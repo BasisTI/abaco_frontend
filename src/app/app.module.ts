@@ -70,7 +70,7 @@ import {ObservadorGuard} from './observador.guard';
 import {GestorGuard} from './gestor.guard';
 import {  PesquisarFuncaoTransacaoModule } from './pesquisar-ft/pesquisar-ft.module';
 import { HttpConfigInterceptor } from './interceptor';
-import { TipoComponent } from './tipo/tipo.component';
+import { TipoModule } from './tipo';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -119,6 +119,7 @@ export function createTranslateLoader(http: HttpClient) {
                 deps: [HttpClient]
             }
         }),
+        TipoModule,
         VersionTagModule.forRoot(),
         BlockUIModule.forRoot()
     ],
@@ -131,7 +132,6 @@ export function createTranslateLoader(http: HttpClient) {
         AppRightPanelComponent,
         AppBreadcrumbComponent,
         InlineProfileComponent,
-        TipoComponent,
     ],
     providers: [
         {provide: LocationStrategy, useClass: HashLocationStrategy},
