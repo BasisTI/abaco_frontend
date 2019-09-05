@@ -31,7 +31,8 @@ export class MenuItemsService {
                     { label: 'MenuPrincipal.Cadastros.Organizacao', routerLink: 'organizacao', icon: 'business' },
                     { label: 'MenuPrincipal.Cadastros.Sistema', routerLink: 'sistema', icon: 'laptop' },
                     { label: 'MenuPrincipal.Administracao.TipoEquipe', routerLink: 'admin/tipoEquipe', icon: 'people' },
-                    { label: 'MenuPrincipal.Administracao.Usuarios', routerLink: 'admin/user', icon: 'person' }
+                    { label: 'MenuPrincipal.Administracao.Usuarios', routerLink: 'admin/user', icon: 'person' },
+                    { label: 'MenuPrincipal.Administracao.Tipo', routerLink: 'tipo', icon: 'info' }
                 ]
             },
             {

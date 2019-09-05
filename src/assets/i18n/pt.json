@@ -839,7 +839,8 @@
     "Administracao": {
       "Administracao": "Administração",
       "TipoEquipe": "Tipo de Equipe",
-      "Usuarios": "Usuários"
+      "Usuarios": "Usuários",
+      "Tipo": "Tipo"
     },
     "Configuracao": {
       "AlterarSenha": "Alterar Senha",

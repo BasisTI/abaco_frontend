@@ -842,7 +842,8 @@
     "Administracao": {
       "Administracao": "Administration",
       "TipoEquipe": "Team Type",
-      "Usuarios": "Users"
+      "Usuarios": "Users",
+      "Tipo": "Type"
     },
     "Configuracao": {
       "AlterarSenha": "Change Password",

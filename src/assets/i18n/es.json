@@ -837,7 +837,8 @@
     "Administracao": {
       "Administracao": "Administración",
       "TipoEquipe": "Tipo de Equipo",
-      "Usuarios": "Usuarios"
+      "Usuarios": "Usuarios",
+      "Tipo": "Tipo"
     },
     "Configuracao": {
       "AlterarSenha": "Cambiar Contraseña",
