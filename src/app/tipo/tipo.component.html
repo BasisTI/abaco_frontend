@@ -28,9 +28,10 @@
                     </div>
                 </div>
 
-                <!-- <p-dataTable [value]="tipo" [paginator]="true" [rows]="20">
-
-                </p-dataTable> -->
+                <p-dataTable [paginator]="true" [rows]="20">
+                    <p-column [header]="'Codigo'" field="id"></p-column>
+                    <p-column [header]="'Nome'" field="nome"></p-column>
+                </p-dataTable>
             </div>            
         </div>
     </div>
