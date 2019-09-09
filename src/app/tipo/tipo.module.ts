@@ -5,12 +5,13 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, ROUTES } from '@angular/router';
 import { TipoComponent } from './tipo.component';
 import { TipoRoute } from './tipo.route';
-import { InputTextModule, DataTableModule } from 'primeng/primeng';
+import { InputTextModule, DataTableModule, ButtonModule } from 'primeng/primeng';
 
 @NgModule({
   imports: [
     CommonModule,
     InputTextModule,
+    ButtonModule,
     RouterModule.forRoot(TipoRoute),
     DataTableModule,
     AbacoButtonsModule
