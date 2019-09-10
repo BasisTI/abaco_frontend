@@ -6,7 +6,8 @@
 
                 <div class="ui-g-12 ui-md-12">
                     <span class="md-inputfield">
-                        <input type="text" pInputText class="ui-inputtext" name="filtroTipoFase" />
+                        <input type="text" pInputText class="ui-inputtext" name="filtroTipoFase" maxlength="100"
+                            [(ngModel)]="filtro.descricao" (keyup.Enter)="obterTipos()" />
                         <label>Descrição</label>
                     </span>
                 </div>
@@ -20,12 +21,14 @@
                         </div>
 
                         <div class="ui-g-2 ui-md-2 ui-sm-12">
-                            <app-blue-button [buttonLabel]="'Pesquisar'" buttonIcon="ui-icon-search">
+                            <app-blue-button (click)="obterTipos()" [buttonLabel]="'Pesquisar'"
+                                buttonIcon="ui-icon-search">
                             </app-blue-button>
                         </div>
 
                         <div class="ui-g-2 ui-md-2 ui-sm-12">
-                            <app-green-button routerLink="/tipo/new" [buttonLabel]="'Novo'" buttonIcon="ui-icon-add"></app-green-button>
+                            <app-green-button routerLink="/tipo/new" [buttonLabel]="'Novo'" buttonIcon="ui-icon-add">
+                            </app-green-button>
                         </div>
 
                     </div>
