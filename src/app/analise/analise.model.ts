@@ -1,5 +1,5 @@
 import { UserService } from './../user/user.service';
-import { Manual } from './../manual/manual.model';
+import { Manual } from '../manual/model/manual.model';
 import { BaseEntity, MappableEntities, JSONable } from '../shared';
 import { Contrato } from '../contrato';
 import { EsforcoFase } from '../esforco-fase/index';

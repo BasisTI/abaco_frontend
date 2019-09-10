@@ -1,5 +1,5 @@
 import { FatorAjuste, TipoFatorAjuste, ImpactoFatorAjuste } from '../../fator-ajuste/fator-ajuste.model';
-import { Manual } from '../../manual/manual.model';
+import { Manual } from '../../manual/model/manual.model';
 
 export class FatorAjusteImpactoRetriever {
 

@@ -1,6 +1,6 @@
-import {BaseEntity, MappableEntities, JSONable} from '../shared';
-import {EsforcoFase} from '../esforco-fase/index';
-import {FatorAjuste} from '../fator-ajuste/fator-ajuste.model';
+import {BaseEntity, MappableEntities, JSONable} from '../../shared';
+import {EsforcoFase} from '../../esforco-fase/index';
+import {FatorAjuste} from '../../fator-ajuste/fator-ajuste.model';
 
 export class Manual implements BaseEntity, JSONable<Manual> {
 

@@ -1,4 +1,4 @@
-import { Manual } from './../manual/manual.model';
+import { Manual } from '../manual/model/manual.model';
 import { ManualContrato } from './../organizacao/ManualContrato.model';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';

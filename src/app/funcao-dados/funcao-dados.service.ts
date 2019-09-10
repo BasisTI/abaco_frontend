@@ -1,4 +1,4 @@
-import { Manual } from './../manual/manual.model';
+import { Manual } from '../manual/model/manual.model';
 import { FuncaoTransacao } from './../funcao-transacao/funcao-transacao.model';
 import {Injectable} from '@angular/core';
 import {Response} from '@angular/http';

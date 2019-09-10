@@ -4,17 +4,17 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Response } from '@angular/http';
 import { Observable, Subscription } from 'rxjs/Rx';
 
-import { Manual } from './manual.model';
-import { ManualService } from './manual.service';
-import { EsforcoFaseService } from '../esforco-fase/esforco-fase.service';
-import { ResponseWrapper } from '../shared';
-import { EsforcoFase } from '../esforco-fase/esforco-fase.model';
-import { FaseService, Fase } from '../fase';
+import { Manual } from '../model/manual.model';
+import { ManualService } from '../manual.service';
+import { EsforcoFaseService } from '../../esforco-fase/esforco-fase.service';
+import { ResponseWrapper } from '../../shared';
+import { EsforcoFase } from '../../esforco-fase/esforco-fase.model';
+import { FaseService, Fase } from '../../fase';
 import { DatatableClickEvent } from '@basis/angular-components';
 import { ConfirmationService } from 'primeng/components/common/confirmationservice';
-import { FatorAjuste, TipoFatorAjuste } from '../fator-ajuste/fator-ajuste.model';
-import { PageNotificationService } from '../shared/page-notification.service';
-import { UploadService } from '../upload/upload.service';
+import { FatorAjuste, TipoFatorAjuste } from '../../fator-ajuste/fator-ajuste.model';
+import { PageNotificationService } from '../../shared/page-notification.service';
+import { UploadService } from '../../upload/upload.service';
 import { FileUpload, SelectItem } from 'primeng/primeng';
 
 @Component({

@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
 import {Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes} from '@angular/router';
 
-import {ManualComponent} from './manual.component';
-import {ManualDetailComponent} from './manual-detail.component';
-import {ManualFormComponent} from './manual-form.component';
+import {ManualComponent} from './components/manual.component';
+import {ManualDetailComponent} from './components/manual-detail.component';
+import {ManualFormComponent} from './components/manual-form.component';
 
 import {AuthGuard} from '@basis/angular-components';
 

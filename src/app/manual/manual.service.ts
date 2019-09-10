@@ -6,7 +6,7 @@ import { HttpService } from '@basis/angular-components';
 import { environment } from '../../environments/environment';
 import { UploadService } from '../upload/upload.service';
 
-import { Manual } from './manual.model';
+import { Manual } from './model/manual.model';
 import { ResponseWrapper, createRequestOption, JSONable, PageNotificationService } from '../shared';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 

@@ -3,11 +3,11 @@ import { Component, ViewChild, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ConfirmationService } from 'primeng/primeng';
 import { DatatableComponent, DatatableClickEvent } from '@basis/angular-components';
-import { Manual } from './manual.model';
-import { ManualService } from './manual.service';
-import { ElasticQuery, PageNotificationService } from '../shared';
+import { Manual } from '../model/manual.model';
+import { ManualService } from '../manual.service';
+import { ElasticQuery, PageNotificationService } from '../../shared';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
-import { MessageUtil } from '../util/message.util';
+import { MessageUtil } from '../../util/message.util';
 import { Response, Headers } from '@angular/http';
 import { FormGroup } from '@angular/forms';
 
