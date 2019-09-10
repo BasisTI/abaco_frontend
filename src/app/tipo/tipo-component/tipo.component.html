@@ -1,14 +1,14 @@
 <div class="container">
     <div class="ui-g ui-fluid">
         <div class="card card-w-title">
-            <h1>Tipo</h1>
+            <h1 translate="Cadastros.Tipo.Tipo">Tipo</h1>
             <div class="ui-g">
 
                 <div class="ui-g-12 ui-md-12">
                     <span class="md-inputfield">
                         <input type="text" pInputText class="ui-inputtext" name="filtroTipoFase" maxlength="100"
                             [(ngModel)]="filtro.descricao" (keyup.Enter)="obterTipos()" />
-                        <label>Descrição</label>
+                        <label translate="Cadastros.Tipo.Descricao">Descrição</label>
                     </span>
                 </div>
 
@@ -16,18 +16,18 @@
                     <div class="ui-g ui-md-12 form-buttons-container">
 
                         <div class="ui-g-2 ui-md-2 ui-sm-12">
-                            <app-white-button [buttonLabel]="'Limpar'" buttonIcon="ui-icon-clear-all">
+                            <app-white-button [buttonLabel]="'Global.Botoes.LimparPesquisa' | translate" buttonIcon="ui-icon-clear-all">
                             </app-white-button>
                         </div>
 
                         <div class="ui-g-2 ui-md-2 ui-sm-12">
-                            <app-blue-button (click)="obterTipos()" [buttonLabel]="'Pesquisar'"
+                            <app-blue-button (click)="obterTipos()" [buttonLabel]="'Global.Botoes.Pesquisar' | translate"
                                 buttonIcon="ui-icon-search">
                             </app-blue-button>
                         </div>
 
                         <div class="ui-g-2 ui-md-2 ui-sm-12">
-                            <app-green-button routerLink="/tipo/new" [buttonLabel]="'Novo'" buttonIcon="ui-icon-add">
+                            <app-green-button routerLink="/tipo/new" [buttonLabel]="'Global.Botoes.Novo' | translate" buttonIcon="ui-icon-add">
                             </app-green-button>
                         </div>
 
@@ -37,19 +37,19 @@
                         <div class="table-container">
                             <p-dataTable #datatable [value]="tipos.content" 
                                 [paginator]="true" [rows]="20" >
-                                <p-column [header]="'Codigo'" [sortable]="true" field="id"></p-column>
-                                <p-column [header]="'Nome'" [sortable]="true" field="nome"></p-column>
+                                <p-column [header]="'Cadastros.Fase.Codigo' | translate" [sortable]="true" field="id"></p-column>
+                                <p-column [header]="'Cadastros.Fase.Nome' | translate"  [sortable]="true" field="nome"></p-column>
                             </p-dataTable>
                         </div>
 
                         <div class="table-next-containter">
                             <div class="btn-table">
                                 <button type="button" pButton class="green-btn side-button" name="edit"
-                                    icon="ui-icon-edit" value="edit"></button>
+                                [title]="'Global.Botoes.Editar' | translate" icon="ui-icon-edit" value="edit"></button>
                                 <button type="button" pButton class="side-button" name="view"
-                                    icon="ui-icon-remove-red-eye"></button>
+                                [title]="'Global.Botoes.Visualizar' | translate"    icon="ui-icon-remove-red-eye"></button>
                                 <button type="button" pButton class="ui-button-danger side-button" name="delete"
-                                    icon="ui-icon-trash"></button>
+                                [title]="'Global.Botoes.Excluir' | translate"    icon="ui-icon-trash"></button>
                             </div>
                         </div>
                     </div>
