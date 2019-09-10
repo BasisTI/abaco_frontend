@@ -32,7 +32,7 @@
 
                     <div class="dynamic-table-container">
                         <div class="table-container">
-                            <p-dataTable [paginator]="true" [rows]="20">
+                            <p-dataTable #datatable [paginator]="true" [rows]="20">
                                 <p-column [header]="'Codigo'" field="id"></p-column>
                                 <p-column [header]="'Nome'" field="nome"></p-column>
                             </p-dataTable>
@@ -49,6 +49,10 @@
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <div class="ui-g-12 ui-md-2 ui-sm-2">
+                    <app-export-button [dataTable]="datatable" resourceName="tipo"></app-export-button>
                 </div>
             </div>
         </div>

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { TipoService } from '../tipo.service';
 @Component({
   selector: 'app-tipo',
   templateUrl: './tipo.component.html',
@@ -6,7 +7,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TipoComponent implements OnInit {
 
-  constructor() { }
+  constructor(private tipoService: TipoService) { }
 
   ngOnInit() {
   }
