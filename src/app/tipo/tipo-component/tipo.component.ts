@@ -3,6 +3,7 @@ import { Component, ViewChild } from '@angular/core';
 import { TipoService } from '../tipo.service';
 import { Tipo } from '../tipo-model/tipo.model';
 import { DataTable } from 'primeng/primeng';
+import { Page } from '../../util/page';
 @Component({
   selector: 'app-tipo',
   templateUrl: './tipo.component.html',
@@ -12,12 +13,12 @@ export class TipoComponent {
 
   @ViewChild(DataTable) dataTable: DataTable;
   filtro: TipoFilter = new TipoFilter();
-  tipo: Tipo = new Tipo();
+  tipos: Page<Tipo> = new Page<Tipo>();
 
   constructor(private tipoService: TipoService) {}
 
   obterTipos(){
     this.tipoService.getPage(this.filtro,this.dataTable)
-    .subscribe(tipo => this.tipo = tipo);
+    .subscribe(tipo => this.tipos = tipo);
   }
 }
