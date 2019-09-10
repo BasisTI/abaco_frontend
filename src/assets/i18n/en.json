@@ -254,6 +254,18 @@
         "msgNaoEPossivelExcluirRegistrosVinculados":"Unable to delete linked records!"
       }
     },
+
+    "Tipo": {
+      "CadastrarTipo": "Enter Type",
+      "Codigo": "Code",
+      "Descricao": "Description",
+      "EditarTipo": "Edit Type",
+      "ID": "ID",
+      "Nome": "Name",
+      "Tipo": "Type",
+      "VisualizarTipo": "View Type"
+    },
+
     "TipoEquipe": {
       "CadastrarTipoEquipe": "Register Team Type",
       "Codigo": "Code",

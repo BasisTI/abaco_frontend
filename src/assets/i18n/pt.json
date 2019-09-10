@@ -118,6 +118,18 @@
         "msgNaoEPossivelExcluirRegistrosVinculados": "Não é possivel excluir registros vinculados!"
       }
     },
+
+    "Tipo": {
+      "CadastrarTipo": "Cadastrar Tipo",
+      "Codigo": "Código",
+      "Descricao": "Descrição",
+      "EditarTipo": "Editar Tipo",
+      "ID": "ID",
+      "Nome": "Nome",
+      "Tipo": "Tipo",
+      "VisualizarTipo": "Visualizar Tipo"
+    },
+    
     "Manual": {
       "Ativo": "Ativo",
       "Alteracao": "Alteração",
@@ -853,7 +865,8 @@
       "Manual": "Manual",
       "Organizacao": "Organização",
       "Sistema": "Sistema",
-      "Fase": "Fase"
+      "Fase": "Fase",
+      "Tipo": "Tipo"
     },
     "Analise": {
       "Analise": "Análise",

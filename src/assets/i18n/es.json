@@ -119,6 +119,18 @@
         "msgNaoEPossivelExcluirRegistrosVinculados": "No es posible eliminar registros vinculados!"
       }
     },
+
+    "Tipo": {
+      "CadastrarTipo": "Registro Tipo",
+      "Codigo": "Código",
+      "Descricao": "Descripción",
+      "EditarTipo": "Editar Tipo",
+      "ID": "ID",
+      "Nome": "Nombre",
+      "Tipo": "Tipo",
+      "VisualizarTipo": "Ver Tipo"
+    },
+
     "Manual": {
       "Ativo": "Ativo",
       "Alteracao": "Cambio",

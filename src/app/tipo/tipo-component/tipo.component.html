@@ -35,9 +35,10 @@
 
                     <div class="dynamic-table-container">
                         <div class="table-container">
-                            <p-dataTable #datatable [paginator]="true" [rows]="20">
-                                <p-column [header]="'Codigo'" field="id"></p-column>
-                                <p-column [header]="'Nome'" field="nome"></p-column>
+                            <p-dataTable #datatable [value]="tipos.content" 
+                                [paginator]="true" [rows]="20" >
+                                <p-column [header]="'Codigo'" [sortable]="true" field="id"></p-column>
+                                <p-column [header]="'Nome'" [sortable]="true" field="nome"></p-column>
                             </p-dataTable>
                         </div>
 
