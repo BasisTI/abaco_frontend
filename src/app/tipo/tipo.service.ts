@@ -21,7 +21,7 @@ export class TipoService {
       .map(response => response.json());
   }
 
-  getPage(filtro :TipoFilter, dataTable: DataTable): Observable<Response>{
+  getPage(filtro :TipoFilter, dataTable: DataTable): Observable<any>{
     const optionsParam = {
       params: RequestUtil.getRequestParams(dataTable)
     }
