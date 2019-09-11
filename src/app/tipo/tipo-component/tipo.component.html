@@ -36,7 +36,8 @@
                     <div class="dynamic-table-container">
                         <div class="table-container">
                             <p-dataTable #datatable [value]="tipos.content" 
-                                [paginator]="true" [rows]="20" >
+                                [paginator]="true" [rowsPerPageOptions]="[5, 10, 20]" 
+                                [rows]="20" [lazy]="true" (onLazyLoad)="obterTipos()" dataKey="id" [totalRecords]="tipos.totalElements">
                                 <p-column [header]="'Cadastros.Fase.Codigo' | translate" [sortable]="true" field="id"></p-column>
                                 <p-column [header]="'Cadastros.Fase.Nome' | translate"  [sortable]="true" field="nome"></p-column>
                             </p-dataTable>
