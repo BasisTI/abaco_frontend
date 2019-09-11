@@ -16,7 +16,7 @@ import * as _ from 'lodash';
 import { FatorAjusteLabelGenerator } from '../shared/fator-ajuste-label-generator';
 import { TipoEquipeService, TipoEquipe } from '../tipo-equipe';
 import { MessageUtil } from '../util/message.util';
-import { FatorAjuste } from '../fator-ajuste';
+import { FatorAjuste } from '../manual';
 import { EsforcoFase } from '../esforco-fase';
 import { Manual } from '../manual';
 import { Response } from '@angular/http';

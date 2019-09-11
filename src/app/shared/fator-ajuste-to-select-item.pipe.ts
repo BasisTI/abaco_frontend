@@ -1,6 +1,6 @@
 import {Pipe, PipeTransform} from '@angular/core';
 import {SelectItem} from 'primeng/primeng';
-import {FatorAjuste} from '../fator-ajuste';
+import { FatorAjuste } from '../manual';
 import {FatorAjusteLabelGenerator} from './fator-ajuste-label-generator';
 
 @Pipe({ name: 'fatorAjusteToSelectItem' })

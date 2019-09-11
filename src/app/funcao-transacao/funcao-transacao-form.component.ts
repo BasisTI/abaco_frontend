@@ -7,7 +7,7 @@ import { BaselineAnalitico } from './../baseline/baseline-analitico.model';
 import { Component, OnInit, ChangeDetectorRef, OnDestroy, Input, Output, EventEmitter, QueryList, ViewChildren } from '@angular/core';
 import { AnaliseSharedDataService, PageNotificationService, ResponseWrapper, EntityToJSON } from '../shared';
 import { Analise, AnaliseService } from '../analise';
-import { FatorAjuste } from '../fator-ajuste';
+import { FatorAjuste } from '../manual';
 
 import * as _ from 'lodash';
 import { Funcionalidade } from '../funcionalidade/index';

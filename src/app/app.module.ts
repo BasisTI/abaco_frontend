@@ -38,7 +38,6 @@ import {InlineProfileComponent} from './app.profile.component';
 import {JhiDateUtils, BreadcrumbService, PageNotificationService} from './shared';
 
 import {AbacoManualModule} from './manual/manual.module';
-import {AbacoFatorAjusteModule} from './fator-ajuste/fator-ajuste.module';
 import {AbacoFuncaoTransacaoModule} from './funcao-transacao/funcao-transacao.module';
 import {AbacoAnaliseModule} from './analise/analise.module';
 import {AbacoOrganizacaoModule} from './organizacao/organizacao.module';
@@ -88,7 +87,6 @@ export function createTranslateLoader(http: HttpClient) {
         DatatableModule.forRoot(),
         SharedModule.forRoot(),
         AbacoManualModule,
-        AbacoFatorAjusteModule,
         AbacoFuncaoTransacaoModule,
         AbacoAnaliseModule,
         AbacoOrganizacaoModule,

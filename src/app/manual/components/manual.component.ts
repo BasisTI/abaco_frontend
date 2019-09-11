@@ -1,15 +1,14 @@
 import { TranslateService } from '@ngx-translate/core';
 import { Component, ViewChild, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ConfirmationService } from 'primeng/primeng';
-import { DatatableComponent, DatatableClickEvent } from '@basis/angular-components';
+import { ConfirmationService, DataTable } from 'primeng/primeng';
 import { Manual } from '../model/manual.model';
 import { ManualService } from '../manual.service';
-import { ElasticQuery, PageNotificationService } from '../../shared';
+import { PageNotificationService } from '../../shared';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
-import { MessageUtil } from '../../util/message.util';
-import { Response, Headers } from '@angular/http';
-import { FormGroup } from '@angular/forms';
+import { ManualFilter } from '../model/ManualFilter';
+import { Observable } from 'rxjs';
+import { Page } from '../../util/page';
 
 @Component({
     selector: 'jhi-manual',
@@ -18,15 +17,13 @@ import { FormGroup } from '@angular/forms';
 export class ManualComponent implements OnInit {
 
     @BlockUI() blockUI: NgBlockUI;
-    @ViewChild(DatatableComponent) datatable: DatatableComponent;
+    @ViewChild(DataTable) dataTable: DataTable;
 
-    searchUrl: string = this.manualService.searchUrl;
-    elasticQuery: ElasticQuery = new ElasticQuery();
-    manualSelecionado: Manual = new Manual();
-    nomeDoManualClonado: string;
-    mostrarDialogClonar: boolean;
-    rowsPerPageOptions: number[] = [5, 10, 20];
-    myform: FormGroup;
+    selectedLine: Manual = new Manual();
+    filtro: ManualFilter = new ManualFilter();
+    manuais: Page<Manual> = new Page<Manual>();
+    nomeDoManualClonado: string = '';
+    mostrarDialogClonar = false;
     nomeValido: boolean = false;
 
     constructor(
@@ -35,64 +32,38 @@ export class ManualComponent implements OnInit {
         private confirmationService: ConfirmationService,
         private pageNotificationService: PageNotificationService,
         private translate: TranslateService
-    ) {
+    ) { }
+
+    translateMessage(message: string, callback: (translatedMessage: string, ...args: any[]) => void, ...args: any[]) {
+        this.translate.get(message).subscribe((translatedMessage: string) => {
+            callback(translatedMessage, args);
+        });
     }
 
-    getLabel(label) {
-        let str: any;
-        this.translate.get(label).subscribe((res: string) => {
-          str = res;
-        }).unsubscribe();
-        return str;
-      }
+    translateMultiple(messages: string[], callback: (messages: string[], ...agrs: object[]) => void) {
+        Observable.forkJoin(
+            messages.map(message => this.translate.stream(message))
+        ).subscribe(messages => callback(messages))
+    }
 
     public ngOnInit() {
-        this.mostrarDialogClonar = false;
-        this.datatable.pDatatableComponent.onRowSelect.subscribe((event) => {
-            this.manualSelecionado = new Manual().copyFromJSON(event.data);
-        });
-        this.datatable.pDatatableComponent.onRowUnselect.subscribe((event) => {
-            this.manualSelecionado = undefined;
-        });
+        this.obterManuais();
     }
 
-    public datatableClick(event: DatatableClickEvent) {
-        if (!event.selection) {
-            return;
-        }
-        switch (event.button) {
-            case 'edit':
-                this.router.navigate(['/manual', event.selection.id, 'edit']);
-                break;
-            case 'delete':
-                this.confirmDelete(event.selection.id);
-                break;
-            case 'view':
-                this.router.navigate(['/manual', event.selection.id]);
-                break;
-            case 'clone':
-                this.manualSelecionado.id = event.selection.id;
-                this.mostrarDialogClonar = true;
-        }
+    susbcribeSelectRow(data): any {
+        this.selectedLine = data;
     }
 
-    public onRowDblclick(event) {
-        if (event.target.nodeName === 'TD') {
-            this.abrirEditar();
-        } else if (event.target.parentNode.nodeName === 'TD') {
-            this.abrirEditar();
-        }
-    }
-
-    clonarTooltip() {
-        if (!this.manualSelecionado.id) {
-            return `${this.getLabel('Cadastros.Manual.Mensagens.msgRegistroClonar')}`;
-        }
-        return this.getLabel('Global.Botoes.Clonar');
+    subscrbeUnselectRow() {
+        this.selectedLine = new Manual();
     }
 
     abrirEditar() {
-        this.router.navigate(['/manual', this.manualSelecionado.id, 'edit']);
+        this.router.navigate(['/manual', this.selectedLine.id, 'edit']);
+    }
+
+    abrirVisualizar() {
+        this.router.navigate(['/manual', this.selectedLine.id])
     }
 
     public fecharDialogClonar() {
@@ -103,7 +74,7 @@ export class ManualComponent implements OnInit {
     public clonar() {
         if (this.nomeDoManualClonado !== undefined) {
             this.nomeValido = false;
-            const manualClonado: Manual = this.manualSelecionado.clone();
+            const manualClonado: Manual = this.selectedLine.clone();
             manualClonado.id = undefined;
             manualClonado.nome = this.nomeDoManualClonado;
             if (manualClonado.esforcoFases) {
@@ -113,43 +84,58 @@ export class ManualComponent implements OnInit {
                 manualClonado.fatoresAjuste.forEach(fa => fa.id = undefined);
             }
 
-            this.manualService.create(manualClonado).subscribe((manualSalvo: Manual) => {
-                this.pageNotificationService
-                .addSuccessMsg(`${this.getLabel('Cadastros.Manual.Mensagens.msgManual')} ${manualSalvo.nome} ${this.getLabel('Cadastros.Manual.Mensagens.msgClonadoPartirDoManual')} ${this.manualSelecionado.nome} ${this.getLabel('Cadastros.Manual.Mensagens.msgComSucesso')}`);
-                this.fecharDialogClonar();
-                this.recarregarDataTable();
-            });
+            this.manualService.save(manualClonado)
+                .finally(() => this.blockUI.stop())
+                .subscribe((manualSalvo: any) => {
+                    this.translateMultiple(['Cadastros.Manual.Mensagens.msgManual',
+                    'Cadastros.Manual.Mensagens.msgClonadoPartirDoManual',
+                    'Cadastros.Manual.Mensagens.msgComSucesso'], manualSalvo);
+                });
         } else {
             this.nomeValido = true;
         }
     }
 
-    public limparPesquisa() {
-        this.elasticQuery.reset();
-        this.recarregarDataTable();
+    showSaveSuccessMsg(messages: string[], manual: Manual) {
+        this.pageNotificationService.addSuccessMsg(
+            `${messages.pop()} ${manual.nome} ${messages.pop()} ${this.selectedLine.nome} ${messages.pop()}`);
+        this.fecharDialogClonar();
     }
 
-    public confirmDelete(id: any) {
+    public limparPesquisa() {
+        this.filtro = new ManualFilter();
+        this.obterManuais();
+    }
+
+    public confirmDelete(id: number) {
+        this.translateMessage('Global.Mensagens.CertezaExcluirRegistro', this.configureMessage, id);
+    }
+
+    configureMessage(translatedMessage: string, id: number) {
         this.confirmationService.confirm({
-            message: this.getLabel('Global.Mensagens.CertezaExcluirRegistro'),
-            accept: () => {                
-                this.blockUI.start(this.getLabel('Global.Mensagens.EXCLUINDO_REGISTRO'));
-                this.manualService.delete(id).subscribe(() => {
-                    this.recarregarDataTable();
-                    this.blockUI.stop();
-                    this.pageNotificationService
-                    .addSuccessMsg(this.getLabel('Global.Mensagens.RegistroExcluidoComSucesso'));
-                }, error=> {
-                    if (error.status === 500){
-                       this.blockUI.stop();
-                    }
-                }
-                );
+            message: translatedMessage,
+            accept: () => {
+                this.translateMessage('Global.Mensagens.EXCLUINDO_REGISTRO', this.startBlockUI);
+                this.manualService.delete(id)
+                    .finally(() => this.blockUI.stop())
+                    .subscribe(() => {
+                        this.translateMessage('Global.Mensagens.RegistroExcluidoComSucesso', this.showSuccessMsg);
+                    });
             }
         });
     }
 
-    public recarregarDataTable() {
-        this.datatable.refresh(this.elasticQuery.query);
+    startBlockUI(translatedMessage: string) {
+        this.blockUI.start(translatedMessage);
+    }
+
+    showSuccessMsg(translatedMessage: string) {
+        this.pageNotificationService.addSuccessMsg(translatedMessage);
+    }
+
+    obterManuais() {
+        this.manualService.getPage(this.filtro, this.dataTable)
+            .finally(() => this.blockUI.stop())
+            .subscribe(manuais => this.manuais = manuais);
     }
 }

@@ -1,4 +1,4 @@
-import { FatorAjuste, TipoFatorAjuste } from '../../fator-ajuste/index';
+import { FatorAjuste, TipoFatorAjuste } from '../../manual';
 import { FuncaoDados, TipoFuncaoDados } from '../../funcao-dados/funcao-dados.model';
 
 import * as _ from 'lodash';

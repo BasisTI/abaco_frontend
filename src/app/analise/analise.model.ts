@@ -7,7 +7,7 @@ import { Sistema } from '../sistema/index';
 import { FuncaoDados, TipoFuncaoDados, FuncaoDadosFormComponent } from '../funcao-dados/index';
 import { ResumoTotal, ResumoFuncoes } from '../analise-shared/resumo-funcoes';
 import { FuncaoTransacao } from '../funcao-transacao/funcao-transacao.model';
-import { FatorAjuste } from '../fator-ajuste';
+import { FatorAjuste } from '../manual';
 import { ModuloDaFuncionalidadeFinder } from './modulo-finder';
 import { FuncaoAnalise } from '../analise-shared/funcao-analise';
 import { Organizacao } from '../organizacao';

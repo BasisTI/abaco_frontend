@@ -12,7 +12,7 @@ import { EsforcoFase } from '../../esforco-fase/esforco-fase.model';
 import { FaseService, Fase } from '../../fase';
 import { DatatableClickEvent } from '@basis/angular-components';
 import { ConfirmationService } from 'primeng/components/common/confirmationservice';
-import { FatorAjuste, TipoFatorAjuste } from '../../fator-ajuste/fator-ajuste.model';
+import { FatorAjuste, TipoFatorAjuste } from '../model/fator-ajuste.model';
 import { PageNotificationService } from '../../shared/page-notification.service';
 import { UploadService } from '../../upload/upload.service';
 import { FileUpload, SelectItem } from 'primeng/primeng';
@@ -108,17 +108,17 @@ export class ManualFormComponent implements OnInit, OnDestroy {
         }
 
         this.isSaving = true;
-        this.manualService.query().subscribe(response => {
-            const todosManuais = response;
+        // this.manualService.query().subscribe(response => {
+        //     const todosManuais = response;
 
-            if (!this.checkIfManualAlreadyExists(todosManuais.json)) {
-                if (this.manual.id !== undefined) {
-                    this.editar();
-                } else {
-                    this.novo();
-                }
-            }
-        });
+        //     if (!this.checkIfManualAlreadyExists(todosManuais.json)) {
+        //         if (this.manual.id !== undefined) {
+        //             this.editar();
+        //         } else {
+        //             this.novo();
+        //         }
+        //     }
+        // });
     }
 
     /*
@@ -155,11 +155,11 @@ export class ManualFormComponent implements OnInit, OnDestroy {
                         this.manual.arquivoManualId = response.id;
                         this.isEdit = true;
                         this.uploadService.deleteFile(oldId);
-                        this.subscribeToSaveResponse(this.manualService.update(this.manual));
+                        this.subscribeToSaveResponse(this.manualService.save(this.manual));
                     });
                 } else {
                     this.isEdit = true;
-                    this.subscribeToSaveResponse(this.manualService.update(this.manual));
+                    this.subscribeToSaveResponse(this.manualService.save(this.manual));
                 }
             } else {
                 this.privateExibirMensagemCamposInvalidos(1);
@@ -173,13 +173,13 @@ export class ManualFormComponent implements OnInit, OnDestroy {
             if (this.checkRequiredFields()) {
                 this.uploadService.uploadFile(this.arquivoManual).subscribe(response => {
                     this.manual.arquivoManualId = response.id;
-                    this.subscribeToSaveResponse(this.manualService.create(this.manual));
+                    this.subscribeToSaveResponse(this.manualService.save(this.manual));
                 });
             } else {
                 this.privateExibirMensagemCamposInvalidos(1);
             }
         } else if (this.checkRequiredFields()) {
-            this.subscribeToSaveResponse(this.manualService.create(this.manual));
+            this.subscribeToSaveResponse(this.manualService.save(this.manual));
         } else {
             this.privateExibirMensagemCamposInvalidos(1);
         }

@@ -1,6 +1,6 @@
 import { Complexidade } from '../analise-shared/complexidade-enum';
 import { MetodoContagem } from '../analise/analise.model';
-import { FatorAjuste, TipoFatorAjuste } from '../fator-ajuste/fator-ajuste.model';
+import { FatorAjuste } from '../manual';
 import { FuncaoTransacao, TipoFuncaoTransacao } from '../funcao-transacao/funcao-transacao.model';
 import { ComplexidadeFuncionalTransacao } from './calculadora/complexidade-funcional-transacao';
 import { PFPorTiposComplexidades } from './calculadora/pf-por-tipos-complexidades';

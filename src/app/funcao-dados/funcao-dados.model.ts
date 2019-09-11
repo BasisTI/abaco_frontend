@@ -2,7 +2,7 @@ import { FuncaoTransacao } from './../funcao-transacao/funcao-transacao.model';
 import { BaseEntity, JSONable } from '../shared';
 import { Funcionalidade } from '../funcionalidade/index';
 import { DerTextParser, ParseResult } from '../analise-shared/der-text/der-text-parser';
-import { FatorAjuste } from '../fator-ajuste/index';
+import { FatorAjuste } from '../manual';
 import { Complexidade } from '../analise-shared/complexidade-enum';
 import { FuncaoAnalise } from '../analise-shared/funcao-analise';
 import { Der } from '../der/der.model';

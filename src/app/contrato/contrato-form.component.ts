@@ -42,7 +42,7 @@ export class ContratoFormComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.isSaving = false;
     this.isEdit = false;
-    this.manualService.query().subscribe((res: ResponseWrapper) => {
+    this.manualService.findDropdown().subscribe((res: ResponseWrapper) => {
       this.manuals = res.json;
     });
     this.routeSub = this.route.params.subscribe(params => {

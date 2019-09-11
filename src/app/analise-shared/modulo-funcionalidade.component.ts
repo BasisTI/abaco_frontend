@@ -6,7 +6,6 @@ import {
 import { AnaliseSharedDataService, PageNotificationService } from '../shared';
 import { Analise } from '../analise';
 import { Manual } from '../manual';
-import { FatorAjuste } from '../fator-ajuste';
 import { Sistema, SistemaService } from '../sistema/index';
 import { Modulo, ModuloService } from '../modulo';
 import { Funcionalidade, FuncionalidadeService } from '../funcionalidade';

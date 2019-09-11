@@ -1,4 +1,4 @@
-import { FatorAjuste, TipoFatorAjuste } from '../fator-ajuste';
+import { FatorAjuste } from '../manual';
 
 export class FatorAjusteLabelGenerator {
 

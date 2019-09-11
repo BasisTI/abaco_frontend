@@ -13,7 +13,7 @@ import { Contrato } from '../contrato';
 import { Sistema, SistemaService } from '../sistema';
 import { EsforcoFase } from '../esforco-fase';
 import { TipoEquipeService } from '../tipo-equipe';
-import { FatorAjuste } from '../fator-ajuste';
+import { FatorAjuste } from '../manual';
 import { FatorAjusteLabelGenerator } from '../shared/fator-ajuste-label-generator';
 import * as _ from 'lodash';
 import { Modulo } from '../modulo';

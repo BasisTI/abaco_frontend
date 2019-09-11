@@ -1,4 +1,4 @@
-import { FatorAjuste } from '../../fator-ajuste/index';
+import { FatorAjuste } from '../../manual';
 import { Complexidade } from '../complexidade-enum';
 import { FatorAjusteLabelGenerator } from '../../shared/fator-ajuste-label-generator';
 import { FuncaoDados } from '../../funcao-dados';

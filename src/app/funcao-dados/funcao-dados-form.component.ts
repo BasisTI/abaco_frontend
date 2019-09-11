@@ -3,7 +3,7 @@ import { MemoryDatatableComponent } from './../memory-datatable/memory-datatable
 import { Der } from './../der/der.model';
 import { TranslateService } from '@ngx-translate/core';
 import { FuncaoDados } from './funcao-dados.model';
-import { FatorAjuste } from '../fator-ajuste';
+import { FatorAjuste } from '../manual';
 import { Component, OnInit, ChangeDetectorRef, OnDestroy, Input, Output, EventEmitter, AfterViewInit, ViewChildren, QueryList } from '@angular/core';
 import { BaselineAnalitico } from './../baseline/baseline-analitico.model';
 import { BaselineService } from './../baseline/baseline.service';

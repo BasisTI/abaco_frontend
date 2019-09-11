@@ -1,7 +1,7 @@
 import {FuncaoDados} from '../funcao-dados/funcao-dados.model';
 import {Complexidade} from '../analise-shared/complexidade-enum';
 import {MetodoContagem} from '../analise/index';
-import {TipoFatorAjuste, FatorAjuste} from '../fator-ajuste/fator-ajuste.model';
+import { FatorAjuste } from '../manual';
 import {ComplexidadeFuncionalDados} from './calculadora/complexidade-funcional-dados';
 import {PFPorTiposComplexidades} from './calculadora/pf-por-tipos-complexidades';
 import {CalculadoraFator} from './calculadora/calculadora-fator';

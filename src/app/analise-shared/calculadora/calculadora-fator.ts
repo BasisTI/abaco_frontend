@@ -1,4 +1,4 @@
-import {FatorAjuste} from '../../fator-ajuste/fator-ajuste.model';
+import { FatorAjuste } from '../../manual';
 
 export class CalculadoraFator {
 

@@ -1,5 +1,5 @@
-import { BaseEntity } from '../shared';
-import { IntToFloatParser } from '../shared/int-to-float-parser';
+import { BaseEntity } from '../../shared';
+import { IntToFloatParser } from '../../shared/int-to-float-parser';
 
 export enum TipoFatorAjuste {
   'PERCENTUAL' = 'PERCENTUAL',
