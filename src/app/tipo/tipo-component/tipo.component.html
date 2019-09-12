@@ -17,7 +17,7 @@
                     <div class="ui-g ui-md-12 form-buttons-container">
 
                         <div class="ui-g-2 ui-md-2 ui-sm-12">
-                            <app-white-button [buttonLabel]="'Global.Botoes.LimparPesquisa' | translate" buttonIcon="ui-icon-clear-all">
+                            <app-white-button (click)="limpaCampos()" [buttonLabel]="'Global.Botoes.LimparPesquisa' | translate" buttonIcon="ui-icon-clear-all">
                             </app-white-button>
                         </div>
 
@@ -59,7 +59,7 @@
                 </div>
 
                 <div class="ui-g-12 ui-md-2 ui-sm-2">
-                    <app-export-button [dataTable]="datatable" resourceName="tipo"></app-export-button>
+                    <app-export-button [dataTable]="datatable" [filter]="filtro" resourceName="tipo"></app-export-button>
                 </div>
             </div>
         </div>

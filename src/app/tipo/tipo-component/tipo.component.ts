@@ -11,10 +11,13 @@ import { Page } from '../../util/page';
 export class TipoComponent implements OnInit{
 
   @ViewChild(DataTable) dataTable: DataTable;
-  filtro: TipoFilter = new TipoFilter();
-  tipos: Page<Tipo> = new Page<Tipo>();
+  filtro: TipoFilter;
+  tipos: Page<Tipo>;
 
-  constructor(private tipoService: TipoService) {}
+  constructor(private tipoService: TipoService) {
+    this.filtro = new TipoFilter();
+    this.tipos = new Page<Tipo>();
+  }
 
   obterTipos(){
     this.tipoService.getPage(this.filtro,this.dataTable)
@@ -23,6 +26,10 @@ export class TipoComponent implements OnInit{
     });
   }
 
+  limpaCampos(){
+    this.filtro = new TipoFilter();
+    this.obterTipos();
+  }
   ngOnInit() {
     this.obterTipos();
   }
