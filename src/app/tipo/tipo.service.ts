@@ -5,6 +5,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { DataTable } from 'primeng/primeng';
 import { RequestUtil } from '../util/requestUtil'
+import { Tipo } from './tipo-model/tipo.model';
 
 @Injectable()
 export class TipoService {
@@ -13,6 +14,10 @@ export class TipoService {
 
   constructor(private http: HttpClient) {
     this.url = `${environment.apiUrl}/tipo`;
+  }
+
+  create(tipo: Tipo): Observable<Tipo>{
+    return this.http.post(`${this.url}`,tipo);
   }
 
   getPage(filtro :TipoFilter, dataTable: DataTable): Observable<any>{
