@@ -1,5 +1,5 @@
 export class TipoFilter {
 
-    descricao: String;
+    nome: String;
     constructor(){}
 }
