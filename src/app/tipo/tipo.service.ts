@@ -5,6 +5,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { DataTable } from 'primeng/primeng';
 import { RequestUtil } from '../util/requestUtil'
+
 @Injectable()
 export class TipoService {
 
