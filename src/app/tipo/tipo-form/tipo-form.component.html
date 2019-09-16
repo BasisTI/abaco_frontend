@@ -3,19 +3,22 @@
     <div class="ui-g-12">
       <div class="card card-w-title">
         <h1>Cadastrar Tipo</h1>
-        <form name="form" #form="ngForm">
+        <form name="formTipo" #form="ngForm">
           <div class="ui-g-12 ui-md-12 ui-sm-12">
             <span class="md-inputfield">
-              <input pInputText name="nomeTipo" required/>
+              <input pInputText name="nome" required ngModel #nome="ngModel"/>
+              <app-tipo-messages [control]="nome" error="required"
+              text="Informe o nome"></app-tipo-messages>
               <label translate="Cadastros.Tipo.Nome">Nome</label>
             </span>
           </div>
+
           <div class="ui-g ui-md-12 form-buttons-container">
             <div class="ui-g-2 ui-md-2 ui-sm-12">
               <app-white-button routerLink="/tipo" [buttonLabel]="'Cancelar'"></app-white-button>
             </div>
             <div class="ui-g-2 ui-md-2 ui-sm-12">
-              <app-submit-button [buttonLabel]="'Salvar'"></app-submit-button>
+              <app-submit-button [isDisabled]="form.invalid" [buttonLabel]="'Salvar'"></app-submit-button>
             </div>
           </div>
         </form>
