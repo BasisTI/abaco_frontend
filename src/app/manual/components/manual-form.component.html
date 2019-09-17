@@ -168,7 +168,7 @@
                 <div class="ui-g form-fields-container">
                     <div class="ui-g-12 ui-md-3 ui-md-offset-9">
                         <app-blue-button [buttonLabel]="'Cadastros.Manual.Botoes.NovoEsforcoFase' | translate"
-                            buttonIcon="ui-icon-add" (click)="openDialogPhaseEffort()">
+                            buttonIcon="ui-icon-add" (click)="openDialogEsforcoFase()">
                         </app-blue-button>
                     </div>
 
@@ -202,7 +202,7 @@
                 <div class="ui-g">
                     <div class="ui-g-4 ui-g-offset-6">
                         <h4>
-                            {{ 'Cadastros.Manual.Total:' | translate }} {{ getPhaseEffortTotalPercentual() }}
+                            {{ 'Cadastros.Manual.Total:' | translate }} {{ getEsforcoEsforcoFasePercentual() }}
                         </h4>
                     </div>
                 </div>
@@ -414,3 +414,12 @@
         </div>
     </div>
 </div>
+
+<p-confirmDialog [header]="'Global.Mensagens.Confirmacao' | translate" #dialog>
+    <p-footer>
+        <app-white-button [buttonLabel]="'Global.Botoes.Nao' | translate" buttonIcon="fa-close"
+            (click)="dialog.reject()"></app-white-button>
+        <app-green-button [buttonLabel]="'Global.Botoes.Sim' | translate" buttonIcon="fa-check"
+            (click)="dialog.accept()"></app-green-button>
+    </p-footer>
+</p-confirmDialog>

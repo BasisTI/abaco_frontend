@@ -1,15 +1,12 @@
 import { TranslateService } from '@ngx-translate/core';
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Response } from '@angular/http';
-import { Observable, Subscription } from 'rxjs/Rx';
 
 import { Manual } from '../model/manual.model';
 import { ManualService } from '../manual.service';
-import { EsforcoFaseService } from '../../esforco-fase/esforco-fase.service';
 import { EsforcoFase } from '../../esforco-fase/esforco-fase.model';
 import { FaseService, Fase } from '../../fase';
-import { ConfirmationService } from 'primeng/components/common/confirmationservice';
+import { ConfirmationService } from 'primeng/primeng';
 import { FatorAjuste, TipoFatorAjuste } from '../model/fator-ajuste.model';
 import { PageNotificationService } from '../../shared/page-notification.service';
 import { UploadService } from '../../upload/upload.service';
@@ -21,11 +18,10 @@ import { BlockUI, NgBlockUI } from 'ng-block-ui';
     selector: 'jhi-manual-form',
     templateUrl: './manual-form.component.html',
 })
-export class ManualFormComponent implements OnInit, OnDestroy {
+export class ManualFormComponent implements OnInit {
     manual: Manual;
     isSaving;
     isEdit; newUpload; validaTipoFase; validaNomeDeflator; validaTipoDeflator; validaDeflator: boolean;
-    private routeSub: Subscription;
     arquivoManual: File;
     esforcoFases: Array<EsforcoFase>;
     showDialogEsforcoFase = false;
@@ -53,21 +49,12 @@ export class ManualFormComponent implements OnInit, OnDestroy {
         private route: ActivatedRoute,
         private router: Router,
         private manualService: ManualService,
-        private esforcoFaseService: EsforcoFaseService,
         private tipoFaseService: FaseService,
         private confirmationService: ConfirmationService,
         private pageNotificationService: PageNotificationService,
         private uploadService: UploadService,
         private translate: TranslateService
     ) {
-    }
-
-    getLabel(label) {
-        let str: any;
-        this.translate.get(label).subscribe((res: string) => {
-            str = res;
-        }).unsubscribe();
-        return str;
     }
 
     translateMessage(message: string
@@ -82,7 +69,7 @@ export class ManualFormComponent implements OnInit, OnDestroy {
         this.traduzirClassificacoes();
         this.newUpload = false;
         this.isSaving = false;
-        this.routeSub = this.route.params.subscribe(params => {
+        this.route.params.subscribe(params => {
             this.manual = new Manual();
             this.manual.fatoresAjuste = [];
             this.manual.esforcoFases = [];
@@ -104,10 +91,6 @@ export class ManualFormComponent implements OnInit, OnDestroy {
     editEsforcoFase() {
         this.esforcoFase = this.selectedEsforcoFase;
         this.showDialogEsforcoFase = true;
-    }
-
-    deleteEsforcoFase() {
-        this.manual.deleteEsforcoFase(this.selectedEsforcoFase);
     }
 
     save() {
@@ -203,26 +186,6 @@ export class ManualFormComponent implements OnInit, OnDestroy {
         this.pageNotificationService.addErrorMsg(message);
     }
 
-    private subscribeToSaveResponse(result: Observable<Manual>) {
-        result.subscribe((res: Manual) => {
-            this.isSaving = false;
-            this.router.navigate(['/manual']);
-            this.isEdit ? this.pageNotificationService.addUpdateMsg() : this.pageNotificationService.addCreateMsg();
-        },
-            (error: Response) => {
-                this.isSaving = false;
-
-                if (error.headers.toJSON()['x-abacoapp-error'][0] === 'error.manualexists') {
-                    this.pageNotificationService.addErrorMsg(this.getLabel('Cadastros.Manual.msgJaExisteUmManualRegistradoComEsteNome'));
-                    document.getElementById('nome_manual').setAttribute('style', 'border-color: red;');
-                }
-            });
-    }
-
-    ngOnDestroy() {
-        this.routeSub.unsubscribe();
-    }
-
     uploadFile(event: any) {
         this.arquivoManual = event.files[0];
         this.newUpload = true;
@@ -246,11 +209,6 @@ export class ManualFormComponent implements OnInit, OnDestroy {
         this.showDialogFatorAjuste = true;
     }
 
-    deleteFatorAjuste() {
-        this.manual.deleteFatoresAjuste(this.selectedFatorAjuste);
-        this.selectedFatorAjuste = null;
-    }
-
     isPercentualEnum(value: TipoFatorAjuste) {
         return (value !== undefined) ? (value.toString() === 'PERCENTUAL') : (false);
     }
@@ -259,54 +217,38 @@ export class ManualFormComponent implements OnInit, OnDestroy {
         return (value !== undefined) ? (value.toString() === 'UNITARIO') : (false);
     }
 
-    confirmDeletePhaseEffort() {
+    deleteEsforcoFase() {
+        this.translateMessage('Cadastros.Manual.Mensagens.msgTemCertezaQueDesejaExcluirEsforcoPorFase', this.confirmeMessageDeleteEsforcoFase);
+    }
+
+    confirmeMessageDeleteEsforcoFase(message: string) {
+        const fase = this.fases.find(fase => fase.id == this.selectedEsforcoFase.fase.id);
         this.confirmationService.confirm({
-            message: this.getLabel('Cadastros.Manual.Mensagens.msgTemCertezaQueDesejaExcluirEsforcoPorFase')
-                + this.fases.find(fase => fase == this.selectedEsforcoFase.fase)
-                + '?',
+            message: `${message} ${fase.nome}?`,
             accept: () => {
                 this.manual.deleteEsforcoFase(this.selectedEsforcoFase);
-                this.pageNotificationService.addDeleteMsg();
-                this.selectedEsforcoFase = new EsforcoFase();
+                this.selectedEsforcoFase = null;
             }
         });
     }
 
-    confirmDeleteAdjustFactor() {
+    deleteFatorAjuste() {
+        this.translateMessage('Cadastros.Manual.Mensagens.msgTemCertezaQueDesejaExcluirFatorAjuste', this.confirmMessageDeleteFatorAjuste);
+    }
+
+    confirmMessageDeleteFatorAjuste(translated: string) {
         this.confirmationService.confirm({
-            message: this.getLabel('Cadastros.Manual.Mensagens.msgTemCertezaQueDesejaExcluirFatorAjuste') + this.fatorAjuste.nome + '?',
+            message: `${translated} ${this.selectedFatorAjuste.nome}?`,
             accept: () => {
-                this.manual.deleteFatoresAjuste(this.fatorAjuste);
-                this.pageNotificationService.addDeleteMsg();
-                this.fatorAjuste = new FatorAjuste();
+                this.manual.deleteFatoresAjuste(this.selectedFatorAjuste);
+                this.selectedFatorAjuste = null;
             }
         });
     }
 
-    openDialogPhaseEffort() {
+    openDialogEsforcoFase() {
         this.esforcoFase = new EsforcoFase();
         this.showDialogEsforcoFase = true;
-    }
-
-    editPhaseEffort() {
-        if (this.verificaCamposEsforcoFase(this.selectedEsforcoFase)) {
-            this.manual.updateEsforcoFases(this.selectedEsforcoFase);
-            //            this.pageNotificationService.addUpdateMsg();
-            this.selectedEsforcoFase = new EsforcoFase();
-            this.showDialogFatorAjuste = false;
-        } else {
-            this.pageNotificationService.addErrorMsg(this.getLabel('Global.Mensagens.FavorPreencherCamposObrigatorios'));
-        }
-    }
-
-    editAdjustFactor() {
-        if (this.verificarCamposFatorAjuste(this.fatorAjuste)) {
-            this.manual.updateFatoresAjuste(this.fatorAjuste);
-            this.pageNotificationService.addUpdateMsg();
-            this.closeDialogFatorAjuste();
-        } else {
-            this.pageNotificationService.addErrorMsg(this.getLabel('Global.Mensagens.FavorPreencherCamposObrigatorios'));
-        }
     }
 
     closeDialogEsforcoFase() {
@@ -322,7 +264,7 @@ export class ManualFormComponent implements OnInit, OnDestroy {
             form.reset();
             this.closeDialogEsforcoFase();
         } else {
-            this.pageNotificationService.addErrorMsg(this.getLabel('Global.Mensagens.FavorPreencherCamposObrigatorios'));
+            this.translateMessage('Global.Mensagens.FavorPreencherCamposObrigatorios', this.addErrorMenssage)
         }
     }
 
@@ -330,7 +272,7 @@ export class ManualFormComponent implements OnInit, OnDestroy {
         return (esforcoFase.fase || esforcoFase.esforco || esforcoFase.fase) ? true : false;
     }
 
-    getPhaseEffortTotalPercentual() {
+    getEsforcoEsforcoFasePercentual() {
         let total = 0;
         if (this.manual.esforcoFases) {
             this.manual.esforcoFases.forEach(each => {
@@ -356,14 +298,18 @@ export class ManualFormComponent implements OnInit, OnDestroy {
         const fatorAjuste = this.fatorAjuste.clone();
         if (this.verificarCamposFatorAjuste(fatorAjuste)) {
             this.manual.persistFatoresAjuste(fatorAjuste);
-            this.pageNotificationService.addCreateMsg(this.getLabel('Cadastros.Manual.Mensagens.msgDeflatorIncluidoComSucesso'));
+            this.translateMessage('Cadastros.Manual.Mensagens.msgDeflatorIncluidoComSucesso', this.addCreateMessage);
             form.reset();
             this.closeDialogFatorAjuste();
         } else {
-            this.pageNotificationService.addErrorMsg(this.getLabel('Global.Mensagens.FavorPreencherCamposObrigatorios'));
+            this.translateMessage('Global.Mensagens.FavorPreencherCamposObrigatorios', this.addErrorMenssage)
         }
         this.isEditFatorAjuste = false;
         this.fatorAjuste = new FatorAjuste();
+    }
+
+    addCreateMessage(translated: string) {
+        this.pageNotificationService.addCreateMsg(translated);
     }
 
     private verificarCamposFatorAjuste(fatorAjuste: FatorAjuste): boolean {
@@ -382,7 +328,7 @@ export class ManualFormComponent implements OnInit, OnDestroy {
         });
     }
 
-    public habilitarDeflator(): boolean {
+    habilitarDeflator(): boolean {
         if (this.fatorAjuste.tipoAjuste !== undefined) {
             return false;
         }
