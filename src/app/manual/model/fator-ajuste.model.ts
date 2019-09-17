@@ -1,5 +1,4 @@
 import { BaseEntity } from '../../shared';
-import { IntToFloatParser } from '../../shared/int-to-float-parser';
 
 export enum TipoFatorAjuste {
   'PERCENTUAL' = 'PERCENTUAL',
@@ -16,35 +15,31 @@ export enum ImpactoFatorAjuste {
 export class FatorAjuste implements BaseEntity {
 
   constructor(
-    public id?: number,
     public nome?: string,
     public fator?: number,
+    public tipoAjuste?: TipoFatorAjuste,
+    public id?: number,
     public ativo?: boolean,
     public descricao?: string,
     public codigo?: string,
-    public tipoAjuste?: TipoFatorAjuste,
     public impacto?: ImpactoFatorAjuste,
-    public manual?: BaseEntity,
     public origem?: string,
     public artificialId?: number
   ) { }
 
   toJSONState(): FatorAjuste {
-    const copy: FatorAjuste = Object.assign({}, this);
-    return copy;
+    return Object.assign({}, this);
   }
 
   copyFromJSON(json: any) {
-    // TODO converter manual?
-    return new FatorAjuste(json.id, json.nome, json.fator, json.ativo,
-      json.descricao, json.codigo, json.tipoAjuste, json.impacto, json.manual,
-      json.origem, json.artificialId);
+    return new FatorAjuste(json.nome, json.fator, json.tipoAjuste
+      , json.id, json.ativo, json.descricao, json.codigo, json.impacto
+      , json.origem, json.artificialId);
   }
 
-  // TODO extrair modulo? entrar pro jsonable?
   clone(): FatorAjuste {
-    return new FatorAjuste(this.id, this.nome, this.fator, this.ativo,
-      this.descricao, this.codigo, this.tipoAjuste, this.impacto, this.manual,
+    return new FatorAjuste(this.nome, this.fator, this.tipoAjuste, this.id,
+      this.ativo, this.descricao, this.codigo, this.impacto,
       this.origem, this.artificialId);
   }
 
@@ -56,7 +51,7 @@ export class FatorAjuste implements BaseEntity {
     if (typeof fator === 'string') {
       fator = Number(fator);
     }
-      this.fator = fator;
+    this.fator = fator;
   }
 
   isPercentual(): boolean {
@@ -67,10 +62,6 @@ export class FatorAjuste implements BaseEntity {
     return this.tipoAjuste === TipoFatorAjuste.UNITARIO;
   }
 
-  /**
-   * VERIFICAR CALCULO - Função que aplica o fator de ajuste
-   * @param pf Pontos de Função a receber fator de ajuste
-   */
   aplicarFator(pf: number): number {
     if (this.isUnitario()) {
       return this.fator;
@@ -78,6 +69,4 @@ export class FatorAjuste implements BaseEntity {
       return pf * this.fator;
     }
   }
-
-
 }

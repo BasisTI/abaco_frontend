@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { DatatableModule } from '@basis/angular-components';
 import { MemoryDataTableModule } from '../memory-datatable/memory-datatable.module';
 import { BotoesExportacaoModule } from './../botoes-exportacao/botoes-exportacao.module';
 import {
@@ -17,7 +16,8 @@ import {
   DialogModule,
   ConfirmDialogModule,
   ConfirmationService,
-  FileUploadModule
+  FileUploadModule,
+  InputTextareaModule
 } from 'primeng/primeng';
 
 import {
@@ -31,7 +31,7 @@ import {
 import { EsforcoFaseService } from '../esforco-fase/esforco-fase.service';
 import { ActiveBooleanPipe } from '../shared/active-boolean.pipe';
 import { AbacoButtonsModule } from '../abaco-buttons/abaco-buttons.module';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {TranslateModule, TranslateLoader} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 
@@ -45,7 +45,6 @@ export function createTranslateLoader(http: HttpClient) {
     HttpModule,
     FormsModule,
     RouterModule.forRoot(manualRoute, { useHash: true }),
-    DatatableModule,
     DataTableModule,
     ButtonModule,
     SpinnerModule,
@@ -59,6 +58,7 @@ export function createTranslateLoader(http: HttpClient) {
     MemoryDataTableModule,
     AbacoButtonsModule,
     BotoesExportacaoModule,
+    InputTextareaModule,
     TranslateModule.forChild({
       loader: {
         provide: TranslateLoader,

@@ -319,11 +319,11 @@ export class AnaliseViewComponent implements OnInit, OnDestroy {
             },
             {
                 value: MessageUtil.INDICATIVA,
-                label: this.getLabelValorVariacao(this.getLabel('Analise.Analise.metsContagens.INDICATIVA_NESMA'), manual.valorVariacaoIndicativaFormatado)
+                label: this.getLabelValorVariacao(this.getLabel('Analise.Analise.metsContagens.INDICATIVA_NESMA'), manual.valorVariacaoIndicativa)
             },
             {
                 value: MessageUtil.ESTIMADA,
-                label: this.getLabelValorVariacao(this.getLabel('Analise.Analise.metsContagens.ESTIMADA_NESMA'), manual.valorVariacaoEstimadaFormatado)
+                label: this.getLabelValorVariacao(this.getLabel('Analise.Analise.metsContagens.ESTIMADA_NESMA'), manual.valorVariacaoEstimada)
             }
         ];
     }

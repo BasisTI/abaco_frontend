@@ -12,7 +12,7 @@ export class EsforcoFase implements BaseEntity, JSONable<EsforcoFase> {
   }
 
   copyFromJSON(json: any) {
-    return new EsforcoFase(json.id, new Fase(json.fase.id, json.fase.nome), json.esforco);
+    return new EsforcoFase(json.id, json.fase, json.esforco, undefined, /* json.faseId */);
   }
 
   toJSONState(): EsforcoFase {

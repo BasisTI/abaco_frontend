@@ -1,3 +1,4 @@
+import { JSONable } from './../shared/jsonable';
 import { DataTable } from 'primeng/primeng';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
@@ -17,11 +18,11 @@ export class ManualService {
     constructor( private http: HttpClient ) {}
 
     save(manual: Manual): Observable<any> {
-        return this.http.post(this.resourceUrl, manual);
+        return this.http.post(this.resourceUrl, manual.toJSONState());
     }
 
-    find(id: number): Observable<any> {
-        return this.http.get(`${this.resourceUrl}/${id}`);
+    find(id: number): Observable<Manual> {
+        return this.http.get(`${this.resourceUrl}/${id}`).map(manual => Manual.prototype.copyFromJSON(manual));
     }
 
     getPage(filtro: ManualFilter, datatable: DataTable): Observable<any> {

@@ -45,6 +45,8 @@ export class Manual implements BaseEntity, JSONable<Manual> {
     }
 
     toJSONState(): Manual {
+        this.esforcoFases.forEach(es => es.toJSONState());
+        this.fatoresAjuste.forEach(ft => ft.toJSONState());
         const copy: Manual = Object.assign({}, this);
         return copy;
     }
@@ -71,52 +73,12 @@ export class Manual implements BaseEntity, JSONable<Manual> {
             , json.versaoCPM);
     }
 
-    get valorVariacaoIndicativaFormatado(): number {
-        return this.valorVariacaoIndicativa;
-    }
-
-    set valorVariacaoIndicativaFormatado(valor: number) {
-        this.valorVariacaoIndicativa = valor;
-    }
-
-    get valorVariacaoEstimadaFormatado(): number {
-        return this.valorVariacaoEstimada;
-    }
-
-    set valorVariacaoEstimadaFormatado(valor: number) {
-        this.valorVariacaoEstimada = valor;
-    }
-
-    get parametroInclusaoFormatado(): number {
-        return this.parametroInclusao;
-    }
-
-    set parametroInclusaoFormatado(valor: number) {
-        this.parametroInclusao = valor;
-    }
-
-    get parametroAlteracaoFormatado(): number {
-        return this.parametroAlteracao;
-    }
-
-    set parametroAlteracaoFormatado(valor: number) {
-        this.parametroAlteracao = valor;
-    }
-
-    get parametroExclusaoFormatado(): number {
-        return this.parametroExclusao;
-    }
-
-    set parametroExclusaoFormatado(valor: number) {
-        this.parametroExclusao = valor;
-    }
-
-    get parametroConversaoFormatado(): number {
-        return this.parametroConversao;
-    }
-
-    set parametroConversaoFormatado(valor: number) {
-        this.parametroConversao = valor;
+    persistEsforcoFase(esforcoFase: EsforcoFase) {
+        if (esforcoFase.id === undefined && esforcoFase.artificialId === undefined) {
+            this.addEsforcoFases(esforcoFase);
+        } else {
+            this.updateEsforcoFases(esforcoFase);
+        }
     }
 
     addEsforcoFases(esforcoFase: EsforcoFase) {
@@ -132,6 +94,14 @@ export class Manual implements BaseEntity, JSONable<Manual> {
     deleteEsforcoFase(esforcoFase: EsforcoFase) {
         this.mappablePhaseEfforts.delete(esforcoFase);
         this.esforcoFases = this.mappablePhaseEfforts.values();
+    }
+
+    persistFatoresAjuste(fatorAjuste: FatorAjuste) {
+        if (fatorAjuste.id === undefined && fatorAjuste.artificialId === undefined) {
+            this.addFatoresAjuste(fatorAjuste);
+        } else {
+            this.updateFatoresAjuste(fatorAjuste);
+        }
     }
 
     addFatoresAjuste(fatorAjuste: FatorAjuste) {
