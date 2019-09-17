@@ -5,6 +5,7 @@ import { Tipo } from '../tipo-model/tipo.model';
 import { DataTable } from 'primeng/primeng';
 import { Page } from '../../util/page';
 import { Router } from '@angular/router';
+import { PageNotificationService } from '@basis/angular-components';
 @Component({
   selector: 'app-tipo',
   templateUrl: './tipo.component.html',
@@ -16,9 +17,11 @@ export class TipoComponent implements OnInit{
   tipos: Page<Tipo>;
   tipoSelecionado: Tipo = new Tipo();
 
-  constructor(private tipoService: TipoService, private route: Router) {
-    this.filtro = new TipoFilter();
-    this.tipos = new Page<Tipo>();
+  constructor(private tipoService: TipoService, 
+    private route: Router, 
+    private pageNotificationService: PageNotificationService) {
+      this.filtro = new TipoFilter();
+      this.tipos = new Page<Tipo>();
   }
 
   obterTipos(){
@@ -34,7 +37,6 @@ export class TipoComponent implements OnInit{
   }
 
   visualizarTipo(){
-    console.log("Visualizar TIPO");
     this.route.navigate([`/tipo`, this.tipoSelecionado.id]);
   }
   
@@ -42,6 +44,13 @@ export class TipoComponent implements OnInit{
     this.tipoSelecionado = data;
   }
   
+  removerRegistro(){
+    this.tipoService.delete(this.tipoSelecionado.id).subscribe(() => {
+      this.pageNotificationService.addDeleteMsg();
+      this.tipoSelecionado = null;
+      this.obterTipos();
+    });
+  }
   ngOnInit() {
     this.obterTipos();
   }

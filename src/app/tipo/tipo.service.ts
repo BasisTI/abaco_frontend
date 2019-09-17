@@ -27,7 +27,11 @@ export class TipoService {
     return this.http.post(`${this.url}/page`, filtro, optionsParam);
   }
 
-  findById(id: number) :Observable<Tipo>{
+  findById(id: number): Observable<Tipo>{
     return this.http.get(`${this.url}/${id}`);
+  }
+
+  delete(id: number): Observable<Tipo>{
+    return this.http.delete(`${this.url}/${id}`);
   }
 }
