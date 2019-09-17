@@ -4,7 +4,7 @@ import { FormControl } from '@angular/forms';
 @Component({
   selector: 'app-tipo-messages',
   template: `
-    <div *ngIf="temErro()" class="ui-message ui-messages-error">
+    <div *ngIf="temErro()" class="ui-message ui-messages-error" translate="Global.Mensagens.CampoObrigatorio">
       {{ text }}
     </div>
   `,
@@ -24,7 +24,7 @@ export class TipoMessagesComponent implements OnInit {
   constructor() { }
 
   temErro(): boolean{
-    return this.control.hasError(this.error) && this.control.dirty && this.control.touched ; 
+    return this.control.hasError(this.error) && (this.control.dirty || this.control.touched); 
   }
 
   ngOnInit() {
