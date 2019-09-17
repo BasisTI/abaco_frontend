@@ -1,0 +1,28 @@
+<div class="container">
+  <div class="ui-fluid">
+    <div class="ui-g-12">
+      <div class="card card-w-title">
+
+        <h1 translate="Cadastros.Tipo.VisualizarTipo">Visualizar Tipo</h1>
+        <div class="ui-g">
+
+          <div class="ui-g-6 ui-md-6 ui-sm-6">
+            <label class="float-label">{{ 'Cadastros.Tipo.ID' | translate }}: {{ tipo.id }}</label>
+          </div>
+
+          <div class="ui-g-6 ui-md-6 ui-sm-6">
+            <label class="float-label">{{ 'Cadastros.Tipo.Nome' | translate }}: {{ tipo.nome }}</label>
+          </div>
+
+        </div>
+
+        <div class="ui-g">
+          <div class="ui-g-2">
+            <button pButton type="button" [label]="'Global.Botoes.Voltar' | translate" routerLink="/tipo"></button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

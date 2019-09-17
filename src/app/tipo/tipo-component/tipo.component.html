@@ -36,10 +36,16 @@
 
                     <div class="dynamic-table-container">
                         <div class="table-container">
-                            <p-dataTable #datatable [value]="tipos.content" 
-                                [paginator]="true" [rowsPerPageOptions]="[5, 10, 20]" 
-                                [rows]="20" [lazy]="true" (onLazyLoad)="obterTipos()" dataKey="id" 
-                                [totalRecords]="tipos.totalElements" selectionMode="single">
+                            <p-dataTable #datatable 
+                                [value]="tipos.content" 
+                                [paginator]="true" 
+                                [rowsPerPageOptions]="[5, 10, 20]" 
+                                [rows]="20" 
+                                [lazy]="true" 
+                                (onLazyLoad)="obterTipos()" dataKey="id" 
+                                [totalRecords]="tipos.totalElements" 
+                                (onRowSelect)="linhaSelecionada($event.data)" 
+                                selectionMode="single">
                                 <p-column [header]="'Cadastros.Fase.Codigo' | translate" [sortable]="true" field="id"></p-column>
                                 <p-column [header]="'Cadastros.Fase.Nome' | translate"  [sortable]="true" field="nome"></p-column>
                             </p-dataTable>
@@ -50,7 +56,7 @@
                                 <button type="button" pButton class="green-btn side-button" name="edit"
                                 [title]="'Global.Botoes.Editar' | translate" icon="ui-icon-edit" value="edit"></button>
                                 <button type="button" pButton class="side-button" name="view"
-                                [title]="'Global.Botoes.Visualizar' | translate"    icon="ui-icon-remove-red-eye"></button>
+                                [title]="'Global.Botoes.Visualizar' | translate" (click)="visualizarTipo()" icon="ui-icon-remove-red-eye"></button>
                                 <button type="button" pButton class="ui-button-danger side-button" name="delete"
                                 [title]="'Global.Botoes.Excluir' | translate"    icon="ui-icon-trash"></button>
                             </div>
