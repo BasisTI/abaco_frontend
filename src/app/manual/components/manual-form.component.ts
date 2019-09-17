@@ -20,14 +20,11 @@ import { BlockUI, NgBlockUI } from 'ng-block-ui';
 })
 export class ManualFormComponent implements OnInit {
     manual: Manual;
-    isSaving;
-    isEdit; newUpload; validaTipoFase; validaNomeDeflator; validaTipoDeflator; validaDeflator: boolean;
+    isEdit; newUpload: boolean;
     arquivoManual: File;
-    esforcoFases: Array<EsforcoFase>;
     showDialogEsforcoFase = false;
     showDialogFatorAjuste = false;
     fases: Fase[] = [];
-    percentual: number;
     esforcoFase: EsforcoFase = new EsforcoFase();
     selectedEsforcoFase: EsforcoFase;
     fatorAjuste: FatorAjuste = new FatorAjuste();
@@ -68,7 +65,6 @@ export class ManualFormComponent implements OnInit {
     ngOnInit() {
         this.traduzirClassificacoes();
         this.newUpload = false;
-        this.isSaving = false;
         this.route.params.subscribe(params => {
             this.manual = new Manual();
             this.manual.fatoresAjuste = [];
