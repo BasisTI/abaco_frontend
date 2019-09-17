@@ -35,7 +35,7 @@ export class ManualFormComponent implements OnInit, OnDestroy {
     esforcoFase: EsforcoFase = new EsforcoFase();
     selectedEsforcoFase: EsforcoFase;
     fatorAjuste: FatorAjuste = new FatorAjuste();
-    selectedFatorAjuste: FatorAjuste = new FatorAjuste();
+    selectedFatorAjuste: FatorAjuste;
 
     isEditFatorAjuste = false;
 
@@ -263,6 +263,7 @@ export class ManualFormComponent implements OnInit, OnDestroy {
 
     deleteFatorAjuste() {
         this.manual.deleteFatoresAjuste(this.selectedFatorAjuste);
+        this.selectedFatorAjuste = null;
     }
 
     isPercentualEnum(value: TipoFatorAjuste) {

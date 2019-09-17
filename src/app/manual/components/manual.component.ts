@@ -19,7 +19,7 @@ export class ManualComponent implements OnInit {
     @BlockUI() blockUI: NgBlockUI;
     @ViewChild(DataTable) dataTable: DataTable;
 
-    selectedLine: Manual = new Manual();
+    selectedLine: Manual;
     filtro: ManualFilter = new ManualFilter();
     manuais: Page<Manual> = new Page<Manual>();
     nomeDoManualClonado: string = '';
@@ -34,9 +34,9 @@ export class ManualComponent implements OnInit {
         private translate: TranslateService
     ) { }
 
-    translateMessage(message: string, callback: (translatedMessage: string, ...args: any[]) => void, ...args: any[]) {
+    translateMessage(message: string, callback: (translatedMessage: string, id?: number) => void, id?: number) {
         this.translate.get(message).subscribe((translatedMessage: string) => {
-            callback(translatedMessage, args);
+            callback.call(this, translatedMessage, id);
         });
     }
 
@@ -55,7 +55,7 @@ export class ManualComponent implements OnInit {
     }
 
     subscrbeUnselectRow() {
-        this.selectedLine = new Manual();
+        this.selectedLine = null;
     }
 
     abrirEditar() {
@@ -88,8 +88,8 @@ export class ManualComponent implements OnInit {
                 .finally(() => this.blockUI.stop())
                 .subscribe((manualSalvo: any) => {
                     this.translateMultiple(['Cadastros.Manual.Mensagens.msgManual',
-                    'Cadastros.Manual.Mensagens.msgClonadoPartirDoManual',
-                    'Cadastros.Manual.Mensagens.msgComSucesso'], manualSalvo);
+                        'Cadastros.Manual.Mensagens.msgClonadoPartirDoManual',
+                        'Cadastros.Manual.Mensagens.msgComSucesso'], manualSalvo);
                 });
         } else {
             this.nomeValido = true;
@@ -120,6 +120,7 @@ export class ManualComponent implements OnInit {
                     .finally(() => this.blockUI.stop())
                     .subscribe(() => {
                         this.translateMessage('Global.Mensagens.RegistroExcluidoComSucesso', this.showSuccessMsg);
+                        this.obterManuais();
                     });
             }
         });
