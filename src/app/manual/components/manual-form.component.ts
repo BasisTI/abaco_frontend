@@ -14,8 +14,8 @@ import { FatorAjuste, TipoFatorAjuste } from '../model/fator-ajuste.model';
 import { PageNotificationService } from '../../shared/page-notification.service';
 import { UploadService } from '../../upload/upload.service';
 import { FileUpload } from 'primeng/primeng';
-import { SelectItem } from 'primeng/api';
 import { FormControl } from '@angular/forms';
+import { BlockUI, NgBlockUI } from 'ng-block-ui';
 
 @Component({
     selector: 'jhi-manual-form',
@@ -47,6 +47,7 @@ export class ManualFormComponent implements OnInit, OnDestroy {
     invalidFields: Array<string> = [];
 
     @ViewChild('fileInput') fileInput: FileUpload;
+    @BlockUI() blockUI: NgBlockUI;
 
     constructor(
         private route: ActivatedRoute,
@@ -69,8 +70,12 @@ export class ManualFormComponent implements OnInit, OnDestroy {
         return str;
     }
 
-    showTranslatedMessage(message: string, callback: (params: string) => void) {
-        this.translate.get(message).subscribe(translated => callback(translated));
+    translateMessage(message: string
+        , callback: (translatedMessage: string, id?: number) => void
+        , id?: number) {
+        this.translate.get(message).subscribe((translatedMessage: string) => {
+            callback.call(this, translatedMessage, id);
+        });
     }
 
     ngOnInit() {
@@ -107,7 +112,7 @@ export class ManualFormComponent implements OnInit, OnDestroy {
 
     save() {
         if (!this.checkRequiredFields()) {
-            this.showTranslatedMessage('Global.Mensagens.FavorPreencherCamposObrigatorios', this.pageNotificationService.addErrorMsg)
+            this.translateMessage('Global.Mensagens.FavorPreencherCamposObrigatorios', this.addErrorMenssage)
             return;
         }
 
@@ -116,23 +121,32 @@ export class ManualFormComponent implements OnInit, OnDestroy {
 
     private persist() {
         const oldId = this.manual.arquivoManualId;
-        // this.manual.esforcoFases.forEach(es => es.fase = es.fase['id']);
-        if (this.checkRequiredFields()) {
-            if (this.newUpload) {
-                if (oldId) {
-                    this.uploadService.deleteFile(oldId);
-                }
-                this.isEdit = true;
-                this.uploadService.uploadFile(this.arquivoManual).subscribe(response => {
-                    this.manual.arquivoManualId = response.id;
-                    this.subscribeToSaveResponse(this.manualService.save(this.manual));
-                });
-            } else {
-                this.subscribeToSaveResponse(this.manualService.save(this.manual));
+        this.translateMessage('Cadastros.Manual.Mensagens.Criando_Manual', this.startBlockUI);
+        if (this.newUpload) {
+            if (oldId) {
+                this.uploadService.deleteFile(oldId);
             }
+            this.uploadService.uploadFile(this.arquivoManual).subscribe(response => {
+                this.manual.arquivoManualId = response.id;
+                this.manualService.save(this.manual)
+                    .finally(() => this.blockUI.stop())
+                    .subscribe(() => {
+                        this.router.navigate(['/manual']);
+                        this.pageNotificationService.addUpdateMsg();
+                    });
+            });
         } else {
-            this.privateExibirMensagemCamposInvalidos(1);
+            this.manualService.save(this.manual)
+                .finally(() => this.blockUI.stop())
+                .subscribe(() => {
+                    this.router.navigate(['/manual']);
+                    this.pageNotificationService.addCreateMsg()
+                });
         }
+    }
+
+    startBlockUI(translatedMessage: string) {
+        this.blockUI.start(translatedMessage);
     }
 
     traduzirClassificacoes() {
@@ -145,77 +159,48 @@ export class ManualFormComponent implements OnInit, OnDestroy {
     }
 
     private checkRequiredFields(): boolean {
-        this.invalidFields = [];
 
         if (!this.manual.valorVariacaoEstimada || this.manual.valorVariacaoEstimada === undefined) {
-            this.pushRequiredField('Cadastros.Manual.ValorVariacaoEstimada', this.invalidFields);
+            return false;
         }
 
         if (!this.manual.valorVariacaoIndicativa || this.manual.valorVariacaoIndicativa === undefined) {
-            this.pushRequiredField('Cadastros.Manual.ValorVariacaoIndicativa', this.invalidFields);
+            return false;
         }
 
         if (!this.manual.nome || this.manual.nome === undefined) {
-            this.pushRequiredField('Cadastros.Manual.Nome', this.invalidFields);
+            return false;
         }
 
         if (!this.manual.parametroInclusao || this.manual.parametroInclusao === undefined) {
-            this.pushRequiredField('Cadastros.Manual.Inclusao', this.invalidFields);
+            return false;
         }
 
         if (!this.manual.parametroAlteracao || this.manual.parametroAlteracao === undefined) {
-            this.pushRequiredField('Cadastros.Manual.Alteracao', this.invalidFields);
+            return false;
         }
 
         if (!this.manual.parametroExclusao || this.manual.parametroExclusao === undefined) {
-            this.pushRequiredField('Cadastros.Manual.Exclusao', this.invalidFields);
+            return false;
         }
 
         if (!this.manual.parametroConversao || this.manual.parametroConversao === undefined) {
-            this.pushRequiredField('Cadastros.Manual.Conversao', this.invalidFields);
+            return false;
         }
 
         if (this.manual.esforcoFases.length === 0 || this.manual.esforcoFases === undefined) {
-            this.pushRequiredField('Cadastros.Manual.EsforcoFases', this.invalidFields);
+            return false;
         }
 
         if (this.manual.fatoresAjuste.length === 0 || this.manual.fatoresAjuste === undefined) {
-            this.pushRequiredField('Cadastros.Manual.Deflator', this.invalidFields);
+            return false;
         }
 
-        return this.invalidFields.length === 0;
+        return true;
     }
 
-    private pushRequiredField(field: string, invalidFields: string[]) {
-        this.translate.get(field).subscribe(translated => invalidFields.push(translated));
-    }
-
-    privateExibirMensagemCamposInvalidos(codErro: number) {
-        switch (codErro) {
-            case 1:
-                this.pageNotificationService.addErrorMsg(this.getLabel('Cadastros.Manual.msgCamposInvalidos') + this.getInvalidFieldsString());
-                this.invalidFields = [];
-                return;
-            case 2:
-                this.pageNotificationService.addErrorMsg(this.getLabel('Cadastros.Manual.msgCampoArquivoManualEstaInvalido'));
-                return;
-        }
-    }
-
-    private getInvalidFieldsString(): string {
-        let invalidFieldsString = '';
-
-        if (this.invalidFields) {
-            this.invalidFields.forEach(invalidField => {
-                if (invalidField === this.invalidFields[this.invalidFields.length - 1]) {
-                    invalidFieldsString = invalidFieldsString + invalidField;
-                } else {
-                    invalidFieldsString = invalidFieldsString + invalidField + ', ';
-                }
-            });
-        }
-
-        return invalidFieldsString;
+    private addErrorMenssage(message: string) {
+        this.pageNotificationService.addErrorMsg(message);
     }
 
     private subscribeToSaveResponse(result: Observable<Manual>) {

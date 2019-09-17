@@ -177,7 +177,7 @@
                 <div class="dynamic-table-container">
                     <div class="table-container">
                         <p-dataTable [value]="manual.esforcoFases" [(selection)]="selectedEsforcoFase"
-                            selectionMode="single" dataKey="{{ 'id' || 'artificialId' }}">
+                            selectionMode="single" compareSelectionBy="equals">
                             <p-column [header]="'Cadastros.Manual.Fase' | translate" field="fase.nome">
                             </p-column>
                             <p-column [header]="'Cadastros.Manual.Percentual(%)' | translate" field="esforco">
@@ -218,7 +218,7 @@
                 <div class="dynamic-table-container">
                     <div class="table-container">
                         <p-dataTable [value]="manual.fatoresAjuste" [(selection)]="selectedFatorAjuste"
-                            selectionMode="single" dataKey="{{ 'id' || 'artificialId' }}">
+                            selectionMode="single" compareSelectionBy="equals">
                             <p-column [header]="'Cadastros.Manual.Codigo' | translate" field="codigo" [sortable]="true">
                                 <ng-template let-col let-codigo="rowData" pTemplate="body">
                                     {{ codigo[col.field] == null ? '---' : codigo[col.field] }}

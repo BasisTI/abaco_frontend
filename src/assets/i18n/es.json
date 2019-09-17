@@ -177,6 +177,7 @@
       "VisualizarManual": "Ver Manual",
       "VersaoCPM": "Versión CPM",
       "Mensagens": {
+        "Criando_Manual": "Crear Manual...",
         "msgJaExisteUmManualRegistradoComEsteNome": "Ya existe un manual registrado con este nombre!",
         "msgCamposInvalidos": "Campos no válidos: ",
         "msgCampoArquivoManualEstaInvalido": "Campo Archivo Manual es inválido!",

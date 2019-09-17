@@ -340,6 +340,7 @@
       "VisualizarManual": "View Manual",
       "VersaoCPM": "CPM Version",
       "Mensagens": {
+        "Criando_Manual": "Crianting Manual...",
         "msgJaExisteUmManualRegistradoComEsteNome": "There is already a Manual registered with this name!",
         "msgCamposInvalidos": "Invalid fields: ",
         "msgCampoArquivoManualEstaInvalido": "Manual File Field is invalid!",
