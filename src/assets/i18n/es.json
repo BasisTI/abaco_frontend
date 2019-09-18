@@ -178,6 +178,7 @@
       "VersaoCPM": "Versión CPM",
       "Mensagens": {
         "Criando_Manual": "Crear Manual...",
+        "Clonando_Manual": "Clonación Manual...",
         "msgJaExisteUmManualRegistradoComEsteNome": "Ya existe un manual registrado con este nombre!",
         "msgCamposInvalidos": "Campos no válidos: ",
         "msgCampoArquivoManualEstaInvalido": "Campo Archivo Manual es inválido!",

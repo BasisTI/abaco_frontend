@@ -107,6 +107,10 @@
                                     icon="ui-icon-trash" [title]="'Global.Botoes.Excluir' | translate"
                                     (click)="confirmDelete(selectedLine.id)" [disabled]="selectedLine == null">
                                 </button>
+                                <button type="button" pButton class="side-button" name="clone"
+                                    icon="ui-icon-content-copy" [title]="'Global.Botoes.Clonar' | translate"
+                                    (click)="clone()" [disabled]="selectedLine == null">
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -137,8 +141,8 @@
     <div class="ui-g">
         <div class="ui-g-12 ui-md-12 ui-sm-12" class="form-fields-container">
             <span class="md-inputfield">
-                <input id="nome_manual" type="text" name="nomeManualClonado" [(ngModel)]="nomeDoManualClonado"
-                    pInputText size="90" maxlength="250" />
+                <input type="text" name="nomeManualClonado" [(ngModel)]="nomeDoManualClonado" pInputText size="90"
+                    maxlength="250" />
                 <div *ngIf="nomeValido">
                     <span class="invalidField" translate="Global.Mensagens.CampoObrigatorio">Campo obrigatório.</span>
                 </div>
@@ -147,11 +151,18 @@
         </div>
     </div>
 
-    <div class="ui-g ui-md-12" class="buttonFlexEnd">
-        <app-white-button [buttonLabel]="'Global.Botoes.Cancelar' | translate" buttonIcon="fa-close"
-            (click)="fecharDialogClonar()">
-        </app-white-button>
-        <app-green-button [buttonLabel]="'Global.Botoes.Salvar' | translate" buttonIcon="ui-icon-save"
-            (click)="clonar()"></app-green-button>
+    <div class="ui-g form-buttons-container">
+        
+        <div class="ui-g-2 ui-md-2 ui-sm-12">
+            <app-white-button [buttonLabel]="'Global.Botoes.Cancelar' | translate" buttonIcon="fa-close"
+                (click)="fecharDialogClonar()">
+            </app-white-button>
+        </div>
+
+        <div class="ui-g-2 ui-md-2 ui-sm-12">
+            <app-green-button [buttonLabel]="'Global.Botoes.Salvar' | translate" buttonIcon="ui-icon-save"
+                (click)="clonar()"></app-green-button>
+        </div>
+
     </div>
 </p-dialog>

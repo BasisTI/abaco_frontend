@@ -341,6 +341,7 @@
       "VersaoCPM": "CPM Version",
       "Mensagens": {
         "Criando_Manual": "Crianting Manual...",
+        "Clonando_Manual": "Manual Mloning...",
         "msgJaExisteUmManualRegistradoComEsteNome": "There is already a Manual registered with this name!",
         "msgCamposInvalidos": "Invalid fields: ",
         "msgCampoArquivoManualEstaInvalido": "Manual File Field is invalid!",

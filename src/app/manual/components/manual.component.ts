@@ -19,7 +19,7 @@ export class ManualComponent implements OnInit {
     @BlockUI() blockUI: NgBlockUI;
     @ViewChild(DataTable) dataTable: DataTable;
 
-    selectedLine: Manual;
+    selectedLine: Manual = new Manual();
     filtro: ManualFilter = new ManualFilter();
     manuais: Page<Manual> = new Page<Manual>();
     nomeDoManualClonado: string = '';
@@ -40,10 +40,12 @@ export class ManualComponent implements OnInit {
         });
     }
 
-    translateMultiple(messages: string[], callback: (messages: string[], ...agrs: object[]) => void) {
-        Observable.forkJoin(
-            messages.map(message => this.translate.stream(message))
-        ).subscribe(messages => callback(messages))
+    translateMultiple(messages: string[], names: string[], callback: (messages: string[], names: string[]) => void) {
+        // result é um array de observables contendo todos os observers das menssagens traduzidas
+        const result = messages.map(message => this.translate.get(message));
+        // forkJoin retornar um observable com o resultado de todas as traduções em uma unica chamada
+        // o metodo call no callback é para manter o contexto na função de callback, para não utilizar o contexto de dentro da lib do RxJs
+        Observable.forkJoin(result).subscribe(messages => callback.call(this, messages, names));
     }
 
     public ngOnInit() {
@@ -66,16 +68,23 @@ export class ManualComponent implements OnInit {
         this.router.navigate(['/manual', this.selectedLine.id])
     }
 
+    clone() {
+        this.mostrarDialogClonar = true;
+    }
+
     public fecharDialogClonar() {
         this.mostrarDialogClonar = false;
-        this.nomeDoManualClonado = '';
+        this.dataTable.selection = null;
+        this.selectedLine = null;
+        this.nomeDoManualClonado = null;
     }
 
     public clonar() {
-        if (this.nomeDoManualClonado !== undefined) {
+        if (this.nomeDoManualClonado) {
             this.nomeValido = false;
-            const manualClonado: Manual = this.selectedLine.clone();
-            manualClonado.id = undefined;
+            const manualClonado: Manual = Manual.prototype.copyFromJSON(this.selectedLine);
+            manualClonado.id = null;
+            const nomeAntigo = manualClonado.nome;
             manualClonado.nome = this.nomeDoManualClonado;
             if (manualClonado.esforcoFases) {
                 manualClonado.esforcoFases.forEach(ef => ef.id = undefined);
@@ -84,22 +93,25 @@ export class ManualComponent implements OnInit {
                 manualClonado.fatoresAjuste.forEach(fa => fa.id = undefined);
             }
 
+            this.translateMessage('Cadastros.Manual.Mensagens.Clonando_Manual', this.startBlockUI);
             this.manualService.save(manualClonado)
                 .finally(() => this.blockUI.stop())
-                .subscribe((manualSalvo: any) => {
+                .subscribe(() => {
                     this.translateMultiple(['Cadastros.Manual.Mensagens.msgManual',
                         'Cadastros.Manual.Mensagens.msgClonadoPartirDoManual',
-                        'Cadastros.Manual.Mensagens.msgComSucesso'], manualSalvo);
+                        'Cadastros.Manual.Mensagens.msgComSucesso'], [manualClonado.nome, nomeAntigo], this.showCloneSuccessMsg);
+                    this.obterManuais();
                 });
+            this.fecharDialogClonar();
         } else {
             this.nomeValido = true;
         }
     }
 
-    showSaveSuccessMsg(messages: string[], manual: Manual) {
+    // Este método cria a menssagem de sucesso de clonagem com traduções
+    showCloneSuccessMsg(messages: string[], names: string[]) {
         this.pageNotificationService.addSuccessMsg(
-            `${messages.pop()} ${manual.nome} ${messages.pop()} ${this.selectedLine.nome} ${messages.pop()}`);
-        this.fecharDialogClonar();
+            `${messages.shift()} ${names.shift()} ${messages.shift()} ${names.shift()} ${messages.shift()}`);
     }
 
     public limparPesquisa() {
