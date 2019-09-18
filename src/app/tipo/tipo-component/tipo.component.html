@@ -54,7 +54,7 @@
                         <div class="table-next-containter">
                             <div class="btn-table">
                                 <button type="button" pButton class="green-btn side-button" name="edit"
-                                [title]="'Global.Botoes.Editar' | translate" icon="ui-icon-edit" value="edit"></button>
+                                [title]="'Global.Botoes.Editar' | translate" (click)="abrirTelaEditarTipo()" icon="ui-icon-edit" value="edit"></button>
                                 <button type="button" pButton class="side-button" name="view"
                                 [title]="'Global.Botoes.Visualizar' | translate" (click)="visualizarTipo()" icon="ui-icon-remove-red-eye"></button>
                                 <button type="button" pButton class="ui-button-danger side-button" name="delete"

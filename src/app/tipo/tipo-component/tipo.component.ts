@@ -44,6 +44,10 @@ export class TipoComponent implements OnInit{
     this.tipoSelecionado = data;
   }
   
+  abrirTelaEditarTipo(){
+    this.route.navigate([`/tipo`, this.tipoSelecionado.id, `edit`]);
+  }
+
   removerRegistro(){
     this.tipoService.delete(this.tipoSelecionado.id).subscribe(() => {
       this.pageNotificationService.addDeleteMsg();

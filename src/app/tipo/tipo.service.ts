@@ -34,4 +34,8 @@ export class TipoService {
   delete(id: number): Observable<Tipo>{
     return this.http.delete(`${this.url}/${id}`);
   }
+
+  update(tipo: Tipo): Observable<Tipo>{
+    return this.http.put<Tipo>(`${this.url}/${tipo.id}`, tipo);
+  }
 }

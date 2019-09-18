@@ -2,7 +2,7 @@
   <div class="ui-g ui-fluid">
     <div class="ui-g-12">
       <div class="card card-w-title">
-        <h1>Cadastrar Tipo</h1>
+        <h1>{{ tipo.id ? ('Cadastros.Tipo.EditarTipo' | translate ) : ('Cadastros.Tipo.CadastrarTipo' | translate) }}</h1>
         <form name="formTipo" #formTipo="ngForm" (ngSubmit)="submit(formTipo)">
           <div class="ui-g-12 ui-md-12 ui-sm-12">
             <span class="md-inputfield">

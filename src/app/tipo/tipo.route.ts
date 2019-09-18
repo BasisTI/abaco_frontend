@@ -7,5 +7,6 @@ import { TipoVisualizarComponent } from './tipo-visualizar/tipo-visualizar.compo
 export const TipoRoute: Routes = [
     { path: 'tipo',component: TipoComponent,canActivate: [AuthGuard] },
     { path: 'tipo/new',component: TipoFormComponent,canActivate: [AuthGuard]},
-    { path: 'tipo/:id',component: TipoVisualizarComponent,canActivate: [AuthGuard]}
+    { path: 'tipo/:id',component: TipoVisualizarComponent,canActivate: [AuthGuard]},
+    { path: 'tipo/:id/edit',component: TipoFormComponent,canActivate: [AuthGuard]}
 ]
