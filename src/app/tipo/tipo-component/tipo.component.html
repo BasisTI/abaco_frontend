@@ -44,7 +44,8 @@
                                 [lazy]="true" 
                                 (onLazyLoad)="obterTipos()" dataKey="id" 
                                 [totalRecords]="tipos.totalElements" 
-                                (onRowSelect)="linhaSelecionada($event.data)" 
+                                (onRowSelect)="linhaSelecionada($event.data)"
+                                (onRowDblclick)="abrirTelaEditarTipo()" 
                                 selectionMode="single">
                                 <p-column [header]="'Cadastros.Fase.Codigo' | translate" [sortable]="true" field="id"></p-column>
                                 <p-column [header]="'Cadastros.Fase.Nome' | translate"  [sortable]="true" field="nome"></p-column>
