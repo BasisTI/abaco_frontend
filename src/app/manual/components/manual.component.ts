@@ -86,11 +86,12 @@ export class ManualComponent implements OnInit {
             manualClonado.id = null;
             const nomeAntigo = manualClonado.nome;
             manualClonado.nome = this.nomeDoManualClonado;
+            
             if (manualClonado.esforcoFases) {
-                manualClonado.esforcoFases.forEach(ef => ef.id = undefined);
+                manualClonado.esforcoFases.forEach(ef => ef.id = null);
             }
             if (manualClonado.fatoresAjuste) {
-                manualClonado.fatoresAjuste.forEach(fa => fa.id = undefined);
+                manualClonado.fatoresAjuste.forEach(fa => fa.id = null);
             }
 
             this.translateMessage('Cadastros.Manual.Mensagens.Clonando_Manual', this.startBlockUI);

@@ -29,7 +29,7 @@
             <div class="ui-g">
                 <h1 translate="Cadastros.Manual.Impacto">Impacto</h1>
                 <div class="ui-g-12">
-                    <p-dataTable [value]="manualArray" (buttonClick)="datatableClick($event)">
+                    <p-dataTable [value]="manualArray">
                         <p-column [header]="'Cadastros.Manual.Inclusao(%)' | translate"
                             field="parametroInclusaoFormatado">
                         </p-column>
@@ -51,7 +51,7 @@
             <div class="ui-g">
                 <h1 translate="Cadastros.Manual.EsforcosPorFases">Esforços por Fase</h1>
                 <div class="ui-g-12">
-                    <p-dataTable [value]="manual.esforcoFases" (buttonClick)="datatableClick($event)">
+                    <p-dataTable [value]="manual.esforcoFases">
                         <p-column [header]="'Cadastros.Manual.Fase' | translate" field="fase.nome">
                         </p-column>
                         <p-column [header]="'Cadastros.Manual.Percentual(%)' | translate" field="esforcoFormatado">
@@ -63,7 +63,7 @@
             <div class="ui-g">
                 <div class="ui-g-12">
                     <h1 translate="Cadastros.Manual.FatoresAjuste">Fatores de Ajuste</h1>
-                    <p-dataTable [value]="manual.fatoresAjuste" (buttonClick)="adjustFactorDatatableClick($event)">
+                    <p-dataTable [value]="manual.fatoresAjuste">
                         <p-column [header]="'Cadastros.Manual.Codigo' | translate" field="codigo">
                             <ng-template let-col let-codigo="rowData" pTemplate="body">
                                 {{ codigo[col.field] == null ? '---' : codigo[col.field]}}
