@@ -41,14 +41,14 @@ export class TipoFormComponent implements OnInit {
     }
     if(this.tipo.id === undefined){
       this.tipoService.create(this.tipo).subscribe(() => {
+        this.pageNotificationService.addCreateMsg();
         this.router.navigate(['/tipo']);
       }); 
     }else{
       this.tipoService.update(this.tipo).subscribe(() => {
+        this.pageNotificationService.addUpdateMsg();
         this.router.navigate(['/tipo']);
       });
     }
-
-    this.tipo.id == null ? this.pageNotificationService.addCreateMsg() : this.pageNotificationService.addUpdateMsg();
   }
 }

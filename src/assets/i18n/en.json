@@ -263,7 +263,14 @@
       "ID": "ID",
       "Nome": "Name",
       "Tipo": "Type",
-      "VisualizarTipo": "View Type"
+      "VisualizarTipo": "View Type",
+      "Mensagens": {
+        "msgJaExisteTipoCadastradoComEsseNome": "There is already a Type registered under this name!",
+        "msgNomeTipoExcedeMaximoCaracteres": "Phase name exceeds maximum characters!",
+        "msgFavorInformarCamposObrigatorios": "Please enter the required fields!",
+        "msgCamposInvalidos": "Invalid fields: ",
+        "msgNaoEPossivelExcluirRegistrosVinculados":"Unable to delete linked records!"
+      }
     },
 
     "TipoEquipe": {

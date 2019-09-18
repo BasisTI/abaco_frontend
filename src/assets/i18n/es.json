@@ -128,7 +128,14 @@
       "ID": "ID",
       "Nome": "Nombre",
       "Tipo": "Tipo",
-      "VisualizarTipo": "Ver Tipo"
+      "VisualizarTipo": "Ver Tipo",
+      "Mensagens": {
+        "msgJaExisteTipoCadastradoComEsseNome": "Ya existe un Tipo registrado con ese nombre!",
+        "msgNomeTipoExcedeMaximoCaracteres": "El nombre de la tipo supera el máximo de caracteres!",
+        "msgFavorInformarCamposObrigatorios": "Por favor, introduzca los campos obligatorios!",
+        "msgCamposInvalidos": "Campos no válidos: ",
+        "msgNaoEPossivelExcluirRegistrosVinculados": "No es posible eliminar registros vinculados!"
+      }
     },
 
     "Manual": {
