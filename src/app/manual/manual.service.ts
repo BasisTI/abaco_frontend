@@ -1,10 +1,8 @@
-import { JSONable } from './../shared/jsonable';
 import { DataTable } from 'primeng/primeng';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { UploadService } from '../upload/upload.service';
 
 import { Manual } from './model/manual.model';
 import { ManualFilter } from './model/ManualFilter';
