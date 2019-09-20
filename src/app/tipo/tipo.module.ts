@@ -6,7 +6,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TipoComponent } from './tipo-component/tipo.component';
-import { InputTextModule, DataTableModule, ButtonModule } from 'primeng/primeng';
+import { InputTextModule, DataTableModule, ButtonModule, ConfirmDialogModule } from 'primeng/primeng';
 import { TipoFormComponent } from './tipo-form/tipo-form.component';
 import { TipoRoute } from './tipo.route';
 import { HttpClient } from '@angular/common/http';
@@ -27,6 +27,7 @@ export function createTranslateLoader(http: HttpClient) {
     RouterModule.forRoot(TipoRoute),
     DataTableModule,
     AbacoButtonsModule,
+    ConfirmDialogModule,
     TranslateModule.forChild({
       loader: {
           provide: TranslateLoader,
