@@ -1,5 +1,5 @@
-import { BaseEntity, MappableEntities, JSONable } from '../shared';
-import { Contrato } from '../contrato';
+import { BaseEntity, MappableEntities, JSONable } from '../../shared';
+import { Contrato } from '../';
 
 export class Organizacao implements BaseEntity, JSONable<Organizacao> {
 

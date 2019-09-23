@@ -1,3 +1,4 @@
+import { Contrato } from './../organizacao/models/contrato.model';
 import { DataTable } from 'primeng/datatable';
 import { Component, OnInit, OnDestroy, ChangeDetectorRef, EventEmitter, Output, ViewChild, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -9,7 +10,6 @@ import { AnaliseService, Analise } from '../analise';
 import { AnaliseSharedDataService, ResponseWrapper, ElasticQuery, PageNotificationService } from '../shared';
 import { Manual } from '../manual';
 import { Organizacao } from '../organizacao';
-import { Contrato } from '../contrato';
 import { Sistema, SistemaService } from '../sistema';
 import { EsforcoFase } from '../esforco-fase';
 import { TipoEquipeService } from '../tipo-equipe';

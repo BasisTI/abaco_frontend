@@ -6,7 +6,7 @@ import { environment } from '../../environments/environment';
 import { Sistema } from './sistema.model';
 import { SistemaService } from './sistema.service';
 import { ElasticQuery, PageNotificationService } from '../shared';
-import { Organizacao } from '../organizacao/organizacao.model';
+import { Organizacao } from '../organizacao/models/organizacao.model';
 import { OrganizacaoService } from '../organizacao/organizacao.service';
 import { StringConcatService } from '../shared/string-concat.service';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';

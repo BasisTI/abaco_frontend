@@ -7,7 +7,7 @@ import { SistemaService } from '../../sistema/sistema.service';
 import { ConfirmationService } from '../../../../node_modules/primeng/primeng';
 import { OrganizacaoService } from '../../organizacao/organizacao.service';
 import { StringConcatService } from '../../shared/string-concat.service';
-import { Organizacao } from '../../organizacao/organizacao.model';
+import { Organizacao } from '../../organizacao/models/organizacao.model';
 import { BaselineService } from '../baseline.service';
 import { BaselineSintetico } from '../baseline-sintetico.model';
 import { Sistema } from '../../sistema';

@@ -1,7 +1,7 @@
+import { Contrato } from './../organizacao/models/contrato.model';
 import { UserService } from './../user/user.service';
 import { Manual } from '../manual/model/manual.model';
 import { BaseEntity, MappableEntities, JSONable } from '../shared';
-import { Contrato } from '../contrato';
 import { EsforcoFase } from '../esforco-fase/index';
 import { Sistema } from '../sistema/index';
 import { FuncaoDados, TipoFuncaoDados, FuncaoDadosFormComponent } from '../funcao-dados/index';

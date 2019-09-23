@@ -1,26 +1,23 @@
+import { Contrato } from './../models/contrato.model';
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Response } from '@angular/http';
 import { Observable, Subscription } from 'rxjs/Rx';
 import { SelectItem } from 'primeng/primeng';
 
-import { Organizacao } from './organizacao.model';
-import { OrganizacaoService } from './organizacao.service';
-import { Contrato, ContratoService } from '../contrato';
-import { Manual, ManualService } from '../manual';
-import { ResponseWrapper } from '../shared';
+import { Organizacao } from '../models/organizacao.model';
+import { OrganizacaoService } from '../organizacao.service';
+import { Manual, ManualService } from '../../manual';
+import { ResponseWrapper } from '../../shared';
 import { ConfirmationService } from 'primeng/components/common/confirmationservice';
 import { DatatableClickEvent } from '@basis/angular-components';
-import { environment } from '../../environments/environment';
-import { PageNotificationService } from '../shared/page-notification.service';
-import { UploadService } from '../upload/upload.service';
+import { environment } from '../../../environments/environment';
+import { PageNotificationService } from '../../shared/page-notification.service';
+import { UploadService } from '../../upload/upload.service';
 import { FileUpload } from 'primeng/primeng';
-import { NgxMaskModule } from 'ngx-mask';
-import { ValidacaoUtil } from '../util/validacao.util';
-import { ValueTransformer } from '@angular/compiler/src/util';
-import { Upload } from '../upload/upload.model';
-import { EsforcoFase } from '../esforco-fase';
-import { ManualContrato } from './ManualContrato.model';
+import { ValidacaoUtil } from '../../util/validacao.util';
+import { Upload } from '../../upload/upload.model';
+import { ManualContrato } from '../models/ManualContrato.model';
 import { TranslateService } from '@ngx-translate/core';
 
 
@@ -79,7 +76,6 @@ export class OrganizacaoFormComponent implements OnInit, OnDestroy {
         private route: ActivatedRoute,
         private router: Router,
         private organizacaoService: OrganizacaoService,
-        private contratoService: ContratoService,
         private manualService: ManualService,
         private confirmationService: ConfirmationService,
         private pageNotificationService: PageNotificationService,

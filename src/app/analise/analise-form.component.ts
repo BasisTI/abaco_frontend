@@ -1,5 +1,6 @@
+import { Contrato } from './../organizacao/models/contrato.model';
 import { Manual } from '../manual/model/manual.model';
-import { ManualContrato } from './../organizacao/ManualContrato.model';
+import { ManualContrato } from '../organizacao/models/ManualContrato.model';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Rx';
@@ -11,7 +12,6 @@ import { AnaliseService } from './analise.service';
 import { User, UserService } from '../user';
 import { ResponseWrapper, AnaliseSharedDataService, PageNotificationService } from '../shared';
 import { Organizacao, OrganizacaoService } from '../organizacao';
-import { Contrato, ContratoService } from '../contrato';
 import { Sistema, SistemaService } from '../sistema';
 import { ConfirmationService } from 'primeng/primeng';
 import { SelectItem } from 'primeng/api';
@@ -107,7 +107,6 @@ export class AnaliseFormComponent implements OnInit, OnDestroy {
         private organizacaoService: OrganizacaoService,
         private pageNotificationService: PageNotificationService,
         private userService: UserService,
-        private contratoService: ContratoService,
         private manualService: ManualService,
         private translate: TranslateService
     ) {
@@ -320,7 +319,7 @@ export class AnaliseFormComponent implements OnInit, OnDestroy {
             this.analise.sistema = undefined;
             this.analise.equipeResponsavel = undefined;
         };
-        this.contratoService.findAllContratoesByOrganization(org).subscribe((contracts) => {
+        this.organizacaoService.findAllContratosByOrganization(org.id).subscribe((contracts) => {
             this.contratos = contracts;
         })
         this.sistemaService.findAllSystemOrg(org.id).subscribe((res: ResponseWrapper) => {

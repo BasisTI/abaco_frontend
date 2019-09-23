@@ -1,11 +1,12 @@
+import { Contrato } from './models/contrato.model';
 import { Injectable } from '@angular/core';
 import { Response } from '@angular/http';
-import { Observable, Subscription } from 'rxjs/Rx';
+import { Observable } from 'rxjs/Rx';
 import { HttpService } from '@basis/angular-components';
 import { environment } from '../../environments/environment';
 
-import { Organizacao } from './organizacao.model';
-import {ResponseWrapper, createRequestOption, JhiDateUtils, JSONable, PageNotificationService} from '../shared';
+import { Organizacao } from './models/organizacao.model';
+import {ResponseWrapper, createRequestOption, JSONable, PageNotificationService} from '../shared';
 import { UploadService } from '../upload/upload.service';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -119,6 +120,10 @@ export class OrganizacaoService {
             return Observable.throw(new Error(error.status));
         }
     });
+  }
+
+  findAllContratosByOrganization(id: number): Observable<Contrato[]> {
+    return null;
   }
 
   private convertResponseToResponseWrapper(res: Response): ResponseWrapper {

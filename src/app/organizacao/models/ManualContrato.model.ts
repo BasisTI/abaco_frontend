@@ -1,6 +1,6 @@
-import { JSONable, BaseEntity, MappableEntities } from './../shared';
-import { Contrato } from './../contrato/contrato.model';
-import { Manual } from '../manual/model/manual.model';
+import { JSONable, BaseEntity, MappableEntities } from '../../shared';
+import { Contrato } from './contrato.model';
+import { Manual } from '../../manual/model/manual.model';
 
 /**
  * Classe que mapeia a ligação de Contratos com Manual

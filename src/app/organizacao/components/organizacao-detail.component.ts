@@ -1,9 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs/Rx';
-import { Organizacao } from './organizacao.model';
-import { OrganizacaoService } from './organizacao.service';
-import { UploadService } from '../upload/upload.service';
+import { Organizacao } from '../models/organizacao.model';
+import { OrganizacaoService } from '../organizacao.service';
+import { UploadService } from '../../upload/upload.service';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({

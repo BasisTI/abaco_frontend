@@ -1,15 +1,13 @@
 import { TranslateService } from '@ngx-translate/core';
-import { Component, ViewChild, AfterViewInit, OnInit } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ConfirmationService } from 'primeng/primeng';
 import { DatatableComponent, DatatableClickEvent } from '@basis/angular-components';
 
-import { environment } from '../../environments/environment';
-import { Organizacao } from './organizacao.model';
-import { OrganizacaoService } from './organizacao.service';
-import { ElasticQuery } from '../shared';
-import { PageNotificationService } from '../shared/page-notification.service';
-import { NgxMaskModule } from 'ngx-mask';
+import { Organizacao } from '../models/organizacao.model';
+import { OrganizacaoService } from '../organizacao.service';
+import { ElasticQuery } from '../../shared';
+import { PageNotificationService } from '../../shared/page-notification.service';
 import { DomSanitizer } from '@angular/platform-browser';
 
 

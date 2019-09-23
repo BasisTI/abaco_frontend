@@ -1,6 +1,8 @@
-export * from './organizacao.model';
-export * from './organizacao.service';
-export * from './organizacao-form.component';
-export * from './organizacao-detail.component';
-export * from './organizacao.component';
-export * from './organizacao.route';
+export { ManualContrato } from './models/ManualContrato.model';
+export { Contrato } from './models/contrato.model';
+export { Organizacao } from './models/organizacao.model';
+export { OrganizacaoService } from './organizacao.service';
+export { OrganizacaoFormComponent } from './components/organizacao-form.component';
+export { OrganizacaoDetailComponent } from './components/organizacao-detail.component';
+export { OrganizacaoComponent } from './components/organizacao.component';
+export { organizacaoRoute } from './organizacao.route';

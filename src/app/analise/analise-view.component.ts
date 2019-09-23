@@ -1,3 +1,4 @@
+import { Contrato } from './../organizacao/models/contrato.model';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 import { Subscription } from 'rxjs/Rx';
@@ -7,7 +8,6 @@ import { AnaliseService } from './analise.service';
 import { User, UserService } from '../user';
 import { ResponseWrapper, AnaliseSharedDataService, PageNotificationService } from '../shared';
 import { Organizacao, OrganizacaoService } from '../organizacao';
-import { Contrato, ContratoService } from '../contrato';
 import { Sistema, SistemaService } from '../sistema';
 import { SelectItem, ConfirmationService } from 'primeng/primeng';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
@@ -90,7 +90,6 @@ export class AnaliseViewComponent implements OnInit, OnDestroy {
         private route: ActivatedRoute,
         private analiseService: AnaliseService,
         private organizacaoService: OrganizacaoService,
-        private contratoService: ContratoService,
         private sistemaService: SistemaService,
         private analiseSharedDataService: AnaliseSharedDataService,
         private equipeService: TipoEquipeService,

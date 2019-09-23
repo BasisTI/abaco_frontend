@@ -1,9 +1,8 @@
-import { Injectable } from '@angular/core';
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 
-import { OrganizacaoComponent } from './organizacao.component';
-import { OrganizacaoDetailComponent } from './organizacao-detail.component';
-import { OrganizacaoFormComponent } from './organizacao-form.component';
+import { OrganizacaoComponent } from './components/organizacao.component';
+import { OrganizacaoDetailComponent } from './components/organizacao-detail.component';
+import { OrganizacaoFormComponent } from './components/organizacao-form.component';
 
 import { AuthGuard } from '@basis/angular-components';
 

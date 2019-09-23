@@ -8,7 +8,7 @@ import { Response } from '@angular/http';
 import { User } from './user.model';
 import { UserService } from './user.service';
 import {  PageNotificationService } from '../shared';
-import { Organizacao } from '../organizacao/organizacao.model';
+import { Organizacao } from '../organizacao/models/organizacao.model';
 import { OrganizacaoService } from '../organizacao/organizacao.service';
 import { Authority } from './authority.model';
 import { TipoEquipe } from '../tipo-equipe/tipo-equipe.model';

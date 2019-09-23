@@ -1,6 +1,6 @@
-import { ManualContrato } from './../organizacao/ManualContrato.model';
-import { BaseEntity, JSONable, MappableEntities } from '../shared';
-import { Manual } from '../manual';
+import { ManualContrato } from './ManualContrato.model';
+import { BaseEntity, JSONable, MappableEntities } from '../../shared';
+import { Manual } from '../../manual';
 
 export class Contrato implements BaseEntity, JSONable<Contrato> {
 

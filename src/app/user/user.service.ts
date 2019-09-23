@@ -1,5 +1,5 @@
 import { TipoEquipe } from './../tipo-equipe/tipo-equipe.model';
-import { Organizacao } from './../organizacao/organizacao.model';
+import { Organizacao } from '../organizacao/models/organizacao.model';
 import { Injectable } from '@angular/core';
 import { Response } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
