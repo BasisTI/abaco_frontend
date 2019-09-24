@@ -2,9 +2,6 @@ import { JSONable, BaseEntity, MappableEntities } from '../../shared';
 import { Contrato } from './contrato.model';
 import { Manual } from '../../manual/model/manual.model';
 
-/**
- * Classe que mapeia a ligação de Contratos com Manual
- */
 export class ManualContrato implements BaseEntity, JSONable<ManualContrato> {
 
     constructor(
@@ -15,22 +12,25 @@ export class ManualContrato implements BaseEntity, JSONable<ManualContrato> {
         public dataInicioVigencia?: Date,
         public dataFimVigencia?: Date,
         public ativo?: boolean,
+        public manualId?: number
     ) {}
 
     toJSONState(): ManualContrato {
         const copy: ManualContrato = Object.assign({}, this);
+        copy.manualId = copy.manual.id;
+        copy.manual = null;
         return copy;
     }
 
     copyFromJSON(json: any) {
-        const manualContrato = new ManualContrato(json.id, null, json.manual, json.contratos
-            , new Date(json.dataInicioVigencia), new Date(json.dataFimVigencia), json.ativo);
+        const manualContrato = new ManualContrato(json.id, null, null, json.contratos
+            , new Date(json.dataInicioVigencia), new Date(json.dataFimVigencia), json.ativo, json.manualId);
         return manualContrato;
     }
 
     clone(): ManualContrato {
         return new ManualContrato(this.id, this.artificialId, this.manual,
-            this.contratos, this.dataInicioVigencia, this.dataFimVigencia, this.ativo);
+            this.contratos, this.dataInicioVigencia, this.dataFimVigencia, this.ativo, this.manualId);
     }
 
 }

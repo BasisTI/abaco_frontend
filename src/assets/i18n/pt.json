@@ -499,7 +499,11 @@
       "Mensagens": {
         "DataInicioVigenciaNaoPosteriorDataTerminoVigencia": "A data de início da vigência não pode ser posterior à data de término da vigência!",
         "CamposInvalidos": "Campos inválidos: ",
-        "InicioVigenciaNaoPosteriorFinalVigencia": "Início Vigência não pode ser posterior a Final Vigência"
+        "InicioVigenciaNaoPosteriorFinalVigencia": "Início Vigência não pode ser posterior a Final Vigência",
+        "ManualAtivo": "Informe se o manual é ativo ou não",
+        "DataInicioVigencia": "Preencher data de início da vigência do manual",
+        "DataFimVigencia": "Preencher data de fim da vigência do manual",
+        "SelecioneManual": "Selecione um manual"
       }
     },
     "Modulo": {

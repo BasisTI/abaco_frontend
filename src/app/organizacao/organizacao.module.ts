@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { DatatableModule } from '@basis/angular-components';
 import { MemoryDataTableModule } from '../memory-datatable/memory-datatable.module';
 import { BotoesExportacaoModule } from './../botoes-exportacao/botoes-exportacao.module';
 import { NgxMaskModule } from 'ngx-mask';
@@ -52,7 +51,6 @@ export function createTranslateLoader(http: HttpClient) {
     HttpModule,
     FormsModule,
     RouterModule.forRoot(organizacaoRoute, { useHash: true }),
-    DatatableModule,
     ButtonModule,
     SpinnerModule,
     CalendarModule,

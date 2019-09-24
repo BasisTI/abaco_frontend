@@ -27,6 +27,7 @@ export class Contrato implements BaseEntity, JSONable<Contrato> {
 
   toJSONState(): Contrato {
     const copy: Contrato = Object.assign({}, this);
+    copy.manualContrato.forEach(mc => mc.toJSONState());
     return copy;
   }
 
@@ -41,6 +42,14 @@ export class Contrato implements BaseEntity, JSONable<Contrato> {
       }
       return new Contrato(json.id, json.numeroContrato, new Date(json.dataInicioVigencia),
         new Date(json.dataFimVigencia), null, json.ativo, json.diasDeGarantia, null, manualContrato);
+    }
+  }
+
+  persistManualContrato(manualContrato: ManualContrato) {
+    if (!manualContrato.id && !manualContrato.artificialId) {
+      this.addManualContrato(manualContrato);
+    } else {
+      this.updateManualContrato(manualContrato);
     }
   }
 

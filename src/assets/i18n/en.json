@@ -160,7 +160,11 @@
       "Mensagens": {
         "DataInicioVigenciaNaoPosteriorDataTerminoVigencia": "The effective start date can not be later than the end date!",
         "CamposInvalidos": "Invalid fields: ",
-        "InicioVigenciaNaoPosteriorFinalVigencia": "Start Term can not be later than End Date"
+        "InicioVigenciaNaoPosteriorFinalVigencia": "Start Term can not be later than End Date",
+        "ManualAtivo": "Inform if the manual is active or not",
+        "DataInicioVigencia": "Fill in the effective date of the manual",
+        "DataFimVigencia": "Fill out manual end date",
+        "SelecioneManual": "Select a manual"
       }
     },
     "Modulo": {

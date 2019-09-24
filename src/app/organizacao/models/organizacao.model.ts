@@ -28,6 +28,7 @@ export class Organizacao implements BaseEntity, JSONable<Organizacao> {
 
   toJSONState(): Organizacao {
     const copy: Organizacao = Object.assign({}, this);
+    copy.contracts.forEach(contrato => contrato.toJSONState());
     return copy;
   }
 
@@ -36,6 +37,14 @@ export class Organizacao implements BaseEntity, JSONable<Organizacao> {
     const newOrganizacao = new Organizacao(json.id, json.sigla, json.nome,
       json.cnpj, json.logoId, json.ativo, json.numeroOcorrencia, contratos /*, json.sistemas*/);
     return newOrganizacao;
+  }
+
+  persistContrato(contrato: Contrato) {
+    if (!contrato.id && !contrato.artificialId) {
+      this.addContrato(contrato);
+    } else {
+      this.updateContrato(contrato);
+    }
   }
 
   addContrato(contrato: Contrato) {
