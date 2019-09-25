@@ -3,30 +3,23 @@ import { Contrato } from './models/contrato.model';
 import { Injectable } from '@angular/core';
 import { Response } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
+
 import { environment } from '../../environments/environment';
+import { DataTable } from 'primeng/primeng';
 
 import { Organizacao } from './models/organizacao.model';
-import {ResponseWrapper, JSONable, PageNotificationService} from '../shared';
-import { TranslateService } from '@ngx-translate/core';
+import { ResponseWrapper, JSONable, PageNotificationService } from '../shared';
+
+import { OrganizacaoFilter } from './models/OrganizacaoFilter';
+
+import { RequestUtil } from '../util/requestUtil';
 
 @Injectable()
 export class OrganizacaoService {
 
   resourceUrl = environment.apiUrl + '/organizacao'
 
-  constructor(
-    private http: HttpClient,
-    private pageNotificationService: PageNotificationService,
-    private translate: TranslateService
-  ) { }
-
-  getLabel(label) {
-    let str: any;
-    this.translate.get(label).subscribe((res: string) => {
-      str = res;
-    }).unsubscribe();
-    return str;
-  }
+  constructor( private http: HttpClient ) { }
 
   save(organizacao: Organizacao) {
     return this.http.post(this.resourceUrl, this.convertToJSON(organizacao));
@@ -36,9 +29,14 @@ export class OrganizacaoService {
     return this.http.get(`${this.resourceUrl}/${id}`).map(organizacao => Organizacao.prototype.copyFromJSON(organizacao));
   }
 
-    /**
-   * Função que retorna dados do usuário logado somente com as organizações ativas
-   */
+  getPage(filtro: OrganizacaoFilter, datatable: DataTable): Observable<any> {
+    const options = { params: RequestUtil.getRequestParams(datatable) };
+    return this.http.post(`${this.resourceUrl}/page`, filtro, options);
+  }
+
+  /**
+ * Função que retorna dados do usuário logado somente com as organizações ativas
+ */
   dropDownActiveLoggedUser(): Observable<ResponseWrapper> {
     return this.http.get(this.resourceUrl + '/active-user').map((res: Response) => {
       return this.convertResponseToResponseWrapper(res);
@@ -46,42 +44,22 @@ export class OrganizacaoService {
   }
 
   dropDown(): Observable<ResponseWrapper> {
-      return this.http.get(this.resourceUrl + '/drop-down')
-          .map((res: Response) => this.convertResponseToResponseWrapper(res)).catch((error: any) => {
-              if (error.status === 403) {
-                  this.pageNotificationService.addErrorMsg(this.getLabel('Global.Mensagens.VoceNaoPossuiPermissao'));
-                  return Observable.throw(new Error(error.status));
-              }
-          });
+    return this.http.get(this.resourceUrl + '/drop-down')
+      .map((res: Response) => this.convertResponseToResponseWrapper(res));
   }
 
   dropDownActive(): Observable<ResponseWrapper> {
     return this.http.get(this.resourceUrl + '/drop-down/active')
-        .map((res: Response) => this.convertResponseToResponseWrapper(res)).catch((error: any) => {
-            if (error.status === 403) {
-                this.pageNotificationService.addErrorMsg(this.getLabel('Global.Mensagens.VoceNaoPossuiPermissao'));
-                return Observable.throw(new Error(error.status));
-            }
-        });
-}
+      .map((res: Response) => this.convertResponseToResponseWrapper(res));
+  }
 
-    searchActiveOrganizations(req?: any): Observable<ResponseWrapper> {
-        return this.http.get(this.resourceUrl + '/ativas')
-            .map((res: Response) => this.convertResponseToResponseWrapper(res)).catch((error: any) => {
-                if (error.status === 403) {
-                    this.pageNotificationService.addErrorMsg(this.getLabel('Global.Mensagens.VoceNaoPossuiPermissao'));
-                    return Observable.throw(new Error(error.status));
-                }
-            });
-    }
+  searchActiveOrganizations(req?: any): Observable<ResponseWrapper> {
+    return this.http.get(this.resourceUrl + '/ativas')
+      .map((res: Response) => this.convertResponseToResponseWrapper(res));
+  }
 
-  delete(id: number): Observable<Response> {
-    return this.http.delete(`${this.resourceUrl}/${id}`).catch((error: any) => {
-        if (error.status === 403) {
-            this.pageNotificationService.addErrorMsg(this.getLabel('Global.Mensagens.VoceNaoPossuiPermissao'));
-            return Observable.throw(new Error(error.status));
-        }
-    });
+  delete(id: number): Observable<any> {
+    return this.http.delete(`${this.resourceUrl}/${id}`);
   }
 
   findAllContratosByOrganization(id: number): Observable<Contrato[]> {

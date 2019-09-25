@@ -3,79 +3,97 @@
     <div class="card card-w-title">
       <h1 translate="Cadastros.Organizacao.Organizacao">Organização</h1>
       <div class="ui-g">
+
         <div class="ui-g-12 ui-md-12 ui-sm-12">
           <span class="md-inputfield">
-            <input type="text" pInputText class="ui-inputtext" (input)="elasticQuery.value = $event.target.value"
-              (keyup.enter)="recarregarDataTable()"
-              #filter maxlength="80" />
-              <label translate="Cadastros.Organizacao.Descricao">Descrição</label>
+            <input type="text" name="organizacaoFiltro" pInputText class="ui-inputtext" [(ngModel)]="filtro.nome"
+              (keyup.enter)="obterOrganizacoes()" maxlength="100" />
+            <label translate="Cadastros.Organizacao.Descricao">Descrição</label>
           </span>
         </div>
-      </div>
-      <div class="ui-g">
 
-        <div class="ui-g ui-md-12" style="justify-content: center; margin-bottom: 25px; margin-top: 25px">
-              <div class="ui-g-2 ui-md-2 ui-sm-12">
-                <app-white-button 
-                  [buttonLabel]="this.getLabel('Global.Botoes.LimparPesquisa')" 
-                  id="idBtnLimparPesquisaComponentOrganizacao"
-                  buttonIcon="ui-icon-clear-all" 
-                  (click)="limparPesquisa()">
-                </app-white-button>
-              </div>
-              <div class="ui-g-2 ui-md-2 ui-sm-12">
-                <app-blue-button 
-                  [buttonLabel]="this.getLabel('Global.Botoes.Pesquisar')" 
-                  buttonIcon="ui-icon-search" 
-                  id="idBtnPesquisarComponentOrganizacao"
-                  (click)="recarregarDataTable()">
-                </app-blue-button>
-              </div>
-              <div class="ui-g-2 ui-md-2 ui-sm-12">
-                <app-green-button 
-                  [buttonLabel]="this.getLabel('Global.Botoes.Novo')" 
-                  id="idBtnNovoComponentOrganizacao"
-                  buttonIcon="ui-icon-add" 
-                  routerLink="/organizacao/new"
-                ></app-green-button>
-              </div>
+
+        <div class="ui-g ui-md-12 form-buttons-container">
+          <div class="ui-g-2 ui-md-2 ui-sm-12">
+            <app-white-button [buttonLabel]="'Global.Botoes.LimparPesquisa' | translate"
+              id="idBtnLimparPesquisaComponentOrganizacao" buttonIcon="ui-icon-clear-all" (click)="limparPesquisa()">
+            </app-white-button>
+          </div>
+
+          <div class="ui-g-2 ui-md-2 ui-sm-12">
+            <app-blue-button [buttonLabel]="'Global.Botoes.Pesquisar' | translate" buttonIcon="ui-icon-search"
+              (click)="obterOrganizacoes()">
+            </app-blue-button>
+          </div>
+
+          <div class="ui-g-2 ui-md-2 ui-sm-12">
+            <app-green-button [buttonLabel]="'Global.Botoes.Novo' | translate" buttonIcon="ui-icon-add"
+              routerLink="/organizacao/new"></app-green-button>
+          </div>
         </div>
 
-        <basis-datatable 
-          (dblclick)="onRowDblclick($event)"
-          (buttonClick)="datatableClick($event)"
-          [rows]="20"
-          [rowsPerPageOptions]="rowsPerPageOptions"
-          [showPaginationFooter]="true"
-          id="idTabelaComponentOrganizacao"
-          #datatable>
-          <p-column [header]="getLabel('Cadastros.Organizacao.Sigla')" field="sigla" [sortable]="true" ></p-column>
-          <p-column [header]="getLabel('Cadastros.Organizacao.Nome')" field="nome" [sortable]="true"></p-column>
-          <p-column [header]="getLabel('Cadastros.Organizacao.CNPJ')" field="cnpj" [sortable]="true">
-            <ng-template  let-col let-item="rowData" pTemplate="body">
-              {{ item.cnpj | cpfCnpj }}
-            </ng-template>
-          </p-column>
-          <p-column [header]="getLabel('Cadastros.Organizacao.NumeroOcorrencia')" field="numeroOcorrencia" [sortable]="true"></p-column>
-          <p-column [header]="getLabel('Cadastros.Organizacao.Ativo')" field="ativo" [sortable]="true">
-            <ng-template let-col let-ativo="rowData" pTemplate="body">
-              {{ ativo[col.field] ? this.getLabel('Global.Botoes.Sim') : (ativo[col.field] != null ? this.getLabel('Global.Botoes.Nao') : null) }}
-            </ng-template>
-          </p-column>
-        </basis-datatable>
+        <div class="dynamic-table-container">
+          <div class="table-container">
+            <p-dataTable (onRowDblclick)="abrirEditar()" [rows]="20" [value]="organizacoes.content"
+              (onRowSelect)="susbcribeSelectRow($event.data)" (onRowUnselect)="subscrbeUnselectRow()"
+              [rowsPerPageOptions]="[5, 10, 20]" [totalRecords]="organizacoes.totalElements" [paginator]="true"
+              selectionMode="single" [lazy]="true" (onLazyLoad)="obterOrganizacoes()" dataKey="id" #datatable>
+
+              <p-column [header]="'Cadastros.Organizacao.Sigla' | translate" field="sigla" [sortable]="true"></p-column>
+
+              <p-column [header]="'Cadastros.Organizacao.Nome' | translate" field="nome" [sortable]="true"></p-column>
+
+              <p-column [header]="'Cadastros.Organizacao.CNPJ' | translate" field="cnpj" [sortable]="true">
+                <ng-template let-col let-item="rowData" pTemplate="body">
+                  {{ item.cnpj | cpfCnpj }}
+                </ng-template>
+              </p-column>
+
+              <p-column [header]="'Cadastros.Organizacao.NumeroOcorrencia' | translate" field="numeroOcorrencia"
+                [sortable]="true"></p-column>
+
+              <p-column [header]="'Cadastros.Organizacao.Ativo' | translate" field="ativo" [sortable]="true">
+                <ng-template let-col let-ativo="rowData" pTemplate="body">
+                  {{ ativo[col.field] ? ('Global.Botoes.Sim' | translate) : (ativo[col.field] != null ? ('Global.Botoes.Nao' | translate) : null) }}
+                </ng-template>
+              </p-column>
+
+            </p-dataTable>
+          </div>
+
+          <div class="table-next-containter">
+            <div class="btn-table">
+              <button type="button" pButton class="green-btn side-button" name="edit" icon="ui-icon-edit" value="edit"
+                [title]="'Global.Botoes.Editar' | translate" (click)="abrirEditar()" [disabled]="selectedLine == null">
+              </button>
+              <button type="button" pButton class="side-button" name="view" icon="ui-icon-remove-red-eye"
+                [title]="'Global.Botoes.Visualizar' | translate" (click)="abrirVisualizar()"
+                [disabled]="selectedLine == null">
+              </button>
+              <button type="button" pButton class="ui-button-danger side-button" name="delete" icon="ui-icon-trash"
+                [title]="'Global.Botoes.Excluir' | translate" (click)="confirmDelete(selectedLine.id)"
+                [disabled]="selectedLine == null">
+              </button>
+            </div>
+          </div>
+        </div>
 
         <div class="ui-g-12 ui-md-2">
-          <app-botoes-exportacao [query]="elasticQuery.value" resourceName="organizacao" fileName="organização">
-          </app-botoes-exportacao>
+          <app-export-button [dataTable]="dataTable" resourceName="organizacao" [filter]="filtro">
+          </app-export-button>
         </div>
 
       </div>
+
     </div>
   </div>
 </div>
-<p-confirmDialog [header]="this.getLabel('Global.Mensagens.Confirmacao')" #dialog>
+
+<p-confirmDialog [header]="'Global.Mensagens.Confirmacao' | translate" #dialog>
   <p-footer>
-    <button type="button" id="idBtnNaoDeleteComponentOrganizacao" pButton icon="fa-close" [label]="this.getLabel('Global.Botoes.Nao')" (click)="dialog.reject()"></button>
-    <button type="button" id="idBtnSimDeleteComponentOrganizacao" pButton icon="fa-check" [label]="this.getLabel('Global.Botoes.Sim')" (click)="dialog.accept()"></button>
+    <button type="button" pButton icon="fa-close" [label]="'Global.Botoes.Nao' | translate"
+      (click)="dialog.reject()"></button>
+    <button type="button" pButton icon="fa-check" [label]="'Global.Botoes.Sim' | translate"
+      (click)="dialog.accept()"></button>
   </p-footer>
 </p-confirmDialog>

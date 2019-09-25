@@ -1,15 +1,16 @@
+import { Page } from './../../util/page';
 import { TranslateService } from '@ngx-translate/core';
 import { Component, ViewChild, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ConfirmationService } from 'primeng/primeng';
-import { DatatableComponent, DatatableClickEvent } from '@basis/angular-components';
+import { ConfirmationService, DataTable } from 'primeng/primeng';
+import { BlockUI, NgBlockUI } from 'ng-block-ui';
 
-import { Organizacao } from '../models/organizacao.model';
-import { OrganizacaoService } from '../organizacao.service';
-import { ElasticQuery } from '../../shared';
 import { PageNotificationService } from '../../shared/page-notification.service';
-import { DomSanitizer } from '@angular/platform-browser';
-
+import {
+  OrganizacaoFilter,
+  Organizacao,
+  OrganizacaoService
+} from '../';
 
 @Component({
   selector: 'jhi-organizacao',
@@ -17,18 +18,16 @@ import { DomSanitizer } from '@angular/platform-browser';
 })
 export class OrganizacaoComponent implements OnInit {
 
-  @ViewChild(DatatableComponent) datatable: DatatableComponent;
+  @BlockUI() blockUI: NgBlockUI;
+  @ViewChild(DataTable) dataTable: DataTable;
 
-  organizacaoSelecionada: Organizacao;
+  selectedLine: Organizacao = new Organizacao();
 
-  paginationParams = { contentIndex: null };
+  filtro: OrganizacaoFilter = new OrganizacaoFilter();
 
-  elasticQuery: ElasticQuery = new ElasticQuery();
-
-  rowsPerPageOptions: number[] = [5, 10, 20];
+  organizacoes: Page<Organizacao> = new Page<Organizacao>();
 
   constructor(
-    public _DomSanitizer: DomSanitizer,
     private router: Router,
     private organizacaoService: OrganizacaoService,
     private confirmationService: ConfirmationService,
@@ -36,85 +35,68 @@ export class OrganizacaoComponent implements OnInit {
     private translate: TranslateService
   ) { }
 
-  getLabel(label) {
-    let str: any;
-    this.translate.get(label).subscribe((res: string) => {
-      str = res;
-    }).unsubscribe();
-    return str;
+  translateMessage(message: string, callback: (translatedMessage: string, id?: number) => void, id?: number) {
+    this.translate.get(message).subscribe((translatedMessage: string) => {
+      callback.call(this, translatedMessage, id);
+    });
   }
 
   public ngOnInit() {
-    this.datatable.pDatatableComponent.onRowSelect.subscribe((event) => {
-      this.organizacaoSelecionada = event.data;
-    });
-    this.datatable.pDatatableComponent.onRowUnselect.subscribe((event) => {
-      this.organizacaoSelecionada = undefined;
-    });
+    this.obterOrganizacoes();
   }
 
-  datatableClick(event: DatatableClickEvent) {
-    if (!event.selection) {
-
-      return;
-    }
-    switch (event.button) {
-      case 'edit':
-        this.router.navigate(['/organizacao', event.selection.id, 'edit']);
-        break;
-      case 'delete':
-        this.confirmDelete(event.selection.id);
-        break;
-      case 'view':
-        this.router.navigate(['/organizacao', event.selection.id]);
-        break;
-    }
+  obterOrganizacoes() {
+    this.organizacaoService.getPage(this.filtro, this.dataTable)
+      .finally(() => this.blockUI.stop())
+      .subscribe(organizacoes => this.organizacoes = organizacoes);
   }
 
-  public onRowDblclick(event) {
+  susbcribeSelectRow(data): any {
+    this.selectedLine = data;
+  }
 
-    if (event.target.nodeName === 'TD') {
-      this.abrirEditar();
-    } else if (event.target.parentNode.nodeName === 'TD') {
-      this.abrirEditar();
-    }
+  subscrbeUnselectRow() {
+    this.selectedLine = null;
   }
 
   abrirEditar() {
-    this.router.navigate(['/organizacao', this.organizacaoSelecionada.id, 'edit']);
+    this.router.navigate(['/organizacao', this.selectedLine.id, 'edit']);
   }
 
-  confirmDelete(id: any) {
+  abrirVisualizar() {
+    this.router.navigate(['/organizacao', this.selectedLine.id])
+  }
+
+  limparPesquisa() {
+    this.filtro = new OrganizacaoFilter();
+    this.obterOrganizacoes();
+  }
+
+  confirmDelete(id: number) {
+    this.translateMessage('Global.Mensagens.CertezaExcluirRegistro', this.configureMessage, id);
+  }
+
+  configureMessage(translatedMessage: string, id: number) {
     this.confirmationService.confirm({
-      message: this.getLabel('Global.Mensagens.CertezaExcluirRegistro'),
+      message: translatedMessage,
       accept: () => {
-        this.organizacaoService.delete(id).subscribe(() => {
-          this.pageNotificationService.addDeleteMsg();
-          this.recarregarDataTable();
-        }, error => {
-          if (error.status === 500) {
-            this.pageNotificationService
-              .addErrorMsg(this.getLabel('Cadastros.Organizacao.Mensagens.msgOrganizacaoNaoPodeSerDeletadaPoisEstaAssociadaAContratoEquipeOuAnalise'));
-          }
-        });
+        this.translateMessage('Global.Mensagens.EXCLUINDO_REGISTRO', this.startBlockUI);
+        this.organizacaoService.delete(id)
+          .finally(() => this.blockUI.stop())
+          .subscribe(() => {
+            this.translateMessage('Global.Mensagens.RegistroExcluidoComSucesso', this.showSuccessMsg);
+            this.obterOrganizacoes();
+          });
       }
     });
   }
 
-  limparPesquisa() {
-    this.elasticQuery.reset();
-    this.recarregarDataTable();
+  startBlockUI(translatedMessage: string) {
+    this.blockUI.start(translatedMessage);
   }
 
-  recarregarDataTable() {
-    //Se descrição == CNPJ remove caracteres . - / para fazer pesquisa. 
-    if (this.elasticQuery.value.length == 18 && this.elasticQuery.value[2] == ".") {
-      this.elasticQuery.value = this.elasticQuery.value.replace(".", "");
-      this.elasticQuery.value = this.elasticQuery.value.replace(".", "");
-      this.elasticQuery.value = this.elasticQuery.value.replace("/", "");
-      this.elasticQuery.value = this.elasticQuery.value.replace("-", "");
-    }
-    this.datatable.refresh(this.elasticQuery.query);
+  showSuccessMsg(translatedMessage: string) {
+    this.pageNotificationService.addSuccessMsg(translatedMessage);
   }
 
 }

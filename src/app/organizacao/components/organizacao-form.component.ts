@@ -235,8 +235,9 @@ export class OrganizacaoFormComponent implements OnInit {
 
     save(form: FormControl) {
         if (this.validarCamposOrganização()) {
-            this.persistir();
-            form.reset();
+            if (this.persistir()) {
+                form.reset();
+            }
         }
     }
 
@@ -270,26 +271,30 @@ export class OrganizacaoFormComponent implements OnInit {
         return true;
     }
 
-    persistir() {
+    persistir(): boolean {
         this.translateMessage('Cadastros.Organizacao.Mensagens.msgSalvandoOrganizacao', this.blockUiStart);
         if (this.logo) {
             this.uploadService.uploadLogo(this.logo).subscribe((response: any) => {
                 this.organizacao.logoId = response.id;
                 this.logo = response.logo;
                 this.saveOrganizacao();
+                return true;
             });
         } else {
             this.saveOrganizacao();
+            return true;
         }
 
+        return false;
     }
 
     private saveOrganizacao() {
         this.organizacaoService.save(this.organizacao)
-        .finally(() => this.blockUI.stop())
-        .subscribe(() => {
-            this.router.navigate(['/organizacao']);
-        });
+            .finally(() => this.blockUI.stop())
+            .subscribe(() => {
+                this.router.navigate(['/organizacao']);
+                this.pageNotificationService.addCreateMsg();
+            });
     }
 
     blockUiStart(translatedMessage: string) {

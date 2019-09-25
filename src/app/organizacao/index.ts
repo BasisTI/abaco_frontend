@@ -6,3 +6,4 @@ export { OrganizacaoFormComponent } from './components/organizacao-form.componen
 export { OrganizacaoDetailComponent } from './components/organizacao-detail.component';
 export { OrganizacaoComponent } from './components/organizacao.component';
 export { organizacaoRoute } from './organizacao.route';
+export { OrganizacaoFilter } from './models/OrganizacaoFilter';
