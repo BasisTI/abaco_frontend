@@ -2,12 +2,12 @@
   <div class="ui-g-12">
     <div class="card card-w-title">
 
-      <h1>Organização</h1>
+      <h1 translate="Cadastros.Organizacao.Organizacao">Organização</h1>
 
       <div class="ui-g">
 
         <div class="ui-g-4">
-          <img src="data:image/png;base64,{{logo}}" style="max-width:100%; height:auto;" alt="" >
+          <img src="data:image/png;base64,{{logo}}" style="max-width:100%; height:auto;" alt="">
         </div>
 
       </div>
@@ -15,85 +15,69 @@
       <div class="ui-g">
 
         <div class="ui-g-12 ui-md-12 ui-sm-12">
-          <label>Sigla: {{ organizacao.sigla }}</label>
+          <label>{{ ('Cadastros.Sistema.sigla:' | translate) }} {{ organizacao.sigla }}</label>
         </div>
+
         <div class="ui-g-12 ui-md-12 ui-sm-12">
-          <label>Nome: {{ organizacao.nome }}</label>
+          <label>{{ ('Cadastros.Nome:' | translate) }} {{ organizacao.nome }}</label>
         </div>
+
         <div class="ui-g-12 ui-md-12 ui-sm-12">
-          <label>CNPJ: </label>
-          <input id="idCNPJDetailOrganizacao" type="text" name="cnpj" mask="99.999.999/9999-99" [ngModel]="organizacao.cnpj" style="border-style: none" readonly/>
+          <label>{{ ('Cadastros.Organizacao.CNPJ:' | translate) }} </label>
+          <input type="text" name="cnpj" mask="99.999.999/9999-99" [ngModel]="organizacao.cnpj"
+            style="border-style: none" readonly />
         </div>
+
         <div class="ui-g-12 ui-md-12 ui-sm-12">
-          <label>Número ocorrência: {{ organizacao.numeroOcorrencia }}</label>
+          <label>{{ ('Cadastros.Organizacao.NumeroOcorrencia:' | translate) }} {{ organizacao.numeroOcorrencia }}</label>
         </div>
+
         <div class="ui-g-12 ui-md-12 ui-sm-12">
-          <label>Ativo: {{ organizacao.ativo ? 'Sim' : 'Não' }}</label>
+          <label>{{ ('Cadastros.Usuarios.Ativo:' | translate) }} {{
+            organizacao.ativo ? ('Global.Botoes.Sim' | translate) : ('Global.Botoes.Não' | translate) }}</label>
         </div>
+
       </div>
 
       <div class="ui-g" style="margin-bottom: 25px">
-          <h4>Contratos</h4>
+        <h4 translate="Cadastros.Contratos.Contratos">Contratos</h4>
 
-          <app-memory-datatable
-            [value]="organizacao.contracts"
-            [immutable]="false" 
-            id="idTabelaOrganizacaoDetailOrganizacao"
-            #contratosDataTable>
-            
-            <p-column 
-              header="Número do Contrato" 
-              field="numeroContrato">
-            </p-column>
-            
-            <p-column
-              header="Ínicio Vigência" 
-              field="dataInicioVigencia">
-              <ng-template 
-                let-col 
-                let-dataInicioVigencia="rowData" 
-                pTemplate="body">
-                {{ dataInicioVigencia[col.field] | date: 'dd/MM/y' }}
-              </ng-template>
-            </p-column>
-            
-            <p-column 
-              header="Final Vigência" 
-              field="dataFimVigencia">
-              <ng-template 
-                let-col 
-                let-dataFimVigencia="rowData" 
-                pTemplate="body">
-                {{ dataFimVigencia[col.field] | date: 'dd/MM/y' }}
-              </ng-template>
-            </p-column>
 
-            <p-column 
-              header="Manuais" 
-              [sorteble]="true">
-              <ng-template let-col let-row="rowData" pTemplate="body">
-                <li *ngFor="let manualContrato of row.manualContrato">
-                  {{ manualContrato.manual.nome }}
-                </li>
-              </ng-template>
-            </p-column>
-            
-            <p-column 
-              header="Ativo" 
-              field="ativo">
-              <ng-template 
-                let-col 
-                let-ativo="rowData" 
-                pTemplate="body">
-                {{ ativo[col.field] ? 'Sim' : 'Não' }}
-              </ng-template>
-            </p-column>
-          </app-memory-datatable>
+        <p-dataTable [value]="organizacao.contratos">
+          <p-column [header]="'Cadastros.Organizacao.NumeroContrato' | translate" field="numeroContrato">
+          </p-column>
 
-        </div>
+          <p-column [header]="'Cadastros.Organizacao.InicioVigencia' | translate" field="dataInicioVigencia">
+            <ng-template let-col let-dataInicioVigencia="rowData" pTemplate="body">
+              {{ dataInicioVigencia[col.field] | date: 'dd/MM/y' }}
+            </ng-template>
+          </p-column>
+
+          <p-column [header]="'Cadastros.Organizacao.FimVigencia' | translate" field="dataFimVigencia">
+            <ng-template let-col let-dataFimVigencia="rowData" pTemplate="body">
+              {{ dataFimVigencia[col.field] | date: 'dd/MM/y' }}
+            </ng-template>
+          </p-column>
+
+          <p-column [header]="'Cadastros.Organizacao.Manuais' | translate" [sorteble]="true">
+            <ng-template let-col let-row="rowData" pTemplate="body">
+              <li *ngFor="let manualContrato of row.manualContrato">
+                {{ manualContrato.manual.nome }}
+              </li>
+            </ng-template>
+          </p-column>
+
+          <p-column [header]="'Cadastros.Usuarios.Ativo' | translate" field="ativo">
+            <ng-template let-col let-ativo="rowData" pTemplate="body">
+              {{ ativo[col.field] ? ('Global.Botoes.Sim' | translate) : ('Global.Botoes.Não' | translate) }}
+            </ng-template>
+          </p-column>
+        </p-dataTable>
+
+      </div>
       <div class="ui-g">
         <div class="ui-g-3">
-          <button pButton type="button" id="idBtnVoltarDetailOrganizacao" label="Voltar" routerLink="/organizacao"></button>
+          <button pButton type="button" [label]="'Global.Botoes.Voltar' | translate" routerLink="/organizacao"></button>
         </div>
       </div>
     </div>

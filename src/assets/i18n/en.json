@@ -445,6 +445,7 @@
       "Sigla": "Initials",
       "Sigla:": "Sigla:",
       "Sigla*": "Initials*",
+      "NumeroOcorrencia:": "Occurrence Number:",
       "CadastroContrato": {
         "Ativo:": "Active:",
         "Contrato": "Contract",

@@ -8,7 +8,7 @@ import { environment } from '../../environments/environment';
 import { DataTable } from 'primeng/primeng';
 
 import { Organizacao } from './models/organizacao.model';
-import { ResponseWrapper, JSONable, PageNotificationService } from '../shared';
+import { ResponseWrapper, JSONable } from '../shared';
 
 import { OrganizacaoFilter } from './models/OrganizacaoFilter';
 
@@ -19,7 +19,7 @@ export class OrganizacaoService {
 
   resourceUrl = environment.apiUrl + '/organizacao'
 
-  constructor( private http: HttpClient ) { }
+  constructor( private http: HttpClient) { }
 
   save(organizacao: Organizacao) {
     return this.http.post(this.resourceUrl, this.convertToJSON(organizacao));
