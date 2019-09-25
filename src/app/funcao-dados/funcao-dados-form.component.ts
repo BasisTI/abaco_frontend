@@ -543,7 +543,7 @@ export class FuncaoDadosFormComponent implements OnInit, OnDestroy, AfterViewIni
             this.desconverterChips();
             this.verificarModulo();
             const funcaoDadosCalculada = Calculadora.calcular(
-                this.analise.metodoContagem, this.currentFuncaoDados, this.analise.contrato.manual);
+                this.analise.metodoContagem, this.currentFuncaoDados, this.analise.manual);
             this.funcoesDadosList.push(funcaoDadosCalculada);
             this.analise.addFuncaoDados(funcaoDadosCalculada);
             this.atualizaResumo();
@@ -579,7 +579,7 @@ export class FuncaoDadosFormComponent implements OnInit, OnDestroy, AfterViewIni
             this.verificarModulo();
             const funcaoDadosCalculada = Calculadora.calcular(this.analise.metodoContagem,
                 this.currentFuncaoDados,
-                this.analise.contrato.manual);
+                this.analise.manual);
             this.validarNameFuncaoDados(this.currentFuncaoDados).then(resolve => {
                 if (resolve) {
                     this.pageNotificationService.addCreateMsgWithName(funcaoDadosCalculada.name);
@@ -711,7 +711,7 @@ export class FuncaoDadosFormComponent implements OnInit, OnDestroy, AfterViewIni
             this.desconverterChips();
             this.verificarModulo();
             const funcaoDadosCalculada = Calculadora.calcular(
-            this.analise.metodoContagem, this.currentFuncaoDados, this.analise.contrato.manual);
+            this.analise.metodoContagem, this.currentFuncaoDados, this.analise.manual);
             this.pageNotificationService.addSuccessMsg(`${this.getLabel('Cadastros.FuncaoDados.Mensagens.msgFuncaoDados')}
                 '${funcaoDadosCalculada.name}' ${this.getLabel('Cadastros.FuncaoDados.Mensagens.msgAlteradaComSucesso')}`);
             this.analise.updateFuncaoDados(funcaoDadosCalculada);
@@ -836,7 +836,7 @@ export class FuncaoDadosFormComponent implements OnInit, OnDestroy, AfterViewIni
 
         const funcaoTransacaoCalculada = CalculadoraTransacao.calcular(this.analise.metodoContagem,
             funcaoTransacaoAtual,
-            this.analise.contrato.manual);
+            this.analise.manual);
 
         this.validarNameFuncaoTransacaos(funcaoTransacaoAtual).then(resolve => {
             if (resolve) {

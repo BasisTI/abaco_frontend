@@ -13,29 +13,29 @@ export class Organizacao implements BaseEntity, JSONable<Organizacao> {
     public logoId?: number,
     public ativo?: boolean,
     public numeroOcorrencia?: string,
-    public contracts?: Contrato[],
+    public contratos?: Contrato[],
     // FIXME BaseEntity, para evitar dependencias circulares
     // parece que reestruturação de pastas evita isso
     public sistemas?: BaseEntity[],
   ) {
-    if (contracts) {
-      this.mappableContracts = new MappableEntities<Contrato>(contracts);
+    if (contratos) {
+      this.mappableContracts = new MappableEntities<Contrato>(contratos);
     } else {
-      this.contracts = [];
+      this.contratos = [];
       this.mappableContracts = new MappableEntities<Contrato>();
     }
   }
 
   toJSONState(): Organizacao {
-    const copy: Organizacao = Object.assign({}, this);
-    copy.contracts.forEach(contrato => contrato.toJSONState());
+    const copy: Organizacao = this.clone();
+    copy.contratos = copy.contratos.map(contrato => contrato.toJSONState());
     return copy;
   }
 
   copyFromJSON(json: any) {
-    const contratos: Contrato[] = json.contracts ? json.contracts.map(c => new Contrato().copyFromJSON(c)) : [];
+    const contratos: Contrato[] = json.contratos ? json.contratos.map(c =>  Contrato.prototype.copyFromJSON(c)) : [];
     const newOrganizacao = new Organizacao(json.id, json.sigla, json.nome,
-      json.cnpj, json.logoId, json.ativo, json.numeroOcorrencia, contratos /*, json.sistemas*/);
+      json.cnpj, json.logoId, json.ativo, json.numeroOcorrencia, contratos);
     return newOrganizacao;
   }
 
@@ -49,17 +49,22 @@ export class Organizacao implements BaseEntity, JSONable<Organizacao> {
 
   addContrato(contrato: Contrato) {
     this.mappableContracts.push(contrato);
-    this.contracts = this.mappableContracts.values();
+    this.contratos = this.mappableContracts.values();
   }
 
   updateContrato(contrato: Contrato) {
     this.mappableContracts.update(contrato);
-    this.contracts = this.mappableContracts.values();
+    this.contratos = this.mappableContracts.values();
   }
 
   deleteContrato(contrato: Contrato) {
     this.mappableContracts.delete(contrato);
-    this.contracts = this.mappableContracts.values();
+    this.contratos = this.mappableContracts.values();
+  }
+
+  clone() {
+    return new Organizacao(this.id, this.sigla, this.nome, this.cnpj, this.logoId
+      , this.ativo, this.numeroOcorrencia, this.contratos);
   }
 
 }

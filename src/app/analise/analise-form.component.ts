@@ -296,7 +296,7 @@ export class AnaliseFormComponent implements OnInit, OnDestroy {
             this.router.navigate([`/analise/${analiseCarregada.id}/view`]);
         }
         this.setSistemaOrganizacao(analiseCarregada.organizacao);
-        if (analiseCarregada.contrato != undefined && analiseCarregada.contrato.manualContrato) {
+        if (analiseCarregada.contrato != undefined && analiseCarregada.contrato.manuaisContrato) {
             this.setManual(
                 analiseCarregada.manual ? analiseCarregada.manual : new Manual());
         }
@@ -529,9 +529,9 @@ export class AnaliseFormComponent implements OnInit, OnDestroy {
      * @param contrato
      */
     contratoSelected(contrato: Contrato) {
-        if (contrato && contrato.manualContrato) {
+        if (contrato && contrato.manuaisContrato) {
             this.setManuais(contrato);
-            var manualSelected = (typeof this.analise.manual.id !== "undefined") ? this.analise.manual : contrato.manualContrato[0].manual;
+            var manualSelected = (typeof this.analise.manual.id !== "undefined") ? this.analise.manual : contrato.manuaisContrato[0].manual;
             this.setManual(manualSelected);
             this.analise.manual = manualSelected;
             this.diasGarantia = this.analise.contrato.diasDeGarantia;
@@ -542,7 +542,7 @@ export class AnaliseFormComponent implements OnInit, OnDestroy {
     }
 
     setManuais(contrato: Contrato) {
-        contrato.manualContrato.forEach(item => {
+        contrato.manuaisContrato.forEach(item => {
             //Método provisorio, deve ser iniciado durante a desserialização
             item.dataInicioVigencia = new Date(item.dataInicioVigencia)
             item.dataFimVigencia = new Date(item.dataFimVigencia)
@@ -558,7 +558,7 @@ export class AnaliseFormComponent implements OnInit, OnDestroy {
      * @param contrato Contrato de uma organização
      */
     private populaComboManual(contrato: Contrato) {
-        contrato.manualContrato.forEach((item: ManualContrato) => {
+        contrato.manuaisContrato.forEach((item: ManualContrato) => {
             const entity: Manual = new Manual();
             const m: Manual = entity.copyFromJSON(item.manual);
             this.manuais.push(item.manual);
@@ -576,7 +576,7 @@ export class AnaliseFormComponent implements OnInit, OnDestroy {
      * @param contrato Contrato que terá seus manuais ordenados
      */
     private ordenarManuais(contrato: Contrato) {
-        contrato.manualContrato = contrato.manualContrato.sort((a, b): number => {
+        contrato.manuaisContrato = contrato.manuaisContrato.sort((a, b): number => {
             if ((a.dataInicioVigencia.getTime() == b.dataInicioVigencia.getTime())) {
                 if (a.dataFimVigencia.getTime() < b.dataFimVigencia.getTime()) {
                     return -1;

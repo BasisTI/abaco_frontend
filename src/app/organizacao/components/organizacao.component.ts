@@ -19,8 +19,6 @@ export class OrganizacaoComponent implements OnInit {
 
   @ViewChild(DatatableComponent) datatable: DatatableComponent;
 
-  searchUrl: string = this.organizacaoService.searchUrl;
-
   organizacaoSelecionada: Organizacao;
 
   paginationParams = { contentIndex: null };

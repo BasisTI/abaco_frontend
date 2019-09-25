@@ -485,7 +485,8 @@
         "msgCamposInvalidos": "Invalid fields: ",
         "msgPreencherDataFimDaVigenciaManual": "Fill in date of expiration of the manual",
         "msgPreencherDataInicioVigenciaManual": "Fill in effective date of the manual",
-        "msgTemCertezaQueDesejaExcluirManual":"Are you sure you want to delete the manual "
+        "msgTemCertezaQueDesejaExcluirManual":"Are you sure you want to delete the manual ",
+        "msgSalvandoOrganizacao": "Saling Organization"
       },
       "Botoes": {
         "NovoContrato": "New Contract"

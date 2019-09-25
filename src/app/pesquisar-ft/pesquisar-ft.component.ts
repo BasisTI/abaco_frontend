@@ -268,7 +268,7 @@ export class PesquisarFtComponent implements OnInit, OnDestroy {
     }
 
     setSistamaOrganizacao(org: Organizacao) {
-        this.contratos = org.contracts;
+        this.contratos = org.contratos;
         this.sistemaService.findAllSystemOrg(org.id).subscribe((res: ResponseWrapper) => {
             this.sistemas = res.json;
         });
@@ -276,7 +276,7 @@ export class PesquisarFtComponent implements OnInit, OnDestroy {
     }
 
     setEquipeOrganizacao(org: Organizacao) {
-        this.contratos = org.contracts;
+        this.contratos = org.contratos;
         this.equipeService.findAllByOrganizacaoId(org.id).subscribe((res: ResponseWrapper) => {
             this.equipeResponsavel = res.json;
         });
@@ -492,7 +492,7 @@ export class PesquisarFtComponent implements OnInit, OnDestroy {
     calcularComNovoDeflator(funcao: FuncaoTransacao) {
         const funcaoTransacaoCalculada = CalculadoraTransacao.calcular(this.analise.metodoContagem,
             funcao,
-            this.analise.contrato.manual);
+            this.analise.manual);
     }
 
     retornarParaTelaDeFT(modDropDown, funcDropDown, deflaDropDown) {

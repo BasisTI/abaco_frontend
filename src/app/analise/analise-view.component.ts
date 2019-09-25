@@ -238,7 +238,7 @@ export class AnaliseViewComponent implements OnInit, OnDestroy {
      * Método responsável por popular a lista de sistemas da organização selecionada.
      */
     setSistamaOrganizacao(org: Organizacao) {
-        this.contratos = org.contracts;
+        this.contratos = org.contratos;
         this.sistemaService.findAllSystemOrg(org.id).subscribe((res: ResponseWrapper) => {
             this.sistemas = res.json;
         });
@@ -249,7 +249,7 @@ export class AnaliseViewComponent implements OnInit, OnDestroy {
      * Método responsável por popular a equipe responsavel da organização
      */
     setEquipeOrganizacao(org: Organizacao) {
-        this.contratos = org.contracts;
+        this.contratos = org.contratos;
         this.equipeService.findAllByOrganizacaoId(org.id).subscribe((res: ResponseWrapper) => {
             this.equipeResponsavel = res.json;
             if (this.equipeResponsavel !== null) {

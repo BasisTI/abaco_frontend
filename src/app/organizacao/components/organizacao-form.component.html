@@ -111,7 +111,7 @@
 
                         <div class="dynamic-table-container">
                             <div class="table-container">
-                                <p-dataTable [value]="organizacao.contracts" [(selection)]="selectedLine"
+                                <p-dataTable [value]="organizacao.contratos" [(selection)]="selectedLine"
                                 selectionMode="single" compareSelectionBy="equals">
 
                                     <p-column [header]="'Cadastros.Organizacao.NumeroContrato' | translate"
@@ -263,13 +263,13 @@
                                     <label translate="Cadastros.Organizacao.CadastroContrato.Ativo:">Ativo:</label>
                                 </div>
                                 <div class="ui-g-12 ui-md-2">
-                                    <p-radioButton name="contrato_ativo" [(ngModel)]="ativo" [value]="true"
+                                    <p-radioButton name="contrato_ativo" [(ngModel)]="contrato.ativo" [value]="true"
                                         [label]="'Global.Botoes.Sim' | translate">
                                     </p-radioButton>
                                 </div>
                                 <div class="ui-g-12 ui-md-2">
                                     <p-radioButton name="contrato_ativo" [value]="false"
-                                        [label]="'Global.Botoes.Nao' | translate" [(ngModel)]="ativo">
+                                        [label]="'Global.Botoes.Nao' | translate" [(ngModel)]="contrato.ativo">
                                     </p-radioButton>
                                 </div>
                             </div>
@@ -284,7 +284,7 @@
                                 <p-dropdown [filter]="true" [options]="manuais" optionLabel="nome"
                                     [placeholder]="'Cadastros.Organizacao.CadastroContrato.Manual*' | translate"
                                     name="manualDropdownNovo" [(ngModel)]="manualContrato.manual" [autoWidth]="false"
-                                    (onChange)="validarManual()" dataKey="id" required [resetFilterOnHide]="false">
+                                    dataKey="id" required [resetFilterOnHide]="false">
                                 </p-dropdown>
                                 <div *ngIf="manualForm.controls['manualDropdownNovo']
                                     && !manualForm.controls['manualDropdownNovo'].valid
@@ -366,8 +366,8 @@
 
                     <div class="dynamic-table-container">
                         <div class="table-container">
-                            <p-dataTable [value]="contrato.manualContrato" [(selection)]="selectedManualContrato"
-                                selectionMode="single" compareSelectionBy="equals">
+                            <p-dataTable [value]="contrato.manuaisContrato" [(selection)]="selectedManualContrato"
+                                selectionMode="single" compareSelectionBy="equals" datakey="">
 
                                 <p-column [header]="'Cadastros.Organizacao.Manual' | translate" field="manual.nome">
                                 </p-column>

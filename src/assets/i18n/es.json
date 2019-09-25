@@ -318,7 +318,8 @@
         "msgCamposInvalidos": "Campos no válidos: ",
         "msgPreencherDataFimDaVigenciaManual": "Llenar fecha de fin de la vigencia del manual",
         "msgPreencherDataInicioVigenciaManual": "Llenar la fecha de inicio de la vigencia del manual",
-        "msgTemCertezaQueDesejaExcluirManual": "Está seguro de que desea eliminar el manual "
+        "msgTemCertezaQueDesejaExcluirManual": "Está seguro de que desea eliminar el manual ",
+        "msgSalvandoOrganizacao": "Guardar Organización"
       },
       "Botoes": {
         "NovoContrato": "Nuevo Contrato"

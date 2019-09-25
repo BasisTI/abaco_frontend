@@ -296,7 +296,8 @@
         "msgCamposInvalidos": "Campos inválidos: ",
         "msgPreencherDataFimDaVigenciaManual": "Preencher data de fim da vigência do manual",
         "msgPreencherDataInicioVigenciaManual": "Preencher data de início da vigência do manual",
-        "msgTemCertezaQueDesejaExcluirManual":"Tem certeza que deseja excluir o manual "
+        "msgTemCertezaQueDesejaExcluirManual":"Tem certeza que deseja excluir o manual ",
+        "msgSalvandoOrganizacao": "Salvando Organização"
       },
       "Botoes": {
         "NovoContrato": "Novo Contrato"

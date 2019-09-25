@@ -356,7 +356,7 @@ export class FuncaoTransacaoFormComponent implements OnInit, OnDestroy {
             this.verificarModulo();
             const funcaoTransacaoCalculada = CalculadoraTransacao.calcular(this.analise.metodoContagem,
                 this.currentFuncaoTransacao,
-                this.analise.contrato.manual);
+                this.analise.manual);
             this.funcoesTransacaoList.push(funcaoTransacaoCalculada);
             this.analise.addFuncaoTransacao(funcaoTransacaoCalculada);
             this.atualizaResumo();
@@ -422,8 +422,8 @@ export class FuncaoTransacaoFormComponent implements OnInit, OnDestroy {
 
     private get manual() {
         if (this.analiseSharedDataService.analise.contrato &&
-            this.analiseSharedDataService.analise.contrato.manualContrato) {
-            return this.analiseSharedDataService.analise.contrato.manualContrato[0].manual;
+            this.analiseSharedDataService.analise.contrato.manuaisContrato) {
+            return this.analiseSharedDataService.analise.contrato.manuaisContrato[0].manual;
         }
         return undefined;
     }
@@ -518,7 +518,7 @@ export class FuncaoTransacaoFormComponent implements OnInit, OnDestroy {
                 this.verificarModulo();
                 const funcaoTransacaoCalculada = CalculadoraTransacao.calcular(this.analise.metodoContagem,
                     this.currentFuncaoTransacao,
-                    this.analise.contrato.manual);
+                    this.analise.manual);
 
                 this.validarFuncaoTransacaos(this.currentFuncaoTransacao).then(resolve => {
                     if (resolve) {
@@ -651,7 +651,7 @@ export class FuncaoTransacaoFormComponent implements OnInit, OnDestroy {
             this.desconverterChips();
             this.verificarModulo();
             const funcaoTransacaoCalculada = CalculadoraTransacao.calcular(
-            this.analise.metodoContagem, this.currentFuncaoTransacao, this.analise.contrato.manual);
+            this.analise.metodoContagem, this.currentFuncaoTransacao, this.analise.manual);
             this.analise.updateFuncaoTransacao(funcaoTransacaoCalculada);
             this.atualizaResumo();
             this.resetarEstadoPosSalvar();

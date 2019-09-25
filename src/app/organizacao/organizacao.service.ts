@@ -1,29 +1,21 @@
+import { HttpClient } from '@angular/common/http';
 import { Contrato } from './models/contrato.model';
 import { Injectable } from '@angular/core';
 import { Response } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
-import { HttpService } from '@basis/angular-components';
 import { environment } from '../../environments/environment';
 
 import { Organizacao } from './models/organizacao.model';
-import {ResponseWrapper, createRequestOption, JSONable, PageNotificationService} from '../shared';
-import { UploadService } from '../upload/upload.service';
+import {ResponseWrapper, JSONable, PageNotificationService} from '../shared';
 import { TranslateService } from '@ngx-translate/core';
 
 @Injectable()
 export class OrganizacaoService {
 
-  resourceName = '/organizacaos';
-
-  resourceUrl = environment.apiUrl + this.resourceName;
-
-  searchUrl = environment.apiUrl + '/_search' + this.resourceName;
-
-  findActive = environment.apiUrl + this.resourceName + '/active';
+  resourceUrl = environment.apiUrl + '/organizacao'
 
   constructor(
-    private http: HttpService,
-    private uploadService: UploadService,
+    private http: HttpClient,
     private pageNotificationService: PageNotificationService,
     private translate: TranslateService
   ) { }
@@ -35,42 +27,13 @@ export class OrganizacaoService {
     }).unsubscribe();
     return str;
   }
-  create(organizacao: Organizacao): Observable<any> {
-    const copy = this.convertToJSON(organizacao);
-    return this.http.post(this.resourceUrl, copy).map((res: Response) => {
-      const jsonResponse = res.json();
-      return this.convertFromJSON(jsonResponse);
-    }).catch((error: any) => {
-        if (error.status === 403) {
-            this.pageNotificationService.addErrorMsg(this.getLabel('Global.Mensagens.VoceNaoPossuiPermissao'));
-            return Observable.throw(new Error(error.status));
-        }
-    });
-  }
 
-  update(organizacao: Organizacao): Observable<Organizacao> {
-    const copy = this.convertToJSON(organizacao);
-    return this.http.put(this.resourceUrl, copy).map((res: Response) => {
-      const jsonResponse = res.json();
-      return this.convertFromJSON(jsonResponse);
-    }).catch((error: any) => {
-        if (error.status === 403) {
-            this.pageNotificationService.addErrorMsg(this.getLabel('Global.Mensagens.VoceNaoPossuiPermissao'));
-            return Observable.throw(new Error(error.status));
-        }
-    });
+  save(organizacao: Organizacao) {
+    return this.http.post(this.resourceUrl, this.convertToJSON(organizacao));
   }
 
   find(id: number): Observable<Organizacao> {
-    return this.http.get(`${this.resourceUrl}/${id}`).map((res: Response) => {
-      const jsonResponse = res.json();
-      return this.convertFromJSON(jsonResponse);
-    }).catch((error: any) => {
-        if (error.status === 403) {
-            this.pageNotificationService.addErrorMsg(this.getLabel('Global.Mensagens.VoceNaoPossuiPermissao'));
-            return Observable.throw(new Error(error.status));
-        }
-    });
+    return this.http.get(`${this.resourceUrl}/${id}`).map(organizacao => Organizacao.prototype.copyFromJSON(organizacao));
   }
 
     /**
@@ -103,8 +66,7 @@ export class OrganizacaoService {
 }
 
     searchActiveOrganizations(req?: any): Observable<ResponseWrapper> {
-        const options = createRequestOption(req);
-        return this.http.get(this.resourceUrl + '/ativas', options)
+        return this.http.get(this.resourceUrl + '/ativas')
             .map((res: Response) => this.convertResponseToResponseWrapper(res)).catch((error: any) => {
                 if (error.status === 403) {
                     this.pageNotificationService.addErrorMsg(this.getLabel('Global.Mensagens.VoceNaoPossuiPermissao'));
@@ -141,7 +103,6 @@ export class OrganizacaoService {
   }
 
   private convertToJSON(organizacao: Organizacao): Organizacao {
-    const copy: Organizacao = Object.assign({}, organizacao);
-    return copy;
+    return organizacao.toJSONState();
   }
 }
