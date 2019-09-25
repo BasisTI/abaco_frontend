@@ -6,40 +6,39 @@
 
       <div class="ui-g">
 
-        <div class="ui-g-4">
-          <img src="data:image/png;base64,{{logo}}" style="max-width:100%; height:auto;" alt="">
+        <div class="ui-g-4 ui-md-4 ui-sm-12">
+          <img src="data:image/png;base64,{{logo}}" class="logoView" alt="">
         </div>
 
-      </div>
+        <div class="ui-g-8 ui-md-8 ui-sm-12">
+          <div class="ui-g-12 ui-md-12 ui-sm-12">
+            <label>{{ ('Cadastros.Sistema.Sigla:' | translate) }} {{ organizacao.sigla }}</label>
+          </div>
 
-      <div class="ui-g">
+          <div class="ui-g-12 ui-md-12 ui-sm-12">
+            <label>{{ ('Cadastros.Nome:' | translate) }} {{ organizacao.nome }}</label>
+          </div>
 
-        <div class="ui-g-12 ui-md-12 ui-sm-12">
-          <label>{{ ('Cadastros.Sistema.sigla:' | translate) }} {{ organizacao.sigla }}</label>
-        </div>
+          <div class="ui-g-12 ui-md-12 ui-sm-12">
+            <label>{{ ('Cadastros.Organizacao.CNPJ:' | translate) }} </label>
+            <input type="text" name="cnpj" mask="99.999.999/9999-99" [ngModel]="organizacao.cnpj" class="inputLabel"
+              readonly />
+          </div>
 
-        <div class="ui-g-12 ui-md-12 ui-sm-12">
-          <label>{{ ('Cadastros.Nome:' | translate) }} {{ organizacao.nome }}</label>
-        </div>
+          <div class="ui-g-12 ui-md-12 ui-sm-12">
+            <label>{{ ('Cadastros.Organizacao.NumeroOcorrencia:' | translate) }}
+              {{ organizacao.numeroOcorrencia }}</label>
+          </div>
 
-        <div class="ui-g-12 ui-md-12 ui-sm-12">
-          <label>{{ ('Cadastros.Organizacao.CNPJ:' | translate) }} </label>
-          <input type="text" name="cnpj" mask="99.999.999/9999-99" [ngModel]="organizacao.cnpj"
-            style="border-style: none" readonly />
-        </div>
-
-        <div class="ui-g-12 ui-md-12 ui-sm-12">
-          <label>{{ ('Cadastros.Organizacao.NumeroOcorrencia:' | translate) }} {{ organizacao.numeroOcorrencia }}</label>
-        </div>
-
-        <div class="ui-g-12 ui-md-12 ui-sm-12">
-          <label>{{ ('Cadastros.Usuarios.Ativo:' | translate) }} {{
+          <div class="ui-g-12 ui-md-12 ui-sm-12">
+            <label>{{ ('Cadastros.Usuarios.Ativo:' | translate) }} {{
             organizacao.ativo ? ('Global.Botoes.Sim' | translate) : ('Global.Botoes.Não' | translate) }}</label>
-        </div>
+          </div>
 
+        </div>
       </div>
 
-      <div class="ui-g" style="margin-bottom: 25px">
+      <div class="ui-g" class="form-fields-container">
         <h4 translate="Cadastros.Contratos.Contratos">Contratos</h4>
 
 
@@ -53,7 +52,7 @@
             </ng-template>
           </p-column>
 
-          <p-column [header]="'Cadastros.Organizacao.FimVigencia' | translate" field="dataFimVigencia">
+          <p-column [header]="'Cadastros.Organizacao.FinalVigencia' | translate" field="dataFimVigencia">
             <ng-template let-col let-dataFimVigencia="rowData" pTemplate="body">
               {{ dataFimVigencia[col.field] | date: 'dd/MM/y' }}
             </ng-template>
@@ -75,11 +74,13 @@
         </p-dataTable>
 
       </div>
+
       <div class="ui-g">
         <div class="ui-g-3">
           <button pButton type="button" [label]="'Global.Botoes.Voltar' | translate" routerLink="/organizacao"></button>
         </div>
       </div>
+
     </div>
   </div>
 </div>

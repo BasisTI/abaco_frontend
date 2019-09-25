@@ -99,3 +99,14 @@ span.invalidField {
   margin-top: 10%;
 }
 
+.logoView {
+  max-width: 100%;
+  max-height: 100%;
+    -webkit-box-shadow: 5px 5px 15px rgba(0,0,0,0.4);
+    -moz-box-shadow: 5px 5px 15px rgba(0,0,0,0.4);
+}
+
+.inputLabel {
+  border-style: none;
+}
+
