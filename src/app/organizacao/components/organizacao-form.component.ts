@@ -271,7 +271,7 @@ export class OrganizacaoFormComponent implements OnInit {
     }
 
     persistir() {
-        this.translateMessage('Cadastros.Organizacao.Mensagens.msgSalvandoOrganizacao"', this.blockUiStart);
+        this.translateMessage('Cadastros.Organizacao.Mensagens.msgSalvandoOrganizacao', this.blockUiStart);
         if (this.logo) {
             this.uploadService.uploadLogo(this.logo).subscribe((response: any) => {
                 this.organizacao.logoId = response.id;
