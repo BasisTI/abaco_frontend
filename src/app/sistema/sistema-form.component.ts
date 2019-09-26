@@ -70,7 +70,7 @@ export class SistemaFormComponent implements OnInit, OnDestroy {
         this.traduzirTipoSistema();
         this.isSaving = false;
         this.organizacaoService.dropDownActive().subscribe(response => {
-            this.organizacaos = response.json;
+            this.organizacaos = response;
         });
         this.routeSub = this.route.params.subscribe(params => {
             this.sistema = new Sistema();

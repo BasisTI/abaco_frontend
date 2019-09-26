@@ -83,7 +83,7 @@ export class UserComponent implements OnInit {
      */
     recuperarOrganizacoes() {
         this.organizacaoService.dropDown().subscribe(response => {
-            this.organizations = response.json;
+            this.organizations = response;
             const emptyOrg = new Organizacao();
             this.organizations.unshift(emptyOrg);
         });

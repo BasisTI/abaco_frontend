@@ -177,7 +177,7 @@ export class AnaliseFormComponent implements OnInit, OnDestroy {
      */
     getOrganizationsFromActiveLoggedUser() {
         this.organizacaoService.dropDownActiveLoggedUser().subscribe(res => {
-            this.populateOrgs(res.json);
+            this.populateOrgs(res);
         });
     }
 

@@ -37,23 +37,23 @@ export class OrganizacaoService {
   /**
  * Função que retorna dados do usuário logado somente com as organizações ativas
  */
-  dropDownActiveLoggedUser(): Observable<ResponseWrapper> {
-    return this.http.get(this.resourceUrl + '/active-user').map((res: Response) => {
+  dropDownActiveLoggedUser(): Observable<Organizacao[]> {
+    return this.http.get(`${this.resourceUrl}/dropdown-users`).map((res: Response) => {
       return this.convertResponseToResponseWrapper(res);
     });
   }
 
-  dropDown(): Observable<ResponseWrapper> {
-    return this.http.get(this.resourceUrl + '/drop-down')
+  dropDown(): Observable<Organizacao[]> {
+    return this.http.get(`${this.resourceUrl}/dropdown`)
       .map((res: Response) => this.convertResponseToResponseWrapper(res));
   }
 
-  dropDownActive(): Observable<ResponseWrapper> {
-    return this.http.get(this.resourceUrl + '/drop-down/active')
+  dropDownActive(): Observable<Organizacao[]> {
+    return this.http.get(`${this.resourceUrl}/dropdown/active`)
       .map((res: Response) => this.convertResponseToResponseWrapper(res));
   }
 
-  searchActiveOrganizations(req?: any): Observable<ResponseWrapper> {
+  searchActiveOrganizations(): Observable<Organizacao[]> {
     return this.http.get(this.resourceUrl + '/ativas')
       .map((res: Response) => this.convertResponseToResponseWrapper(res));
   }
@@ -63,16 +63,15 @@ export class OrganizacaoService {
   }
 
   findAllContratosByOrganization(id: number): Observable<Contrato[]> {
-    return null;
+    return this.http.get<Contrato[]>(`${this.resourceUrl}/${id}/contratos`);
   }
 
-  private convertResponseToResponseWrapper(res: Response): ResponseWrapper {
-    const jsonResponse = res.json();
-    const result = [];
-    for (let i = 0; i < jsonResponse.length; i++) {
-      result.push(this.convertFromJSON(jsonResponse[i]));
+  private convertResponseToResponseWrapper(res): Organizacao[] {
+    const result: Organizacao[] = [];
+    for (let i = 0; i < res.length; i++) {
+      result.push(this.convertFromJSON(res[i]));
     }
-    return new ResponseWrapper(res.headers, result, res.status);
+    return result;
   }
 
   private convertFromJSON(json: any): Organizacao {

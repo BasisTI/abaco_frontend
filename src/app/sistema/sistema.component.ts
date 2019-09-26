@@ -57,7 +57,7 @@ export class SistemaComponent {
         const emptyOrganization = new Organizacao();
 
         this.organizacaoService.dropDown().subscribe(response => {
-            this.organizations = response.json;
+            this.organizations = response;
             this.organizations.unshift(emptyOrganization);
         });
     }

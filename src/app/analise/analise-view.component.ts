@@ -206,8 +206,8 @@ export class AnaliseViewComponent implements OnInit, OnDestroy {
      * Método responsável por popular a lista de organizações.
      */
     listOrganizacoes() {
-        this.organizacaoService.searchActiveOrganizations().subscribe((res: ResponseWrapper) => {
-            this.organizacoes = res.json;
+        this.organizacaoService.searchActiveOrganizations().subscribe((res) => {
+            this.organizacoes = res;
         }, (error: Response) => {
             this.pageNotificationService.addErrorMsg(this.getLabel('Analise.Analise.Mensagens.msgErroListar'));
         });
