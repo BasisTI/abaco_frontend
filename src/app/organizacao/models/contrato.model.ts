@@ -66,7 +66,6 @@ export class Contrato implements BaseEntity, JSONable<Contrato> {
     this.manuaisContrato = this.mappableManualContrato.values();
   }
 
-  // TODO extrair modulo? entrar pro jsonable?
   clone(): Contrato {
     return new Contrato(this.id, this.numeroContrato, this.dataInicioVigencia,
       this.dataFimVigencia, this.ativo, this.diasDeGarantia, this.artificialId, this.manuaisContrato);

@@ -8,7 +8,7 @@ import { environment } from '../../environments/environment';
 import { DataTable } from 'primeng/primeng';
 
 import { Organizacao } from './models/organizacao.model';
-import { ResponseWrapper, JSONable } from '../shared';
+import { JSONable } from '../shared';
 
 import { OrganizacaoFilter } from './models/OrganizacaoFilter';
 
