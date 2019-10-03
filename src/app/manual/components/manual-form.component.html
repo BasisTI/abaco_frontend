@@ -4,7 +4,7 @@
             <h1>{{ manual.id ? ('Cadastros.Manual.EditarManual' | translate) : ('Cadastros.Manual.CadastrarManual' | translate) }}
             </h1>
 
-            <form name="editForm" (ngSubmit)="save()" #editForm="ngForm">
+            <form name="editForm" (ngSubmit)="save(editForm.control)" #editForm="ngForm">
                 <div class="ui-g-6 ui-md-6 ui-sm-6 form-fields-container">
                     <span class="md-inputfield">
                         <input name="nome" maxlength="250" [(ngModel)]="manual.nome" pInputText required />
@@ -12,7 +12,7 @@
                         <div *ngIf="editForm.controls['nome']
                               && !editForm.controls['nome'].valid
                               && (editForm.controls['nome'].touched
-                              || editForm.submitted)" class="ui-message ui-messages-error"
+                              || editForm.controls['nome'].dirty)" class="ui-message ui-messages-error"
                             translate="Global.Mensagens.CampoObrigatorio">
                             Campo obrigatório.
                         </div>
@@ -263,157 +263,162 @@
                         </app-white-button>
                     </div>
                     <div class="ui-g-2 ui-md-2 ui-sm-12">
-                        <app-submit-button [buttonLabel]="'Global.Botoes.Salvar' | translate"
-                            [disabled]="editForm.form.invalid" (onclick)="save()">
-                        </app-submit-button>
+                        <button pButton type="button" type="submit"
+                            class="green-btn flat ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
+                            [label]="'Global.Botoes.Salvar' | translate" icon="ui-icon-save" [disabled]="editForm.invalid">
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<!-- Dialog Registro Esforco Fase -->
+<p-dialog [header]="'Cadastros.Manual.EsforcoFase' | translate" [(visible)]="showDialogEsforcoFase"
+    [contentStyle]="{'overflow':'visible'}" [width]="800" name="esfocoFaseDialog">
+
+    <form name="esforcoFaseForm" #esforcoFaseForm="ngForm">
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-12 ui-md-12 ui-sm-12 form-fields-container">
+                <label for="faseDropdown" translate="Cadastros.Manual.Fase*">Tipo de Fase *</label>
+                <p-dropdown [filter]="true" [options]="fases" optionLabel="nome" [(ngModel)]="esforcoFase.fase"
+                    [placeholder]="'Cadastros.Manual.Fase' | translate" [autoWidth]="false" name="faseDropdown">
+                </p-dropdown>
+                <div *ngIf="esforcoFaseForm.controls['esfocoFasePercent']
+                     && (!esforcoFaseForm.controls['faseDropdown'].valid
+                     && esforcoFaseForm.controls['faseDropdown'].touched)">
+                    <span class="invalidField" translate="Global.Mensagens.CampoObrigatorio">Campo
+                        obrigatório.</span>
+                </div>
+            </div>
+
+            <div class="ui-g-12 ui-md-12 ui-sm-12 form-fields-container">
+                <label for="esfocoFasePercent" translate="Cadastros.Manual.Esforco">Esforço (%) *</label>
+                <p-spinner required [step]="0.010" [min]="0" [max]="100" maxlength="5" name="esfocoFasePercent"
+                    [(ngModel)]="esforcoFase.esforco">
+                </p-spinner>
+                <div *ngIf="esforcoFaseForm.controls['esfocoFasePercent']
+                     && (!esforcoFaseForm.controls['esfocoFasePercent'].valid
+                     && esforcoFaseForm.controls['esfocoFasePercent'].touched)">
+                    <span class="invalidField" translate="Global.Mensagens.CampoObrigatorio">Campo
+                        obrigatório.</span>
+                </div>
+            </div>
+
+            <div class="ui-g ui-md-12 form-buttons-container">
+                <div class="ui-g-2 ui-md-2 ui-sm-12">
+                    <app-white-button [buttonLabel]="'Global.Botoes.Cancelar' | translate"
+                        (click)="closeDialogEsforcoFase()">
+                    </app-white-button>
+                </div>
+
+                <div class="ui-g-2 ui-md-2 ui-sm-12">
+                    <app-green-button [buttonLabel]="'Global.Botoes.Salvar' | translate" buttonIcon="ui-icon-add"
+                        (click)="addEsforcoFase(esforcoFaseForm)">
+                    </app-green-button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+</p-dialog>
+
+<!-- Inicio Dialog Novo Deflator -->
+<p-dialog [header]="'Cadastros.Manual.Deflator' | translate" [(visible)]="showDialogFatorAjuste"
+    [contentStyle]="{'overflow':'visible'}" [width]="800">
+
+    <form name="deflatorForm" #deflatorForm="ngForm">
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g form-fields-container-modal">
+                <div class="ui-g-6 ui-md-6 ui-sm-12">
+                    <label for="nomeFatorAjuste" translate="Cadastros.Manual.Nome*">Nome *</label>
+                    <input type="text" pInputText name="nomeFatorAjuste" [(ngModel)]="fatorAjuste.nome" required
+                        maxlength="255" />
+                    <div *ngIf="deflatorForm.controls['nomeFatorAjuste']
+                     && (!deflatorForm.controls['nomeFatorAjuste'].valid
+                     && deflatorForm.controls['nomeFatorAjuste'].touched)">
+                        <span class="invalidField" translate="Global.Mensagens.CampoObrigatorio">Campo
+                            obrigatório.</span>
                     </div>
                 </div>
 
-            </form>
-
-            <!-- Dialog Registro Esforco Fase -->
-            <p-dialog [header]="'Cadastros.Manual.EsforcoFase' | translate" [(visible)]="showDialogEsforcoFase"
-                [contentStyle]="{'overflow':'visible'}" [width]="800" name="esfocoFaseDialog">
-
-                <form name="esforcoFaseForm" #esforcoFaseForm="ngForm">
-
-                    <div class="ui-g-12 ui-md-12 ui-sm-12 form-fields-container">
-                        <label for="faseDropdown" translate="Cadastros.Manual.Fase*">Tipo de Fase *</label>
-                        <p-dropdown [filter]="true" [options]="fases" optionLabel="nome" [(ngModel)]="esforcoFase.fase"
-                            [placeholder]="'Cadastros.Manual.Fase' | translate" [autoWidth]="false" name="faseDropdown">
-                        </p-dropdown>
-                        <div *ngIf="esforcoFaseForm.controls['esfocoFasePercent']
-                                    && (!esforcoFaseForm.controls['faseDropdown'].valid
-                                    && esforcoFaseForm.controls['faseDropdown'].touched)">
-                            <span class="invalidField" translate="Global.Mensagens.CampoObrigatorio">Campo
-                                obrigatório.</span>
-                        </div>
+                <div class="ui-g-3 ui-md-3 ui-sm-12">
+                    <label for="tipoAjusteDropdown" translate="Cadastros.CadastroDeflator.TipoDeflator*">Tipo
+                        Deflator *</label><br>
+                    <p-dropdown [filter]="true" [options]="tiposAjuste" name="tipoAjusteDropdown"
+                        [(ngModel)]="fatorAjuste.tipoAjuste" filter="true" [autoWidth]="false"
+                        [placeholder]="'Cadastros.Manual.TipoAjuste' | translate" required>
+                    </p-dropdown>
+                    <div *ngIf="deflatorForm.controls['tipoAjusteDropdown']
+                     && (!deflatorForm.controls['tipoAjusteDropdown'].valid
+                     && deflatorForm.controls['tipoAjusteDropdown'].touched)">
+                        <span class="invalidField" translate="Global.Mensagens.CampoObrigatorio">Campo
+                            obrigatório.</span>
                     </div>
+                </div>
 
-                    <div class="ui-g-12 ui-md-12 ui-sm-12 form-fields-container">
-                        <label for="esfocoFasePercent" translate="Cadastros.Manual.Esforco">Esforço (%) *</label>
-                        <p-spinner required [step]="0.010" [min]="0" [max]="100" maxlength="5" name="esfocoFasePercent"
-                            [(ngModel)]="esforcoFase.esforco">
-                        </p-spinner>
-                        <div *ngIf="esforcoFaseForm.controls['esfocoFasePercent']
-                                    && (!esforcoFaseForm.controls['esfocoFasePercent'].valid
-                                    && esforcoFaseForm.controls['esfocoFasePercent'].touched)">
-                            <span class="invalidField" translate="Global.Mensagens.CampoObrigatorio">Campo
-                                obrigatório.</span>
-                        </div>
+                <div class="ui-g-3 ui-md-3 ui-sm-12">
+                    <label *ngIf="isPercentualEnum(fatorAjuste.tipoAjuste)"
+                        translate="Cadastros.Manual.Deflator(%)*">Deflator (%) *</label>
+                    <label *ngIf="isUnitaryEnum(fatorAjuste.tipoAjuste)"
+                        translate="Cadastros.Manual.Deflator(PF)*">Deflator
+                        (PF) *</label>
+                    <label *ngIf="fatorAjuste.tipoAjuste === undefined" translate="Cadastros.Manual.Deflator*">Deflator
+                        *</label>
+
+                    <p-spinner maxlength="8" [min]="0" [max]="9999" name="fator" step="0.01"
+                        [disabled]="habilitarDeflator()" required [(ngModel)]="fatorAjuste.fator">
+                    </p-spinner>
+
+                    <div *ngIf="deflatorForm.controls['fator']
+                         && (!deflatorForm.controls['fator'].valid
+                         && deflatorForm.controls['fator'].touched)">
+                        <span class="invalidField" translate="Global.Mensagens.CampoObrigatorio">Campo
+                            obrigatório.</span>
                     </div>
-
-                    <div class="ui-g ui-md-12 form-buttons-container">
-                        <div class="ui-g-2 ui-md-2 ui-sm-12">
-                            <app-white-button [buttonLabel]="'Global.Botoes.Cancelar' | translate"
-                                (click)="closeDialogEsforcoFase()">
-                            </app-white-button>
-                        </div>
-
-                        <div class="ui-g-2 ui-md-2 ui-sm-12">
-                            <app-green-button [buttonLabel]="'Global.Botoes.Salvar' | translate"
-                                buttonIcon="ui-icon-add" (click)="addEsforcoFase(esforcoFaseForm)">
-                            </app-green-button>
-                        </div>
-                    </div>
-
-                </form>
-            </p-dialog>
-
-            <!-- Inicio Dialog Novo Deflator -->
-            <p-dialog [header]="'Cadastros.Manual.Deflator' | translate" [(visible)]="showDialogFatorAjuste"
-                [contentStyle]="{'overflow':'visible'}" [width]="800">
-
-                <form name="deflatorForm" #deflatorForm="ngForm">
-
-                    <div class="ui-g form-fields-container-modal">
-                        <div class="ui-g-6 ui-md-6 ui-sm-12">
-                            <label for="nomeFatorAjuste" translate="Cadastros.Manual.Nome*">Nome *</label>
-                            <input type="text" pInputText name="nomeFatorAjuste" [(ngModel)]="fatorAjuste.nome" required
-                                maxlength="255" />
-                            <div *ngIf="deflatorForm.controls['nomeFatorAjuste']
-                                    && (!deflatorForm.controls['nomeFatorAjuste'].valid
-                                    && deflatorForm.controls['nomeFatorAjuste'].touched)">
-                                <span class="invalidField" translate="Global.Mensagens.CampoObrigatorio">Campo
-                                    obrigatório.</span>
-                            </div>
-                        </div>
-
-                        <div class="ui-g-3 ui-md-3 ui-sm-12">
-                            <label for="tipoAjusteDropdown" translate="Cadastros.CadastroDeflator.TipoDeflator*">Tipo
-                                Deflator *</label><br>
-                            <p-dropdown [filter]="true" [options]="tiposAjuste" name="tipoAjusteDropdown"
-                                [(ngModel)]="fatorAjuste.tipoAjuste" filter="true" [autoWidth]="false"
-                                [placeholder]="'Cadastros.Manual.TipoAjuste' | translate" required>
-                            </p-dropdown>
-                            <div *ngIf="deflatorForm.controls['tipoAjusteDropdown']
-                                    && (!deflatorForm.controls['tipoAjusteDropdown'].valid
-                                    && deflatorForm.controls['tipoAjusteDropdown'].touched)">
-                                <span class="invalidField" translate="Global.Mensagens.CampoObrigatorio">Campo
-                                    obrigatório.</span>
-                            </div>
-                        </div>
-
-                        <div class="ui-g-3 ui-md-3 ui-sm-12">
-                            <label *ngIf="isPercentualEnum(fatorAjuste.tipoAjuste)"
-                                translate="Cadastros.Manual.Deflator(%)*">Deflator (%) *</label>
-                            <label *ngIf="isUnitaryEnum(fatorAjuste.tipoAjuste)"
-                                translate="Cadastros.Manual.Deflator(PF)*">Deflator (PF) *</label>
-                            <label *ngIf="fatorAjuste.tipoAjuste === undefined"
-                                translate="Cadastros.Manual.Deflator*">Deflator *</label>
-
-                            <p-spinner maxlength="8" [min]="0" [max]="9999" name="fator" step="0.01"
-                                [disabled]="habilitarDeflator()" required [(ngModel)]="fatorAjuste.fator">
-                            </p-spinner>
-
-                            <div *ngIf="deflatorForm.controls['fator']
-                                        && (!deflatorForm.controls['fator'].valid
-                                        && deflatorForm.controls['fator'].touched)">
-                                <span class="invalidField" translate="Global.Mensagens.CampoObrigatorio">Campo
-                                    obrigatório.</span>
-                            </div>
-                        </div>
-                    </div>
+                </div>
+            </div>
 
 
-                    <div class="ui-g-12 ui-md-12 ui-sm-12 form-fields-container-modal">
-                        <label for="descricaoFatorAjuste" translate="Cadastros.Manual.Descricao">Descrição</label>
-                        <textarea [rows]="10" [cols]="90" pInputTextarea maxlength="2000" name="descricaoFatorAjuste"
-                            [(ngModel)]="fatorAjuste.descricao">
-                            </textarea>
-                    </div>
+            <div class="ui-g-12 ui-md-12 ui-sm-12 form-fields-container-modal">
+                <label for="descricaoFatorAjuste" translate="Cadastros.Manual.Descricao">Descrição</label>
+                <textarea [rows]="10" [cols]="90" pInputTextarea maxlength="2000" name="descricaoFatorAjuste"
+                    [(ngModel)]="fatorAjuste.descricao">
+             </textarea>
+            </div>
 
-                    <div class="ui-g-5 ui-md-5 ui-sm-12 form-fields-container-modal" *ngIf="!isEditFatorAjuste">
-                        <label for="codigo" translate="Cadastros.Manual.Codigo">Código</label>
-                        <input type="text" name="codigo" [(ngModel)]="fatorAjuste.codigo" pInputText maxlength="255" />
-                    </div>
+            <div class="ui-g-5 ui-md-5 ui-sm-12 form-fields-container-modal" *ngIf="!isEditFatorAjuste">
+                <label for="codigo" translate="Cadastros.Manual.Codigo">Código</label>
+                <input type="text" name="codigo" [(ngModel)]="fatorAjuste.codigo" pInputText maxlength="255" />
+            </div>
 
-                    <div class="ui-g-7 ui-md-7 ui-sm-12 form-fields-container-modal">
-                        <label for="origem" translate="Cadastros.Manual.Origem">Origem</label>
-                        <input type="text" name="origem" [(ngModel)]="fatorAjuste.origem" pInputText maxlength="255" />
-                    </div>
+            <div class="ui-g-7 ui-md-7 ui-sm-12 form-fields-container-modal">
+                <label for="origem" translate="Cadastros.Manual.Origem">Origem</label>
+                <input type="text" name="origem" [(ngModel)]="fatorAjuste.origem" pInputText maxlength="255" />
+            </div>
 
-                    <div class="ui-g ui-md-12 form-buttons-container">
-                        <div class="ui-g-2 ui-md-2 ui-sm-12">
-                            <app-white-button [buttonLabel]="'Global.Botoes.Cancelar' | translate"
-                                (click)="closeDialogFatorAjuste()">
-                            </app-white-button>
-                        </div>
+            <div class="ui-g ui-md-12 form-buttons-container">
+                <div class="ui-g-2 ui-md-2 ui-sm-12">
+                    <app-white-button [buttonLabel]="'Global.Botoes.Cancelar' | translate"
+                        (click)="closeDialogFatorAjuste()">
+                    </app-white-button>
+                </div>
 
-                        <div class="ui-g-2 ui-md-2 ui-sm-12">
-                            <app-green-button [buttonLabel]="'Global.Botoes.Salvar' | translate"
-                                buttonIcon="ui-icon-add" (click)="addFatorAjuste(deflatorForm)">
-                            </app-green-button>
-                        </div>
-                    </div>
-
-                </form>
-            </p-dialog>
-            <!-- Fim Dialog Novo Deflator -->
-
+                <div class="ui-g-2 ui-md-2 ui-sm-12">
+                    <app-green-button [buttonLabel]="'Global.Botoes.Salvar' | translate" buttonIcon="ui-icon-add"
+                        (click)="addFatorAjuste(deflatorForm)">
+                    </app-green-button>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
+
+    </form>
+</p-dialog>
+<!-- Fim Dialog Novo Deflator -->
 
 <p-confirmDialog [header]="'Global.Mensagens.Confirmacao' | translate" #dialog>
     <p-footer>
