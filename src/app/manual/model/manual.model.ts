@@ -74,7 +74,7 @@ export class Manual implements BaseEntity, JSONable<Manual> {
     }
 
     persistEsforcoFase(esforcoFase: EsforcoFase) {
-        if (esforcoFase.id === undefined && esforcoFase.artificialId === undefined) {
+        if (esforcoFase.id && esforcoFase.artificialId) {
             this.addEsforcoFases(esforcoFase);
         } else {
             this.updateEsforcoFases(esforcoFase);
@@ -97,7 +97,7 @@ export class Manual implements BaseEntity, JSONable<Manual> {
     }
 
     persistFatoresAjuste(fatorAjuste: FatorAjuste) {
-        if (fatorAjuste.id === undefined && fatorAjuste.artificialId === undefined) {
+        if (fatorAjuste.id && fatorAjuste.artificialId) {
             this.addFatoresAjuste(fatorAjuste);
         } else {
             this.updateFatoresAjuste(fatorAjuste);

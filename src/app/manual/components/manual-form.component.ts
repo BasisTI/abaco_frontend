@@ -276,10 +276,7 @@ export class ManualFormComponent implements OnInit {
     }
 
     habilitarDeflator(): boolean {
-        if (this.fatorAjuste.tipoAjuste !== undefined) {
-            return false;
-        }
-        if (this.fatorAjuste.tipoAjuste !== undefined) {
+        if (this.fatorAjuste.tipoAjuste || this.fatorAjuste.tipoAjuste) {
             return false;
         }
         return true;
