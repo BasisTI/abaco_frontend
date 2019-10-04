@@ -133,14 +133,14 @@ export class ManualFormComponent implements OnInit {
 
         let validArrays = true;
 
-        Object.keys(this.manual).forEach(propName => {
+        validArrays = Object.keys(this.manual).some(propName => {
             const prop = this.manual[propName];
             if (prop instanceof Array && !prop.length) {
-                validArrays = false;
+                return true;
             } 
         });
 
-        return form.valid && validArrays;
+        return form.valid && !validArrays;
     }
 
     private addErrorMenssage(message: string) {
