@@ -14,8 +14,6 @@ export class Organizacao implements BaseEntity, JSONable<Organizacao> {
     public ativo?: boolean,
     public numeroOcorrencia?: string,
     public contratos?: Contrato[],
-    // FIXME BaseEntity, para evitar dependencias circulares
-    // parece que reestruturação de pastas evita isso
     public sistemas?: BaseEntity[],
   ) {
     if (contratos) {
