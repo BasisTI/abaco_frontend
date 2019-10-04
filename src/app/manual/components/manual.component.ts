@@ -7,8 +7,8 @@ import { ManualService } from '../manual.service';
 import { PageNotificationService } from '../../shared';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 import { ManualFilter } from '../model/ManualFilter';
-import { Observable } from 'rxjs';
 import { Page } from '../../util/page';
+import { translateMessage, translateMultiple } from '../../util/translateUtils';
 
 @Component({
     selector: 'jhi-manual',
@@ -33,20 +33,6 @@ export class ManualComponent implements OnInit {
         private pageNotificationService: PageNotificationService,
         private translate: TranslateService
     ) { }
-
-    translateMessage(message: string, callback: (translatedMessage: string, id?: number) => void, id?: number) {
-        this.translate.get(message).subscribe((translatedMessage: string) => {
-            callback.call(this, translatedMessage, id);
-        });
-    }
-
-    translateMultiple(messages: string[], names: string[], callback: (messages: string[], names: string[]) => void) {
-        // result é um array de observables contendo todos os observers das menssagens traduzidas
-        const result = messages.map(message => this.translate.get(message));
-        // forkJoin retornar um observable com o resultado de todas as traduções em uma unica chamada
-        // o metodo call no callback é para manter o contexto na função de callback, para não utilizar o contexto de dentro da lib do RxJs
-        Observable.forkJoin(result).subscribe(messages => callback.call(this, messages, names));
-    }
 
     public ngOnInit() {
         this.obterManuais();
@@ -94,11 +80,11 @@ export class ManualComponent implements OnInit {
                 manualClonado.fatoresAjuste.forEach(fa => fa.id = null);
             }
 
-            this.translateMessage('Cadastros.Manual.Mensagens.Clonando_Manual', this.startBlockUI);
+            translateMessage.call(this, 'Cadastros.Manual.Mensagens.Clonando_Manual', this.startBlockUI);
             this.manualService.save(manualClonado)
                 .finally(() => this.blockUI.stop())
                 .subscribe(() => {
-                    this.translateMultiple(['Cadastros.Manual.Mensagens.msgManual',
+                    translateMultiple.call(this, ['Cadastros.Manual.Mensagens.msgManual',
                         'Cadastros.Manual.Mensagens.msgClonadoPartirDoManual',
                         'Cadastros.Manual.Mensagens.msgComSucesso'], [manualClonado.nome, nomeAntigo], this.showCloneSuccessMsg);
                     this.obterManuais();
@@ -109,7 +95,6 @@ export class ManualComponent implements OnInit {
         }
     }
 
-    // Este método cria a menssagem de sucesso de clonagem com traduções
     showCloneSuccessMsg(messages: string[], names: string[]) {
         this.pageNotificationService.addSuccessMsg(
             `${messages.shift()} ${names.shift()} ${messages.shift()} ${names.shift()} ${messages.shift()}`);
@@ -121,18 +106,18 @@ export class ManualComponent implements OnInit {
     }
 
     public confirmDelete(id: number) {
-        this.translateMessage('Global.Mensagens.CertezaExcluirRegistro', this.configureMessage, id);
+        translateMessage.call(this, 'Global.Mensagens.CertezaExcluirRegistro', this.configureMessage, id);
     }
 
     configureMessage(translatedMessage: string, id: number) {
         this.confirmationService.confirm({
             message: translatedMessage,
             accept: () => {
-                this.translateMessage('Global.Mensagens.EXCLUINDO_REGISTRO', this.startBlockUI);
+                translateMessage.call(this, 'Global.Mensagens.EXCLUINDO_REGISTRO', this.startBlockUI);
                 this.manualService.delete(id)
                     .finally(() => this.blockUI.stop())
                     .subscribe(() => {
-                        this.translateMessage('Global.Mensagens.RegistroExcluidoComSucesso', this.showSuccessMsg);
+                        translateMessage.call(this, 'Global.Mensagens.RegistroExcluidoComSucesso', this.showSuccessMsg);
                         this.obterManuais();
                     });
             }

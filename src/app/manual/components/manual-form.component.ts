@@ -6,35 +6,36 @@ import { Manual } from '../model/manual.model';
 import { ManualService } from '../manual.service';
 import { EsforcoFase } from '../../esforco-fase/esforco-fase.model';
 import { FaseService, Fase } from '../../fase';
-import { ConfirmationService } from 'primeng/primeng';
+import { ConfirmationService, SelectItem } from 'primeng/primeng';
 import { FatorAjuste, TipoFatorAjuste } from '../model/fator-ajuste.model';
 import { PageNotificationService } from '../../shared/page-notification.service';
 import { UploadService } from '../../upload/upload.service';
 import { FileUpload } from 'primeng/primeng';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
+import { translateMessage } from '../../util/translateUtils';
 
 @Component({
     selector: 'jhi-manual-form',
     templateUrl: './manual-form.component.html',
 })
 export class ManualFormComponent implements OnInit {
-    manual: Manual;
-    isEdit; newUpload: boolean;
+    manual: Manual = new Manual();
+    newUpload = false;
     arquivoManual: File;
     showDialogEsforcoFase = false;
     showDialogFatorAjuste = false;
     fases: Fase[] = [];
     esforcoFase: EsforcoFase = new EsforcoFase();
-    selectedEsforcoFase: EsforcoFase;
+    selectedEsforcoFase: EsforcoFase = new EsforcoFase();
     fatorAjuste: FatorAjuste = new FatorAjuste();
-    selectedFatorAjuste: FatorAjuste;
+    selectedFatorAjuste: FatorAjuste = new FatorAjuste();
 
     isEditFatorAjuste = false;
 
-    tiposAjuste: Array<any> = [
-        { label: 'Percentual', value: 'PERCENTUAL' },
-        { label: 'Unitário', value: 'UNITARIO' }
+    tiposAjuste: SelectItem[] = [
+        { label: 'Percentual', value: TipoFatorAjuste.PERCENTUAL },
+        { label: 'Unitário', value: TipoFatorAjuste.UNITARIO }
     ];
 
     invalidFields: Array<string> = [];
@@ -54,17 +55,8 @@ export class ManualFormComponent implements OnInit {
     ) {
     }
 
-    translateMessage(message: string
-        , callback: (translatedMessage: string, id?: number) => void
-        , id?: number) {
-        this.translate.get(message).subscribe((translatedMessage: string) => {
-            callback.call(this, translatedMessage, id);
-        });
-    }
-
     ngOnInit() {
         this.traduzirClassificacoes();
-        this.newUpload = false;
         this.route.params.subscribe(params => {
             this.manual = new Manual();
             this.manual.fatoresAjuste = [];
@@ -72,7 +64,6 @@ export class ManualFormComponent implements OnInit {
             if (params['id']) {
                 this.manualService.find(params['id']).subscribe((manual: Manual) => {
                     this.manual = manual;
-                    this.isEdit = true;
                     if (this.manual.arquivoManualId) {
                         this.getFile();
                     }
@@ -89,9 +80,9 @@ export class ManualFormComponent implements OnInit {
         this.showDialogEsforcoFase = true;
     }
 
-    save() {
-        if (!this.checkRequiredFields()) {
-            this.translateMessage('Global.Mensagens.FavorPreencherCamposObrigatorios', this.addErrorMenssage)
+    save(form: FormGroup) {
+        if (!this.checkRequiredFields(form)) {
+            translateMessage.call(this, 'Global.Mensagens.FavorPreencherCamposObrigatorios', this.addErrorMenssage);
             return;
         }
 
@@ -99,11 +90,10 @@ export class ManualFormComponent implements OnInit {
     }
 
     private persist() {
-        const oldId = this.manual.arquivoManualId;
-        this.translateMessage('Cadastros.Manual.Mensagens.Criando_Manual', this.startBlockUI);
+        translateMessage.call(this, 'Cadastros.Manual.Mensagens.Criando_Manual', this.startBlockUI);
         if (this.newUpload) {
-            if (oldId) {
-                this.uploadService.deleteFile(oldId);
+            if (this.manual.arquivoManualId) {
+                this.uploadService.deleteFile(this.manual.arquivoManualId);
             }
             this.uploadService.uploadFile(this.arquivoManual).subscribe(response => {
                 this.manual.arquivoManualId = response.id;
@@ -124,7 +114,7 @@ export class ManualFormComponent implements OnInit {
         }
     }
 
-    startBlockUI(translatedMessage: string) {
+    private startBlockUI(translatedMessage: string) {
         this.blockUI.start(translatedMessage);
     }
 
@@ -137,45 +127,20 @@ export class ManualFormComponent implements OnInit {
         })
     }
 
-    private checkRequiredFields(): boolean {
+    private checkRequiredFields(form: FormGroup): boolean {
 
-        if (!this.manual.valorVariacaoEstimada || this.manual.valorVariacaoEstimada === undefined) {
-            return false;
-        }
+        Object.keys(form.controls).forEach(field => form.get(field).markAsTouched({ onlySelf: true }) );
 
-        if (!this.manual.valorVariacaoIndicativa || this.manual.valorVariacaoIndicativa === undefined) {
-            return false;
-        }
+        let validArrays = true;
 
-        if (!this.manual.nome || this.manual.nome === undefined) {
-            return false;
-        }
+        validArrays = Object.keys(this.manual).some(propName => {
+            const prop = this.manual[propName];
+            if (prop instanceof Array && !prop.length) {
+                return true;
+            } 
+        });
 
-        if (!this.manual.parametroInclusao || this.manual.parametroInclusao === undefined) {
-            return false;
-        }
-
-        if (!this.manual.parametroAlteracao || this.manual.parametroAlteracao === undefined) {
-            return false;
-        }
-
-        if (!this.manual.parametroExclusao || this.manual.parametroExclusao === undefined) {
-            return false;
-        }
-
-        if (!this.manual.parametroConversao || this.manual.parametroConversao === undefined) {
-            return false;
-        }
-
-        if (this.manual.esforcoFases.length === 0 || this.manual.esforcoFases === undefined) {
-            return false;
-        }
-
-        if (this.manual.fatoresAjuste.length === 0 || this.manual.fatoresAjuste === undefined) {
-            return false;
-        }
-
-        return true;
+        return form.valid && !validArrays;
     }
 
     private addErrorMenssage(message: string) {
@@ -195,10 +160,6 @@ export class ManualFormComponent implements OnInit {
         this.selectedEsforcoFase = null;
     }
 
-    selectFatorAjuste(selectedLine) {
-        console.log(selectedLine);
-    }
-
     editFatorAjuste() {
         this.fatorAjuste = this.selectedFatorAjuste;
         this.isEditFatorAjuste = true;
@@ -214,7 +175,7 @@ export class ManualFormComponent implements OnInit {
     }
 
     deleteEsforcoFase() {
-        this.translateMessage('Cadastros.Manual.Mensagens.msgTemCertezaQueDesejaExcluirEsforcoPorFase', this.confirmeMessageDeleteEsforcoFase);
+        translateMessage.call(this, 'Cadastros.Manual.Mensagens.msgTemCertezaQueDesejaExcluirEsforcoPorFase', this.confirmeMessageDeleteEsforcoFase);
     }
 
     confirmeMessageDeleteEsforcoFase(message: string) {
@@ -229,7 +190,7 @@ export class ManualFormComponent implements OnInit {
     }
 
     deleteFatorAjuste() {
-        this.translateMessage('Cadastros.Manual.Mensagens.msgTemCertezaQueDesejaExcluirFatorAjuste', this.confirmMessageDeleteFatorAjuste);
+        translateMessage.call(this, 'Cadastros.Manual.Mensagens.msgTemCertezaQueDesejaExcluirFatorAjuste', this.confirmMessageDeleteFatorAjuste);
     }
 
     confirmMessageDeleteFatorAjuste(translated: string) {
@@ -260,7 +221,7 @@ export class ManualFormComponent implements OnInit {
             form.reset();
             this.closeDialogEsforcoFase();
         } else {
-            this.translateMessage('Global.Mensagens.FavorPreencherCamposObrigatorios', this.addErrorMenssage)
+            translateMessage.call(this, 'Global.Mensagens.FavorPreencherCamposObrigatorios', this.addErrorMenssage);
         }
     }
 
@@ -270,11 +231,9 @@ export class ManualFormComponent implements OnInit {
 
     getEsforcoEsforcoFasePercentual() {
         let total = 0;
-        if (this.manual.esforcoFases) {
-            this.manual.esforcoFases.forEach(each => {
-                (each.esforco !== undefined) ? (total = total + each.esforcoFormatado) : (total = total);
-            });
-        }
+        this.manual.esforcoFases.forEach(each => {
+            (each.esforco == 0) ? (total = total + each.esforcoFormatado) : (total = total);
+        });
 
         return total + '%';
     }
@@ -294,11 +253,11 @@ export class ManualFormComponent implements OnInit {
         const fatorAjuste = this.fatorAjuste.clone();
         if (this.verificarCamposFatorAjuste(fatorAjuste)) {
             this.manual.persistFatoresAjuste(fatorAjuste);
-            this.translateMessage('Cadastros.Manual.Mensagens.msgDeflatorIncluidoComSucesso', this.addCreateMessage);
+            translateMessage.call(this, 'Cadastros.Manual.Mensagens.msgDeflatorIncluidoComSucesso', this.addCreateMessage);
             form.reset();
             this.closeDialogFatorAjuste();
         } else {
-            this.translateMessage('Global.Mensagens.FavorPreencherCamposObrigatorios', this.addErrorMenssage)
+            translateMessage.call(this, 'Global.Mensagens.FavorPreencherCamposObrigatorios', this.addErrorMenssage);
         }
         this.isEditFatorAjuste = false;
         this.fatorAjuste = new FatorAjuste();
@@ -309,19 +268,11 @@ export class ManualFormComponent implements OnInit {
     }
 
     private verificarCamposFatorAjuste(fatorAjuste: FatorAjuste): boolean {
-        return (fatorAjuste || fatorAjuste.nome || fatorAjuste.tipoAjuste || fatorAjuste.fator) ? true : false;
+        return (fatorAjuste && fatorAjuste.nome && fatorAjuste.tipoAjuste && fatorAjuste.fator) ? true : false;
     }
 
     getFile() {
-        this.uploadService.getFile(this.manual.arquivoManualId).subscribe(response => {
-            this.arquivoManual = response;
-        });
-    }
-
-    getFileInfo() {
-        return this.uploadService.getFile(this.manual.arquivoManualId).subscribe(response => {
-            return response;
-        });
+        this.uploadService.getFile(this.manual.arquivoManualId).subscribe(response => this.arquivoManual = response);
     }
 
     habilitarDeflator(): boolean {
