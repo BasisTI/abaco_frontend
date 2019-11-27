@@ -573,7 +573,7 @@
                         </div>
 
                         <div class="ui-g-3 ui-md-3 ui-sm-12" style="padding-top: 25px">
-                            <label *ngIf="isPercentualEnum(editedAdjustFactor.tipoAjuste)" translate="Cadastros.Manual.Deflator(%)*">Deflator (%) *</label>
+                            <label *ngIf="isPercentualEnum(editedAdjustFactor.tipoAjuste)" translate="Cadastros.Manual.Deflator(%)*">DeflatorTeste(%) *</label>
                             <label *ngIf="isUnitaryEnum(editedAdjustFactor.tipoAjuste)" translate="Cadastros.Manual.Deflator(PF)*">Deflator (PF) *</label>
                             <label *ngIf="editedAdjustFactor.tipoAjuste === undefined" translate="Cadastros.Manual.Deflator*">Deflator *</label>
 
@@ -583,7 +583,9 @@
                                 required
                                 (onFocus)= "this.validaDeflator = false"
                                 id="valor_fator"
-                                maxlength="3"
+                                maxlength="8"
+                                [min]="0"
+                                [max]="9999"
                                 name="fatorEdit"
                                 [disabled]="habilitarDeflator()"
                                 [(ngModel)]="editedAdjustFactor.fatorFormatado">
