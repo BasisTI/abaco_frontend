@@ -40,7 +40,7 @@
     "core-js": "^2.4.1",
     "fullcalendar": "^3.1.0",
     "intl": "^1.2.5",
-    "jquery": "^3.1.1",
+    "jquery": "^3.5.0",
     "lodash": "^4.17.4",
     "moment": "^2.17.1",
     "nanoscroller": "0.8.7",
