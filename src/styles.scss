@@ -1,45 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
-body .ui-messages.ui-messages-error {
-  display: none !important;
-}
-
-body .ui-messages.ui-messages-success {
-  display: none !important;
-}
-
-#chips .ui-chips-input-token {
-  width: 100%;
-}
-
-#chips .ui-chips-input-token input {
-  width: 100%;
-}
-
-span.ui-chips-token-label.ng-star-inserted {
-  word-wrap: break-word;
-  word-break: break-all;
-  white-space: normal;
-}
-
-li.ui-chips-token.ui-state-highlight.ui-corner-all.ng-star-inserted {
-  margin-bottom: 3px;
-  margin-top: 3px;
-  margin-left: 2px;
-  margin-right: 2px;
-}
-
-.abaco-white-btn {
-  background-color: #fff !important;
-  color: #373a3c !important;
-  border: solid;
-  border-width: thin;
-  border-color: #ccc;
-}
-
-.abaco-white-btn:hover{
-  background-color: #f2f2f2 !important;
-  color: #373a3c !important;
-  border: solid;
-  border-width: thin;
-  border-color: #ccc;
-}
+body .ui-widget-overlay {
+    background-color: rgb(88, 87, 92, 0.8)!important;
+    opacity: 1;
+  }

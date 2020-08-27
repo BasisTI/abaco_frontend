@@ -1,35 +1,39 @@
-import { DataTable } from 'primeng/datatable';
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, EventEmitter, Output, ViewChild, Input } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { MessageUtil } from '../util/message.util';
-import { SelectItem } from 'primeng/primeng';
-import { TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs/Rx';
-import { AnaliseService, Analise } from '../analise';
-import { AnaliseSharedDataService, ResponseWrapper, ElasticQuery, PageNotificationService } from '../shared';
-import { Manual } from '../manual';
-import { Organizacao } from '../organizacao';
-import { Contrato } from '../contrato';
-import { Sistema, SistemaService } from '../sistema';
-import { EsforcoFase } from '../esforco-fase';
-import { TipoEquipeService } from '../tipo-equipe';
-import { FatorAjuste } from '../fator-ajuste';
-import { FatorAjusteLabelGenerator } from '../shared/fator-ajuste-label-generator';
+import {ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild, Input} from '@angular/core';
+import {MessageUtil} from '../util/message.util';
+import {SelectItem} from 'primeng/primeng';
+import {Analise, AnaliseService} from '../analise';
+import {Organizacao} from '../organizacao';
+import {Contrato} from '../contrato';
+import {Sistema, SistemaService} from '../sistema';
+import {EsforcoFase} from '../esforco-fase';
+import {TipoEquipeService, TipoEquipe} from '../tipo-equipe';
+import {FatorAjuste} from '../fator-ajuste';
+import {FatorAjusteLabelGenerator} from '../shared/fator-ajuste-label-generator';
 import * as _ from 'lodash';
-import { Modulo } from '../modulo';
-import { FuncaoDadosService } from '../funcao-dados/funcao-dados.service';
+import {Modulo} from '../modulo';
+import {FuncaoDadosService} from '../funcao-dados/funcao-dados.service';
 
-import { Funcionalidade, FuncionalidadeService } from '../funcionalidade';
-import { FuncaoTransacao } from '../funcao-transacao';
-import { CalculadoraTransacao } from '../analise-shared';
-import { FuncaoTransacaoService } from '../funcao-transacao/funcao-transacao.service';
-import { BaselineService } from '../baseline';
+import {Funcionalidade, FuncionalidadeService} from '../funcionalidade';
+import {FuncaoTransacao} from '../funcao-transacao';
+import {CalculadoraTransacao, Calculadora} from '../analise-shared';
+import {FuncaoTransacaoService} from '../funcao-transacao/funcao-transacao.service';
+import {BaselineService} from '../baseline';
+import {Router} from '@angular/router';
+import { Subscription, forkJoin, Observable } from 'rxjs';
+import { DatatableComponent, PageNotificationService } from '@nuvem/primeng-components';
+import { AnaliseSharedDataService } from '../shared/analise-shared-data.service';
+import { BlockUiService } from '@nuvem/angular-base';
+import { FuncaoDados } from '../funcao-dados';
+import { Rlr } from '../rlr/rlr.model';
 
 @Component({
     selector: 'app-pesquisar-ft',
     templateUrl: './pesquisar-ft.component.html',
 })
-export class PesquisarFtComponent implements OnInit, OnDestroy {
+export class PesquisarFtComponent implements OnInit {
+
+    @Input()
+    isFuncaoDados: Boolean = false;
 
     translateSubscriptions: Subscription[] = [];
 
@@ -37,13 +41,15 @@ export class PesquisarFtComponent implements OnInit, OnDestroy {
 
     disableFuncaoTrasacao: boolean;
 
-    query: String = "*";
+    query: String = '*';
 
-    modPesquisa: boolean = true;
+    modPesquisa = true;
 
-    funcPesquisa: boolean = true;
+    funcPesquisa = true;
 
-    deflaPesquisa: boolean = true;
+    deflaPesquisa = true;
+
+    hideShowQuantidade = true;
 
     isEdit: boolean;
 
@@ -55,9 +61,9 @@ export class PesquisarFtComponent implements OnInit, OnDestroy {
 
     organizacoes: Organizacao[];
 
-    @ViewChild(DataTable) datatable: DataTable;
+    @ViewChild(DatatableComponent) datatable: DatatableComponent;
 
-    selections: FuncaoTransacao[] = [];
+    selections: any[] = [];
 
     modulos: Modulo[];
 
@@ -73,7 +79,7 @@ export class PesquisarFtComponent implements OnInit, OnDestroy {
 
     arrayFt: any[] = [];
 
-    fn: Funcionalidade[] = [];
+    fn: any[] = [];
 
     analises: Analise[];
 
@@ -87,9 +93,11 @@ export class PesquisarFtComponent implements OnInit, OnDestroy {
 
     fatoresAjuste: SelectItem[] = [];
 
-    equipeResponsavel: SelectItem[] = [];
+    equipeResponsavel: TipoEquipe[] = [];
 
     novoDeflator: FatorAjuste;
+
+    quantidadeINM = 1;
 
     moduloSelecionado: Modulo;
 
@@ -99,10 +107,12 @@ export class PesquisarFtComponent implements OnInit, OnDestroy {
 
     basilineAnaliticosList: any;
 
-    deflaPadrao: SelectItem = { label: "Não Alterar", value: "original-bAsis" };
+    erroUnitario = false;
+
+    deflaPadrao: SelectItem = {label: 'Não Alterar', value: 'original-bAsis'};
+
 
     constructor(
-        private translate: TranslateService,
         private analiseService: AnaliseService,
         private analiseSharedDataService: AnaliseSharedDataService,
         private sistemaService: SistemaService,
@@ -112,9 +122,11 @@ export class PesquisarFtComponent implements OnInit, OnDestroy {
         private funcionalidadeService: FuncionalidadeService,
         private pageNotificationService: PageNotificationService,
         private funcaoTransacaoService: FuncaoTransacaoService,
-        private baselineFT: BaselineService
-
-    ) { }
+        private baselineFT: BaselineService,
+        private router: Router,
+        private blockUiService: BlockUiService,
+    ) {
+    }
 
     ngOnInit() {
         this.inicializaValoresAposCarregamento();
@@ -122,46 +134,21 @@ export class PesquisarFtComponent implements OnInit, OnDestroy {
         this.estadoInicial();
     }
 
-    ngOnDestroy() {
-        this.translateSubscriptions.pop().unsubscribe();
-    }
-
     tiposAnalise: SelectItem[] = [
-        { label: MessageUtil.PROJETO_DESENVOLVIMENTO, value: MessageUtil.DESENVOLVIMENTO },
-        { label: MessageUtil.PROJETO_MELHORIA, value: MessageUtil.MELHORIA },
-        { label: MessageUtil.CONTAGEM_APLICACAO, value: MessageUtil.APLICACAO }
+        {label: MessageUtil.PROJETO_DESENVOLVIMENTO, value: MessageUtil.DESENVOLVIMENTO},
+        {label: MessageUtil.PROJETO_MELHORIA, value: MessageUtil.MELHORIA},
+        {label: MessageUtil.CONTAGEM_APLICACAO, value: MessageUtil.APLICACAO}
     ];
 
 
     estadoInicial() {
-        this.datatable.editable = true;
-        this.datatable.paginator = false;
+        // this.datatable.editable = true;
+        // this.datatable.paginator = false;
 
     }
 
     getLabel(label) {
-        let str: any;
-        this.translateSubscriptions.push(this.translate.get(label).subscribe((res: string) => {
-            str = res;
-        }));
-        return str;
-    }
-
-    getTodasAnalisesBaseline() {
-        // TODO REMOVER REQUEST
-        this.analiseService.findAllBaseline().subscribe(dado => {
-            this.analises = this.analiseService.convertJsonToAnalise(dado);
-            this.getBaselineAnalitico();
-        }
-        );
-
-    }
-
-    getBaselineAnalitico(){
-        this.baselineFT.baselineAnaliticoFT(this.analise.sistema.id).subscribe(dado =>{
-            this.basilineAnaliticosList = dado.json;
-            this.getFuncoesTransacoes();
-        });
+        return label;
     }
 
     updateImpacto(impacto: string) {
@@ -174,7 +161,8 @@ export class PesquisarFtComponent implements OnInit, OnDestroy {
                 return this.getLabel('Cadastros.FuncaoTransacao.Exclusao');
             case 'CONVERSAO':
                 return this.getLabel('Cadastros.FuncaoTransacao.Conversao');
-            default: return this.getLabel('Global.Mensagens.Nenhum');
+            default:
+                return this.getLabel('Global.Mensagens.Nenhum');
         }
     }
 
@@ -187,7 +175,7 @@ export class PesquisarFtComponent implements OnInit, OnDestroy {
         this.fn = [];
         this.funcaoTransacao = [];
 
-        if(this.analises != undefined){
+        if (this.analises !== undefined) {
             this.analises.forEach(a => {
                 if (a.sistema.id === this.analise.sistema.id) {
                     a.funcaoTransacaos.forEach(b => {
@@ -195,21 +183,20 @@ export class PesquisarFtComponent implements OnInit, OnDestroy {
                     });
                 }
             });
-        };
-       
-        if(this.basilineAnaliticosList != undefined){
+        }
+
+        if (this.basilineAnaliticosList !== undefined) {
             this.basilineAnaliticosList.forEach(basilineAnalitico => {
                 this.funcaoTransacaoFuncionalidade.forEach(funcaoTransacao => {
-                    if(basilineAnalitico.idfuncaodados == funcaoTransacao.id){
+                    if (basilineAnalitico.idfuncaodados === funcaoTransacao.id) {
                         this.funcaoTransacao.push(funcaoTransacao);
                     }
                 });
             });
-        };
-       
+        }
+
         this.fn = this.funcaoTransacao;
     }
-
 
 
     getFuncoesTransacoesPorMod(nome: String) {
@@ -227,11 +214,11 @@ export class PesquisarFtComponent implements OnInit, OnDestroy {
 
         this.basilineAnaliticosList.forEach(ft => {
             this.funcaoTransacaoFuncionalidade.forEach(f => {
-                if(ft.idfuncaodados == f.id && ft.nomeModulo == nome){
+                if (ft.idfuncaodados === f.id && ft.nomeModulo === nome) {
                     this.funcaoTransacao.push(f);
                 }
-            })
-        })
+            });
+        });
         this.fn = this.funcaoTransacao;
     }
 
@@ -251,45 +238,46 @@ export class PesquisarFtComponent implements OnInit, OnDestroy {
 
         this.basilineAnaliticosList.forEach(ft => {
             this.funcaoTransacaoFuncionalidade.forEach(f => {
-                if(ft.idfuncaodados == f.id && ft.nomeModulo == nome && ft.nomeFuncionalidade == nomeF){
+                if (ft.idfuncaodados === f.id && ft.nomeModulo === nome && ft.nomeFuncionalidade === nomeF) {
                     this.funcaoTransacao.push(f);
                 }
-            })
-        })
+            });
+        });
 
         this.fn = this.funcaoTransacao;
 
     }
 
     private inicializaValoresAposCarregamento() {
-        this.setSistamaOrganizacao(this.analise.organizacao);
-        this.carregaFatorAjusteNaEdicao();
-        this.subscribeFuncionalideBaseline();
+        if (this.analise && this.analise.organizacao) {
+            this.setSistamaOrganizacao(this.analise.organizacao);
+            this.carregaFatorAjusteNaEdicao();
+            this.subscribeFuncionalideBaseline();
+        }
     }
 
     setSistamaOrganizacao(org: Organizacao) {
-        this.contratos = org.contracts;
-        this.sistemaService.findAllSystemOrg(org.id).subscribe((res: ResponseWrapper) => {
-            this.sistemas = res.json;
+        this.sistemaService.findAllSystemOrg(org.id).subscribe((res) => {
+            this.sistemas = res;
+            this.contratos = org.contracts;
+            this.setEquipeOrganizacao(org);
         });
-        this.setEquipeOrganizacao(org);
     }
 
     setEquipeOrganizacao(org: Organizacao) {
-        this.contratos = org.contracts;
-        this.equipeService.findAllByOrganizacaoId(org.id).subscribe((res: ResponseWrapper) => {
-            this.equipeResponsavel = res.json;
+        this.equipeService.findAllByOrganizacaoId(org.id).subscribe((res) => {
+            this.equipeResponsavel = res;
+            this.contratos = org.contracts;
         });
     }
 
     private carregaFatorAjusteNaEdicao() {
         const fatorAjuste: FatorAjuste = this.analise.fatorAjuste;
         if (fatorAjuste) {
-            const fatorAjusteSelectItem: SelectItem["value"]
-                = _.find(this.fatoresAjuste, { value: { id: fatorAjuste.id } });
+            const fatorAjusteSelectItem: SelectItem['value']
+                = _.find(this.fatoresAjuste, {value: {id: fatorAjuste.id}});
             this.analise.fatorAjuste = fatorAjusteSelectItem;
         }
-        this.fatoresAjuste.unshift(this.deflaPadrao);
     }
 
     private inicializaFatoresAjuste() {
@@ -297,11 +285,9 @@ export class PesquisarFtComponent implements OnInit, OnDestroy {
         this.fatoresAjuste =
             faS.map(fa => {
                 const label = FatorAjusteLabelGenerator.generate(fa);
-                return { label: label, value: fa };
+                return {label: label, value: fa};
             });
         this.carregarModulosQuandoTiverSistemaDisponivel();
-        this.getTodasAnalisesBaseline();
-
     }
 
     private carregarModulosQuandoTiverSistemaDisponivel() {
@@ -327,18 +313,19 @@ export class PesquisarFtComponent implements OnInit, OnDestroy {
     }
 
     private selecionarModuloBaseline(moduloId: number, funcionalideId: number) {
-        this.moduloSelecionado = _.find(this.modulos, { 'id': moduloId });
-        this.funcionalidadeSelecionada = _.find(this.funcionalidades, { 'id': funcionalideId });
+        this.moduloSelecionado = _.find(this.modulos, {'id': moduloId});
+        this.funcionalidadeSelecionada = _.find(this.funcionalidades, {'id': funcionalideId});
     }
 
     moduloSelected(modulo: Modulo) {
         this.moduloSelecionado = modulo;
         this.deselecionaFuncionalidadeSeModuloSelecionadoForDiferente();
 
-        if (modulo != undefined && modulo != null) {
+        if (modulo !== undefined && modulo !== null) {
             const moduloId = modulo.id;
             this.funcionalidadeService.findFuncionalidadesDropdownByModulo(moduloId).subscribe((funcionalidades: Funcionalidade[]) => {
                 this.funcionalidades = funcionalidades;
+                this.funcionalidadeAtual = null;
             });
         }
     }
@@ -346,10 +333,11 @@ export class PesquisarFtComponent implements OnInit, OnDestroy {
     funcionalidadeSelected(funcionalidade: Funcionalidade) {
         this.funcionalidadeAtual = funcionalidade;
     }
+
     private deselecionaFuncionalidadeSeModuloSelecionadoForDiferente() {
-        if (this.moduloSelecionado != undefined) {
+        if (this.moduloSelecionado !== undefined) {
             if (this.moduloSelecionado.id !== this.oldModuloSelectedId) {
-                this.funcionalidadeSelecionada = undefined;
+                this.funcionalidadeSelecionada = null;
             }
         }
 
@@ -357,12 +345,12 @@ export class PesquisarFtComponent implements OnInit, OnDestroy {
 
 
     performSearch() {
-        if (this.moduloSelecionado == undefined) {
+        if (this.moduloSelecionado === undefined) {
             this.modPesquisa = false;
         } else {
             this.modPesquisa = true;
         }
-        if (this.funcionalidadeAtual == undefined) {
+        if (this.funcionalidadeAtual === undefined) {
             this.funcPesquisa = false;
         } else {
             this.funcPesquisa = true;
@@ -370,36 +358,149 @@ export class PesquisarFtComponent implements OnInit, OnDestroy {
         this.recarregarDataTable();
     }
 
-    montarFuncoesTransacao() {
-        if (this.novoDeflator === undefined) {
-            this.deflaPesquisa = false;
+    montarFuncoes() {
+        if (!(this.isFuncaoDados)) {
+            const getFuncaoTransacoes: Observable<FuncaoTransacao>[] = [];
+            const saveFuncaoTransacoes: Observable<FuncaoTransacao>[] = [];
+            if (!(this.novoDeflator)) {
+                this.deflaPesquisa = false;
+            } else if (this.novoDeflator.tipoAjuste === 'UNITARIO' && this.quantidadeINM <= 0 ) {
+                this.erroUnitario = true;
+            } else {
+                this.erroUnitario = false;
+                this.deflaPesquisa = true;
+                this.selections.forEach(ft => {
+                    this.blockUiService.show();
+                    getFuncaoTransacoes.push(this.funcaoTransacaoService.getById(ft.idfuncaodados));
+                });
+                forkJoin(getFuncaoTransacoes).subscribe(result => {
+                    result.forEach(funcaoTransacaoResp => {
+                        funcaoTransacaoResp['id'] = undefined;
+                        funcaoTransacaoResp.ders.forEach(vd => {
+                            vd.id = undefined;
+                        });
+                        funcaoTransacaoResp.alrs.forEach(vd => {
+                            vd.id = undefined;
+                        });
+                        if (this.novoDeflator != null) {
+                            funcaoTransacaoResp.fatorAjuste = this.novoDeflator;
+                            if (this.novoDeflator.tipoAjuste === 'UNITARIO') {
+                                funcaoTransacaoResp.quantidade = this.quantidadeINM;
+                            }
+                            funcaoTransacaoResp = new FuncaoTransacao().copyFromJSON(funcaoTransacaoResp);
+                            funcaoTransacaoResp = CalculadoraTransacao.calcular(
+                                this.analise.metodoContagem,
+                                funcaoTransacaoResp,
+                                this.analise.manual);
+                        }
+                        this.validaCamposObrigatorios();
+                        if (this.verificarCamposObrigatorios()) {
+                            this.blockUiService.show();
+                            saveFuncaoTransacoes.push(this.funcaoTransacaoService.create(funcaoTransacaoResp, this.analise.id));
+                        }
+                    });
+                forkJoin(saveFuncaoTransacoes).subscribe(
+                        response => {
+                            response.forEach(() => {
+                                this.pageNotificationService.addSuccessMessage(
+                                    this.isEdit ? this.getLabel('Informe o campo Identificador da Analise para continuar') :
+                                        this.getLabel('Dados alterados com sucesso!'));
+                                this.diasGarantia = this.analise.contrato.diasDeGarantia;
+                            });
+                        this.analiseService.updateSomaPf(this.analise.id).subscribe();
+                        this.blockUiService.hide();
+                        this.retornarParaTelaDeFT();
+                    });
+
+                });
+            }
         } else {
-            this.deflaPesquisa = true;
-            this.selections.forEach(ft => {
-                let value: FuncaoTransacao = _.cloneDeep(ft);
-                value.id = undefined;
-                value.ders.forEach(vd => {
-                    vd.id = undefined;
+            const getFuncaoDados: Observable<FuncaoDados>[] = [];
+            const saveFuncaoDados: Observable<FuncaoDados>[] = [];
+            if (!(this.novoDeflator)) {
+                this.deflaPesquisa = false;
+            } else if (this.novoDeflator.tipoAjuste === 'UNITARIO' && this.quantidadeINM <= 0 ) {
+                this.erroUnitario = true;
+            } else {
+                this.erroUnitario = false;
+                this.deflaPesquisa = true;
+                this.selections.forEach(ft => {
+                    this.blockUiService.show();
+                    getFuncaoDados.push(this.funcaoDadosService.getById(ft.idfuncaodados));
                 });
-                value.alrs.forEach(vd => {
-                    vd.id = undefined;
+                forkJoin(getFuncaoDados).subscribe(result => {
+                    result.forEach(funcaoDadosResp => {
+                        funcaoDadosResp['id'] = undefined;
+                        funcaoDadosResp.ders.forEach(der => {
+                            der.id = undefined;
+                        });
+                        funcaoDadosResp.rlrs.forEach(rlr => {
+                            rlr.id = undefined;
+                        });
+                        if (this.novoDeflator != null) {
+                            funcaoDadosResp.fatorAjuste = this.novoDeflator;
+                            if (this.novoDeflator.tipoAjuste === 'UNITARIO') {
+                                funcaoDadosResp.quantidade = this.quantidadeINM;
+                            }
+                            funcaoDadosResp = new FuncaoDados().copyFromJSON(funcaoDadosResp);
+                            funcaoDadosResp = Calculadora.calcular(
+                                this.analise.metodoContagem,
+                                funcaoDadosResp,
+                                this.analise.manual);
+                        }
+                        this.validaCamposObrigatorios();
+                        if (this.verificarCamposObrigatorios()) {
+                            this.blockUiService.show();
+                            saveFuncaoDados.push(this.funcaoDadosService.create(funcaoDadosResp, this.analise.id));
+                        }
+                    });
+                forkJoin(saveFuncaoDados).subscribe(
+                        response => {
+                            response.forEach(() => {
+                                this.pageNotificationService.addSuccessMessage(
+                                    this.isEdit ? this.getLabel('Informe o campo Identificador da Analise para continuar') :
+                                        this.getLabel('Dados alterados com sucesso!'));
+                                this.diasGarantia = this.analise.contrato.diasDeGarantia;
+                            });
+                        this.analiseService.updateSomaPf(this.analise.id).subscribe();
+                        this.blockUiService.hide();
+                    });
+
                 });
-                if (this.novoDeflator != null) {
-                    value.fatorAjuste = this.novoDeflator;
-                    value = CalculadoraTransacao.calcular(this.analise.metodoContagem, value, this.analise.manual)
-                }
-                this.validarFT(value);
-            });
+            }
         }
     }
 
     public recarregarDataTable() {
-        if ( (this.moduloSelecionado != null) && (this.funcionalidadeAtual == null) ) {
-            this.getFuncoesTransacoesPorMod(this.moduloSelecionado.nome);
-        } else if (this.moduloSelecionado != undefined && this.funcionalidadeAtual != undefined) {
-            this.getFuncoesTransacoesPorModEFunc(this.moduloSelecionado.nome, this.funcionalidadeAtual.nome);
+        if (this.isFuncaoDados) {
+            if ((this.moduloSelecionado !== null) && (this.funcionalidadeAtual === null)) {
+                this.funcaoDadosService.getFuncaoDadosByModuloOrFuncionalidade(this.moduloSelecionado.id).subscribe(value => {
+                    this.fn = value;
+                });
+            } else if (this.moduloSelecionado !== undefined && this.funcionalidadeAtual !== undefined) {
+                this.funcaoDadosService.getFuncaoDadosByModuloOrFuncionalidade(this.moduloSelecionado.id, this.funcionalidadeAtual.id)
+                .subscribe(value => {
+                    this.fn = value;
+                });
+            } else {
+                this.getFuncoesTransacoes();
+            }
+
+
         } else {
-            this.getFuncoesTransacoes();
+
+            if ((this.moduloSelecionado !== null) && (this.funcionalidadeAtual === null)) {
+                this.funcaoTransacaoService.getFuncaoTransacaoByModuloOrFuncionalidade(this.moduloSelecionado.id).subscribe(value => {
+                    this.fn = value;
+                });
+            } else if (this.moduloSelecionado !== undefined && this.funcionalidadeAtual !== undefined) {
+                this.funcaoTransacaoService.getFuncaoTransacaoByModuloOrFuncionalidade(this.moduloSelecionado.id, this.funcionalidadeAtual.id)
+                .subscribe(value => {
+                    this.fn = value;
+                });
+            } else {
+                this.getFuncoesTransacoes();
+            }
         }
     }
 
@@ -408,11 +509,13 @@ export class PesquisarFtComponent implements OnInit, OnDestroy {
         this.getFuncoesTransacoes();
     }
 
-    save() {
+    save(funcao: FuncaoTransacao) {
         this.validaCamposObrigatorios();
         if (this.verificarCamposObrigatorios()) {
-            this.analiseService.update(this.analise).subscribe(() => {
-                this.pageNotificationService.addSuccessMsg(this.isEdit ? this.getLabel('Analise.Analise.Mensagens.msgRegistroSalvoSucesso') : this.getLabel('Analise.Analise.Mensagens.msgDadosAlteradosSucesso'));
+            this.funcaoTransacaoService.create(funcao, this.analise.id).subscribe(() => {
+                this.pageNotificationService.addSuccessMessage(
+                    this.isEdit ? this.getLabel('msgRegistroSalvoSucesso') :
+                        this.getLabel('msgDadosAlteradosSucesso'));
                 this.diasGarantia = this.analise.contrato.diasDeGarantia;
             });
         }
@@ -443,27 +546,27 @@ export class PesquisarFtComponent implements OnInit, OnDestroy {
         let isValid = true;
 
         if (!this.analise.identificadorAnalise) {
-            this.pageNotificationService.addInfoMsg(this.getLabel('Analise.Analise.Mensagens.msgINFORME_IDENTIFICADOR'));
+            this.pageNotificationService.addInfoMessage(this.getLabel('Informe o campo Identificador da Analise para continuar'));
             isValid = false;
             return isValid;
         }
         if (!this.analise.contrato) {
-            this.pageNotificationService.addInfoMsg(this.getLabel('Analise.Analise.Mensagens.msgSELECIONE_CONTRATO_CONTINUAR'));
+            this.pageNotificationService.addInfoMessage(this.getLabel('Informe o Contrato para continuar'));
             isValid = false;
             return isValid;
         }
         if (!this.analise.dataCriacaoOrdemServico) {
-            this.pageNotificationService.addInfoMsg(this.getLabel('Analise.Analise.Mensagens.msgINFORME_DATA_ORDEM_SERVICO'));
+            this.pageNotificationService.addInfoMessage(this.getLabel('Informe a data de criação da ordem de serviço para continuar'));
             isValid = false;
             return isValid;
         }
         if (!this.analise.metodoContagem) {
-            this.pageNotificationService.addInfoMsg(this.getLabel('Analise.Analise.Mensagens.msgINFORME_METODO_CONTAGEM'));
+            this.pageNotificationService.addInfoMessage(this.getLabel('Informe o Método de Contagem para continuar'));
             isValid = false;
             return isValid;
         }
         if (!this.analise.tipoAnalise) {
-            this.pageNotificationService.addInfoMsg(this.getLabel('Analise.Analise.Mensagens.msgINFORME_TIPO_CONTAGEM'));
+            this.pageNotificationService.addInfoMessage(this.getLabel('Informe o Tipo de Contagem para continuar'));
             isValid = false;
             return isValid;
         }
@@ -481,12 +584,17 @@ export class PesquisarFtComponent implements OnInit, OnDestroy {
         return isContratoSelected;
     }
 
-    mudarDeflator(event) {
-        if (event == 'original-bAsis') {
-            this.novoDeflator = null;
+    mudarDeflator(event: FatorAjuste) {
+        this.novoDeflator = event;
+        if (event.tipoAjuste === 'UNITARIO') {
+            this.hideShowQuantidade = false;
         } else {
-            this.novoDeflator = event;
+            this.hideShowQuantidade = true;
         }
+    }
+
+    alterarQuatindade(event) {
+       this.quantidadeINM = event;
     }
 
     calcularComNovoDeflator(funcao: FuncaoTransacao) {
@@ -495,10 +603,8 @@ export class PesquisarFtComponent implements OnInit, OnDestroy {
             this.analise.contrato.manual);
     }
 
-    retornarParaTelaDeFT(modDropDown, funcDropDown, deflaDropDown) {
-        this.limparModAndFunc(modDropDown, funcDropDown, deflaDropDown)
-        this.funcaoTransacaoService.display.next(false);
-        this.getFuncoesTransacoes();
+    retornarParaTelaDeFT() {
+        location.reload();
     }
 
     limparModAndFunc(modDropDown, funcDropDown, deflaDropDown) {
@@ -513,9 +619,9 @@ export class PesquisarFtComponent implements OnInit, OnDestroy {
     }
 
     validarFT(funcao: FuncaoTransacao) {
-        this.pageNotificationService.addCreateMsgWithName(funcao.name);
+        this.pageNotificationService.addCreateMsg(funcao.name);
         this.analise.addFuncaoTransacao(funcao);
         this.estadoInicial();
-        this.save();
+        this.save(funcao);
     }
 }

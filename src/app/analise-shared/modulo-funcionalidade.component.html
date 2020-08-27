@@ -11,15 +11,15 @@
                         [filter]="true"
                         optionLabel="nome"
                         name="modulo"
-                        [placeholder]="this.getLabel('Analise.Analise.Selecione')"
+                        [placeholder]="this.getLabel('Selecione')"
                         [options]="modulos"
                         [(ngModel)]="moduloSelecionado"
                         (onChange)="moduloSelected($event.value)"
-                        [autoWidth]="false">
+                        >
                 </p-dropdown>
                 <span class="md-inputfield">
                     <div *ngIf="erroModulo"
-                    class="ui-message ui-messages-error" translate="Global.Mensagens.CampoObrigatorio">
+                    class="ui-message ui-messages-error">
                         Campo Obrigatório.
                     </div>
                 </span>
@@ -48,11 +48,11 @@
                         (onChange)="funcionalidadeSelected($event.value)"
                         [placeholder]="funcionalidadeDropdownPlaceholder()"
                         [disabled]="!isModuloSelected()"
-                        [autoWidth]="false">
+                        >
                 </p-dropdown>
                 <span class="md-inputfield">
                     <div *ngIf="erroModulo"
-                    class="ui-message ui-messages-error" translate="Global.Mensagens.CampoObrigatorio">
+                    class="ui-message ui-messages-error">
                         Campo Obrigatório.
                     </div>
                 </span>
@@ -73,7 +73,7 @@
             [header]="this.getLabel('Cadastros.FuncaoDados.Modulo')"
             [(visible)]="mostrarDialogModulo"
             [contentStyle]="{'overflow':'visible'}"
-            [width]="800">
+           >
 
         <div class="ui-g">
             <div class="ui-g-12" style="margin-bottom: 05px">
@@ -84,7 +84,7 @@
                   [(ngModel)]="novoModulo.nome"
                   pInputText
                   (keydown.enter)="adicionarModulo()"/>
-         <label translate="Analise.Analise.Nome*">Nome *</label>
+         <label>Nome *</label>
         </span>
             </div>
         </div>
@@ -92,14 +92,14 @@
         <div class="ui-g ui-md-12" style="justify-content: flex-end">
             <div class="ui-g-2">
                 <app-white-button
-                        [buttonLabel]="this.getLabel('Global.Botoes.Cancelar')"
+                        [buttonLabel]="this.getLabel('Cancelar')"
                         (click)="fecharDialogModulo()">
                 </app-white-button>
             </div>
 
             <div class="ui-g-2">
                 <app-green-button
-                        [buttonLabel]="this.getLabel('Global.Botoes.Salvar')"
+                        [buttonLabel]="this.getLabel('Salvar')"
                         (click)="adicionarModulo()">
                 </app-green-button>
             </div>
@@ -112,11 +112,11 @@
             [header]="this.getLabel('Analise.Analise.Funcionalidade')"
             [(visible)]="mostrarDialogFuncionalidade"
             [contentStyle]="{'overflow':'visible'}"
-            [width]="800">
+           >
 
         <div class="ui-g">
             <div class="ui-g-12" style="margin-bottom: 05px">
-                <span>{{this.getLabel('Cadastros.FuncaoDados.Modulo')}} {{ moduloName() }}</span>
+                <span>{{ moduloName() }}</span>
             </div>
             <div class="ui-g-12" style="margin-bottom: 05px">
         <span class="md-inputfield">
@@ -132,10 +132,10 @@
 
         <div class="ui-g ui-md-12" style="justify-content: flex-end">
             <div class="ui-g-2">
-                <app-white-button [buttonLabel]="this.getLabel('Global.Botoes.Cancelar')" (click)="fecharDialogFuncionalidade()"></app-white-button>
+                <app-white-button [buttonLabel]="this.getLabel('Cancelar')" (click)="fecharDialogFuncionalidade()"></app-white-button>
             </div>
             <div class="ui-g-2">
-                <app-green-button [buttonLabel]="this.getLabel('Global.Botoes.Salvar')" (click)="adicionarFuncionalidade()"></app-green-button>
+                <app-green-button [buttonLabel]="this.getLabel('Salvar')" (click)="adicionarFuncionalidade()"></app-green-button>
             </div>
         </div>
     </p-dialog>

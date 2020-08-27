@@ -1,14 +1,14 @@
-import { BaseEntity, JSONable } from '../shared';
-import { FatorAjuste, ImpactoFatorAjuste } from '../fator-ajuste/index';
-import { Funcionalidade } from '../funcionalidade/index';
-import { Complexidade } from '../analise-shared/complexidade-enum';
-import { DerTextParser, ParseResult } from '../analise-shared/der-text/der-text-parser';
-import { FuncaoAnalise } from '../analise-shared/funcao-analise';
-import { Der } from '../der/der.model';
-import { DerChipConverter } from '../analise-shared/der-chips/der-chip-converter';
-import { Alr } from '../alr/alr.model';
-import { Impacto } from '../analise-shared/impacto-enum';
-import { FuncaoResumivel } from '../analise-shared';
+import {BaseEntity} from '../shared';
+import {FatorAjuste} from '../fator-ajuste/index';
+import {Funcionalidade} from '../funcionalidade/index';
+import {Complexidade} from '../analise-shared/complexidade-enum';
+import {DerTextParser, ParseResult} from '../analise-shared/der-text/der-text-parser';
+import {FuncaoAnalise} from '../analise-shared/funcao-analise';
+import {Der} from '../der/der.model';
+import {DerChipConverter} from '../analise-shared/der-chips/der-chip-converter';
+import {Alr} from '../alr/alr.model';
+import {Impacto} from '../analise-shared/impacto-enum';
+import {FuncaoResumivel} from '../analise-shared';
 
 export enum TipoFuncaoTransacao {
   'EE' = 'EE',
@@ -24,7 +24,7 @@ export class Editor {
     ) { }
 }
 
-export class FuncaoTransacao implements FuncaoResumivel, BaseEntity, FuncaoAnalise, JSONable<FuncaoTransacao> {
+export class FuncaoTransacao implements FuncaoResumivel, BaseEntity, FuncaoAnalise {
 
   detStr: string;
   ftrStr: string;
@@ -85,7 +85,7 @@ export class FuncaoTransacao implements FuncaoResumivel, BaseEntity, FuncaoAnali
     return copy;
   }
 
-  comprar(funcaoTransacao: FuncaoTransacao): boolean {
+  comparar(funcaoTransacao: FuncaoTransacao): boolean {
     return funcaoTransacao.name === this.name &&
     funcaoTransacao.funcionalidade.id === this.funcionalidade.id &&
     funcaoTransacao.funcionalidade.modulo.id === this.funcionalidade.modulo.id;
@@ -196,9 +196,11 @@ class FuncaoTransacaoCopyFromJSON {
   }
 
   private converteDers() {
-    this._funcaoTransacao.ders = this._json.ders.map(
-      der => new Der().copyFromJSON(der)
-    );
+    if (this._json.ders) {
+      this._funcaoTransacao.ders = this._json.ders.map(
+          der => new Der().copyFromJSON(der)
+      );
+    }
   }
 
   private converteAlrs() {

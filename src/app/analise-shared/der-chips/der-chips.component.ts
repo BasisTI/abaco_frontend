@@ -1,26 +1,9 @@
-import {
-    Component,
-    Input,
-    Output,
-    EventEmitter,
-    OnChanges,
-    SimpleChanges
-} from '@angular/core';
-
-import {DerChipItem} from './der-chip-item';
-import {DerChipConverter} from './der-chip-converter';
-
-import {DerTextParser, ParseResult} from '../der-text/der-text-parser';
-
-import {
-    DuplicatesResult,
-    StringArrayDuplicatesFinder
-} from '../string-array-duplicates-finder';
-import {Der} from '../../der/der.model';
-import { element } from 'protractor';
-import { PageNotificationService } from '../../shared/';
-import { FuncaoTransacao } from '../../funcao-transacao';
-import { TranslateService } from '@ngx-translate/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { DerChipItem } from './der-chip-item';
+import { DerTextParser, ParseResult } from '../der-text/der-text-parser';
+import { DuplicatesResult, StringArrayDuplicatesFinder } from '../string-array-duplicates-finder';
+import { Der } from '../../der/der.model';
+import { FuncaoTransacao } from 'src/app/funcao-transacao';
 
 
 @Component({
@@ -48,22 +31,17 @@ export class DerChipsComponent implements OnChanges {
     validaMultiplos = false;
     validaMultiplosRegistrados = false;
     funcaoTransacao: FuncaoTransacao;
-    tamanhoChip: boolean = false;
+    tamanhoChip = false;
 
     mostrarDialogEdicao = false;
     textoEdicao = '';
     indexChipEmEdicao: number;
 
     constructor(
-        private translate: TranslateService
     ){}
     
     getLabel(label) {
-        let str: any;
-        this.translate.get(label).subscribe((res: string) => {
-            str = res;
-        }).unsubscribe();
-        return str;
+        return label;
     }
 
     ngOnChanges(changes: SimpleChanges) {
@@ -77,22 +55,16 @@ export class DerChipsComponent implements OnChanges {
     }
 
     private addItem(derChipItem: DerChipItem) {
-
         if (this.values !== undefined && this.values.length <= 255) {
             const valores: string[] = this.values.map(chipItem => chipItem.text);
             if (valores.indexOf(derChipItem.text) === -1 && derChipItem.text.length <= 50) {
                 this.values.push(derChipItem);
-                this.valuesChanged();
+                this.valuesChange.emit(this.values);;
                 this.tamanhoChip = false;
-            }else{
+            }else {
                 this.tamanhoChip = true;
             }
         }
-    }
-
-    private valuesChanged() {
-        // this.recalculaDuplicatas();
-        this.valuesChange.emit(this.values);
     }
 
     private recalculaDuplicatas() {
@@ -101,7 +73,7 @@ export class DerChipsComponent implements OnChanges {
     }
 
     onRemove(value: string) {
-        this.valuesChanged();
+        this.valuesChange.emit(this.values);
     }
 
     showTotal(): string {
@@ -134,7 +106,7 @@ export class DerChipsComponent implements OnChanges {
          if (this.verificaMultiplosDuplicados(this.addMultiplosTexto)) {
              if (this.verificaMultiplosCadastrados(this.addMultiplosTexto)) {
                 this.values = this.values.concat(this.converteMultiplos());
-                this.valuesChanged();
+                 this.valuesChange.emit(this.values);
                 this.fecharDialogAddMultiplos();
                 this.validaMultiplos = false;
                 this.validaMultiplosRegistrados = false;

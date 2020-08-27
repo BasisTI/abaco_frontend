@@ -1,29 +1,21 @@
-import { DerService } from './../../../der/der.service';
-import { FuncaoDadosService } from './../../../funcao-dados/funcao-dados.service';
-import { TranslateService } from '@ngx-translate/core';
-import {
-    Component,
-    Input,
-    Output,
-    EventEmitter,
-    OnInit,
-    OnDestroy,
-} from '@angular/core';
+import {DerService} from './../../../der/der.service';
+import {Component, EventEmitter, OnDestroy, OnInit, Output,} from '@angular/core';
 
 import {AnaliseSharedDataService} from '../../../shared/analise-shared-data.service';
-import {Analise} from '../../../analise/analise.model';
-import { AnaliseService } from './../../../analise/analise.service';
-import {FuncaoDados} from '../../../funcao-dados/funcao-dados.model';
+import {AnaliseService} from './../../../analise/analise.service';
 import {Der} from '../../../der/der.model';
-import {Subscription} from 'rxjs/Subscription';
 import {ResponseWrapper} from '../../../shared';
-import {BaselineService} from '../../../baseline';
+import { Subscription } from 'rxjs';
+import { BaselineService } from 'src/app/baseline';
+import { FuncaoDados } from 'src/app/funcao-dados';
+import { FuncaoDadosService } from 'src/app/funcao-dados/funcao-dados.service';
 
 @Component({
     selector: 'app-analise-referenciador-ar',
     templateUrl: './referenciador-ar.component.html'
 })
 export class ReferenciadorArComponent implements OnInit, OnDestroy {
+
 
     @Output()
     dersReferenciadosEvent: EventEmitter<Der[]> = new EventEmitter<Der[]>();
@@ -56,52 +48,38 @@ export class ReferenciadorArComponent implements OnInit, OnDestroy {
         private analiseSharedDataService: AnaliseSharedDataService,
         private analiseService: AnaliseService,
         private baselineService: BaselineService,
-        private translate: TranslateService,
         private funcaoDadosService: FuncaoDadosService,
         private derService: DerService
     ) {
     }
 
     getLabel(label) {
-        let str: any;
-        this.translate.get(label).subscribe((res: string) => {
-            str = res;
-        }).unsubscribe();
-        return str;
+        return label;
     }
 
     ngOnInit() {
-        // TODO quais eventos observar?
-        // precisa de um evento de funcaoDados adicionada  
-        this.subscribeAnaliseCarregada();     
     }
 
     private getFuncoesDados() {
-        if (this.funcoesDados.length > 0) {
-            return;
-        }
-        this.funcaoDadosService.dropDown().subscribe(res => {
-            this.funcoesDados = this.funcoesDados.concat(res.map((item: any) => {
-                let fd = new FuncaoDados();
+        this.funcoesDados = [];
+        this.funcaoDadosService.dropDownPEAnalitico(this.analiseSharedDataService.analise.sistema.id).subscribe(res => {
+            this.funcoesDados = this.funcoesDados.concat(res.map((item) => {
+                const fd = new FuncaoDados();
                 fd.id = item.id;
-                fd.name = item.nome;
+                fd.name = item.name;
                 return fd;
             }));
         });
     }
 
     private subscribeAnaliseCarregada() {
-        
         this.subscriptionAnaliseCarregada = this.analiseSharedDataService.getLoadSubject().subscribe(() => {
-            
             this.funcoesDadosCache = this.analiseSharedDataService.analise.funcaoDados;
-
             this.baselineService.analiticosFuncaoDados(
                 this.analiseSharedDataService.analise.sistema.id).subscribe((res: ResponseWrapper) => {
                 this.funcoesDados = res.json;
-
                 this.funcoesDados.concat(this.funcoesDadosCache);
-                if (this.funcoesDados.length !== 0) {
+                if (this.funcoesDados && this.funcoesDados.length !== 0 && this.funcoesDadosCache) {
                     for (const funcoes of this.funcoesDadosCache) {
                         if (this.funcoesDados.indexOf(funcoes) === -1) {
                             this.funcoesDados.push(funcoes);
@@ -142,10 +120,9 @@ export class ReferenciadorArComponent implements OnInit, OnDestroy {
 
     funcaoDadosSelected(fd: FuncaoDados) {
         this.funcaoDadosSelecionada = fd;
-
         this.derService.dropDownByFuncaoDadosId(fd.id).subscribe(res => {
             this.ders = res;
-            if( !this.ders.some( der => (der.nome === 'Mensagem' || der.nome === 'Ação'))){
+            if (!this.ders.some(der => (der.nome === 'Mensagem' || der.nome === 'Ação'))) {
                 this.ders.push(this.derMsg, this.derAcao);
             }
         });
@@ -156,7 +133,7 @@ export class ReferenciadorArComponent implements OnInit, OnDestroy {
             return this.getLabel('Analise.Analise.Mensagens.msgSelecioneFuncaoDadosParaSelecionarDERsReferenciar');
         }
         return this.getLabel('Analise.Analise.Mensagens.msgSelecioneQuaisDERsReferenciar');
-        
+
     }
 
     relacionar() {

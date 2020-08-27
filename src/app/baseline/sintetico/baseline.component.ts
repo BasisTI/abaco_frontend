@@ -1,17 +1,14 @@
-import { TranslateService } from '@ngx-translate/core';
+import { IndexadorService } from './../../indexador/indexador.service';
 import { Component, AfterViewInit, ViewChild, OnInit } from '@angular/core';
-import { ElasticQuery, PageNotificationService, ResponseWrapper } from '../../shared';
-import { DatatableClickEvent, DatatableComponent } from '@basis/angular-components';
 import { Router } from '@angular/router';
 import { SistemaService } from '../../sistema/sistema.service';
-import { ConfirmationService } from '../../../../node_modules/primeng/primeng';
-import { OrganizacaoService } from '../../organizacao/organizacao.service';
-import { StringConcatService } from '../../shared/string-concat.service';
-import { Organizacao } from '../../organizacao/organizacao.model';
 import { BaselineService } from '../baseline.service';
-import { BaselineSintetico } from '../baseline-sintetico.model';
 import { Sistema } from '../../sistema';
-import { BaselineAnalitico } from '../baseline-analitico.model';
+import { ElasticQuery } from 'src/app/shared/elastic-query';
+import { DatatableComponent, DatatableClickEvent } from '@nuvem/primeng-components';
+import { ResponseWrapper } from 'src/app/shared';
+import { ConfirmationService } from 'primeng';
+import { BaselineSintetico } from '../baseline-sintetico.model';
 
 @Component({
     // tslint:disable-next-line:component-selector
@@ -23,38 +20,42 @@ export class BaselineComponent implements OnInit {
     elasticQuery: ElasticQuery = new ElasticQuery();
     @ViewChild(DatatableComponent) datatable: DatatableComponent;
     rowsPerPageOptions: number[] = [5, 10, 20];
+    indexList = ['BASE_LINE_ANALITICO', 'BASE_LINE_SINTETICO'];
     public urlBaseLineSintetico = this.baselineService.sinteticosUrl;
     selecionada: boolean;
+    nomeSistemas: Array<Sistema>;
+    sistema?: Sistema = new Sistema();
+    urlBaseline: string;
+    enableTable = false ;
+    lstBasilineSintetico: BaselineSintetico[];
 
     constructor(
         private router: Router,
         private baselineService: BaselineService,
-        private translate: TranslateService
+        private sistemaService: SistemaService,
+        private confirmationService: ConfirmationService,
+        private indexadorService: IndexadorService,
     ) {
     }
 
     getLabel(label) {
-        let str: any;
-        this.translate.get(label).subscribe((res: string) => {
-            str = res;
-        }).unsubscribe();
-        return str;
+        return label;
     }
 
     ngOnInit(): void {
-        this.carregarDataTable();
-        this.datatable.pDatatableComponent.onRowSelect.subscribe((event) => {
-            this.selecionada = false;
-        });
-        this.datatable.pDatatableComponent.onRowUnselect.subscribe((event) => {
-            this.selecionada = true;
-        });
+        this.recuperarSistema();
     }
 
     public carregarDataTable() {
-        this.baselineService.allBaselineSintetico().subscribe((res: ResponseWrapper) => {
-            this.datatable.value = res.json;
-            this.datatable.reset;
+        this.baselineService.allBaselineSintetico(this.sistema).subscribe((res) => {
+            this.datatable.value = res;
+            this.datatable.reset();
+            this.datatable.pDatatableComponent.onRowSelect.subscribe((event) => {
+                this.selecionada = false;
+            });
+            this.datatable.pDatatableComponent.onRowUnselect.subscribe((event) => {
+                this.selecionada = true;
+            });
         });
     }
 
@@ -75,6 +76,52 @@ export class BaselineComponent implements OnInit {
     public geraBaselinePdfBrowser(id) {
         this.baselineService.geraBaselinePdfBrowser(id);
     }
+    recuperarSistema() {
+        this.sistemaService.dropDown().subscribe(response => {
+            this.nomeSistemas = response;
+            const emptySystem = new Sistema();
+            this.nomeSistemas.unshift(emptySystem);
+        });
+    }
+    public changeUrl() {
+
+        let querySearch = '?identificador=';
+        querySearch = querySearch.concat((this.sistema && this.sistema.id) ?
+            `sistema=${this.sistema.id}&` : '');
+
+        querySearch = (querySearch === '?') ? '' : querySearch;
+
+        querySearch = (querySearch.endsWith('&')) ? querySearch.slice(0, -1) : querySearch;
+
+        return querySearch;
+    }
+
+    public performSearch() {
+        this.enableTable = true ;
+        this.baselineService.allBaselineSintetico(this.sistema).subscribe((res) => {
+            this.lstBasilineSintetico = res;
+
+        });
+        this.recarregarDataTable();
+    }
 
 
+    public limparPesquisa() {
+        this.sistema = undefined;
+        this.enableTable = false;
+    }
+    public recarregarDataTable() {
+        if (this.datatable) {
+            this.datatable.filterParams['sistema'] = this.sistema.id;
+            this.datatable.reset();
+        }
+    }
+    public atualizarAnalise() {
+        this.confirmationService.confirm({
+            message: this.getLabel('Desejar atualizar a Baseline dos Sistemas?'),
+            accept: () => {
+                this.indexadorService.reindexar(this.indexList).subscribe();
+            }
+        });
+    }
 }

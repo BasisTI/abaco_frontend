@@ -1,146 +1,127 @@
+<div class="ui-g-12">
+    <div class="ui-g-6">
         <div class="ui-g-12">
-            <div class="ui-g-6">
-                <div class="ui-g-12">
-                    <div class="ui-g ui-md-12" style="margin-bottom: 05px; margin-top: 05px">
-                        <div class="ui-g-12 ui-md-10 ui-sm-12" style="margin-bottom: 05px">
-                            <label translate="Cadastros.FuncaoTransacao.Modulo"></label>
-                            <p-dropdown #modDropDown [filter]="true" optionLabel="nome" name="modulo"
-                                [placeholder]="this.getLabel('Analise.Analise.Selecione')"
-                                (onChange)="moduloSelected($event.value)" [(ngModel)]="moduloSelecionado"
-                                [options]="modulos" [autoWidth]="false">
-                            </p-dropdown>
-                        </div>
-                    </div>
-                    <span class="md-inputfield">
-                        <div *ngIf="!modPesquisa" class="ui-message ui-messages-error"
-                            translate="Global.Mensagens.CampoObrigatorio">
-                            Campo obrigatório.
-                        </div>
-                    </span>
+            <div class="ui-g ui-md-12" style="margin-bottom: 05px; margin-top: 05px">
+                <div class="ui-g-12 ui-md-10 ui-sm-12" style="margin-bottom: 05px">
+                    <label>Modulo</label>
+                    <p-dropdown #modDropDown [filter]="true" optionLabel="nome" name="modulo"
+                        [placeholder]="this.getLabel('Selecione')"
+                        (onChange)="moduloSelected($event.value)" [(ngModel)]="moduloSelecionado"
+                        [options]="modulos" [autoWidth]="false">
+                    </p-dropdown>
                 </div>
             </div>
-
-            <div class="ui-g-6">
-                <div class="ui-g-12">
-                    <div class="ui-g ui-md-12" style="margin-bottom: 05px; margin-top: 05px">
-                        <div class="ui-g-12 ui-md-10 ui-sm-12" style="margin-bottom: 05px">
-                            <label translate="Cadastros.FuncaoTransacao.Funcionalidade">Funcionalidade</label>
-                            <p-dropdown #funcDropDown [filter]="true" required id="idTipoContagemFormAnalise"
-                                name="funcionalidades" optionLabel="nome"
-                                [placeholder]="this.getLabel('Analise.Analise.Selecione')"
-                                (onChange)="funcionalidadeSelected($event.value)" [options]="funcionalidades"
-                                [autoWidth]="false" [(ngModel)]="funcionalidadeAtual">
-                            </p-dropdown>
-                        </div>
-                    </div>
-                    <span class="md-inputfield">
-                        <div *ngIf="!funcPesquisa" class="ui-message ui-messages-error"
-                            translate="Global.Mensagens.CampoObrigatorio">
-                            Campo obrigatório.
-                        </div>
-                    </span>
+            <span class="md-inputfield">
+                <div *ngIf="!modPesquisa" class="ui-message ui-messages-error">
+                    Campo obrigatório.
                 </div>
-            </div>
-
-            <div class="ui-g ui-md-12" style="justify-content: center; margin-bottom: px; margin-top: 05px">
-
-                <div class="ui-g-2 ui-md-2 ui-sm-12">
-                    <app-blue-button id="idBtnPesquisarPesquisar-ft" buttonIcon="ui-icon-search"
-                        [buttonLabel]="'Global.Botoes.Pesquisar' | translate" (click)="performSearch()">
-                    </app-blue-button>
-                </div>
-
-                <div class="ui-g-2 ui-md-2 ui-sm-12">
-                    <app-white-button [buttonLabel]="'Global.Botoes.LimparPesquisa' | translate"
-                        id="idBtnLimparPesquisaPesquisa-ft" buttonIcon="ui-icon-clear-all"
-                        (click)="limparPesquisa(modDropDown, funcDropDown, deflaDropDown)">
-                    </app-white-button>
-                </div>
-            </div>
-
-            <p-fieldset [legend]="this.getLabel('Analise.Analise.Fases')" [collapsed]="true">
-                <div class="ui-g-12 ui-md-12 ui-sm-12" style="margin-bottom: 05px">
-
-                    <p-dataTable dataKey="id" 
-                        [value]="fn"
-                        selectionMode="multiple"
-                        [(selection)]="selections"
-                        #datatable>
-
-                        <p-column selectionMode="multiple" [style]="{'width':'5%'}"
-                            (onHeaderCheckboxToggle)="montarFuncoesTransacao()">
-                        </p-column>
-
-                        <p-column [header]="this.getLabel('Cadastros.FuncaoTransacao.Modulo')"
-                            [style]="{'width': '25%'}">
-                            <ng-template let-modulo="rowData.funcionalidade.modulo" pTemplate="body">
-                                {{ modulo.nome }}
-                            </ng-template>
-                        </p-column>
-
-                        <p-column [header]="this.getLabel('Cadastros.FuncaoTransacao.Funcionalidade')"
-                            [style]="{'width': '25%'}">
-                            <ng-template let-funcionalidade="rowData.funcionalidade" pTemplate="body">
-                                {{ funcionalidade.nome }}
-                            </ng-template>
-                        </p-column>
-
-                        <p-column field="name" [header]="this.getLabel('Cadastros.FuncaoTransacao.Nome')"
-                            [style]="{'width': '25%'}">
-                        </p-column>
-
-                        <p-column field="tipo" header="Classif." [style]="{'width': '10%'}">
-                        </p-column>
-
-                        <p-column field="der" [header]="this.getLabel('Cadastros.FuncaoTransacao.DER(TD)')"
-                            [style]="{'width': '10%'}">
-                            <ng-template let-funcaoDados="rowData" pTemplate="body">
-                                {{ funcaoDados.derValue() }}
-                            </ng-template>
-                        </p-column>
-
-                        <p-column [header]="this.getLabel('Cadastros.FuncaoTransacao.FTR(AR)')"
-                            [style]="{'width': '10%'}">
-                            <ng-template let-funcaoDados="rowData" pTemplate="body">
-                                {{ funcaoDados.ftrValue() }}
-                            </ng-template>
-                        </p-column>
-
-                    </p-dataTable>
-                </div>
-
-                <div class="ui-g-12">
-                    <div class="ui-g-3 ui-md-4 ui-sm-6">
-                        <label translate="">Deflator</label>
-                        <p-dropdown #deflaDropDown [filter]="true" [options]="fatoresAjuste"
-                            [disabled]="!isContratoSelected()"
-                            [placeholder]="this.getLabel('Analise.Analise.Selecione')" name="fatorAjuste"
-                            [autoWidth]="false" (onChange)="mudarDeflator($event.value)" [(ngModel)]="novoDeflator">
-                        </p-dropdown>
-                    </div>
-                    <span class="md-inputfield">
-                            <div *ngIf="!deflaPesquisa" class="ui-message ui-messages-error"
-                                translate="Global.Mensagens.CampoObrigatorio">
-                                Campo obrigatório.
-                            </div>
-                    </span>
-                </div>
-
-            </p-fieldset>
+            </span>
         </div>
-
-        <div class="ui-g ui-md-12" style="justify-content: center; margin-bottom: 5px; margin-top: 5px">
-
-            <div class="ui-g-2 ui-md-2 ui-sm-12">
-                <app-white-button [buttonLabel]="'Global.Botoes.Fechar' | translate"
-                    id="idBtnLimparPesquisaComponentAnalise" buttonIcon="ui-icon-clear-all"
-                    (click)="retornarParaTelaDeFT(modDropDown, funcDropDown, deflaDropDown)">
-                </app-white-button>
-            </div>
-
-            <div class="ui-g-2 ui-md-2 ui-sm-12">
-                <app-green-button id="idBtnPesquisarComponentSistema" buttonIcon="ui-icon-arrowstop-1-e"
-                    [buttonLabel]="'Global.Botoes.Gerar' | translate" (click)="montarFuncoesTransacao()">
-                </app-green-button>
+    </div>
+    <div class="ui-g-6">
+        <div class="ui-g-12">
+            <div class="ui-g ui-md-12" style="margin-bottom: 05px; margin-top: 05px">
+                <div class="ui-g-12 ui-md-10 ui-sm-12" style="margin-bottom: 05px">
+                    <label >Funcionalidade</label>
+                    <p-dropdown #funcDropDown [filter]="true" required id="idTipoContagemFormAnalise"
+                        name="funcionalidades" optionLabel="nome"
+                        [placeholder]="this.getLabel('Selecione')"
+                        (onChange)="funcionalidadeSelected($event.value)" [options]="funcionalidades"
+                        [autoWidth]="false" [(ngModel)]="funcionalidadeAtual">
+                    </p-dropdown>
+                </div>
             </div>
         </div>
+    </div>
+    <div class="ui-g ui-md-12" style="justify-content: center; margin-bottom: px; margin-top: 05px">
+        <div class="ui-g-2 ui-md-2 ui-sm-12">
+            <app-blue-button id="idBtnPesquisarPesquisar-ft" buttonIcon="ui-icon-search"
+                [buttonLabel]="'Pesquisar'" (click)="performSearch()">
+            </app-blue-button>
+        </div>
+        <div class="ui-g-2 ui-md-2 ui-sm-12">
+            <app-white-button [buttonLabel]="'Limpar Pesquisa'"
+                id="idBtnLimparPesquisaPesquisa-ft" buttonIcon="ui-icon-clear-all"
+                (click)="limparPesquisa(modDropDown, funcDropDown, deflaDropDown)">
+            </app-white-button>
+        </div>
+    </div>
+    <p-fieldset [legend]="this.getLabel('Fases')" [collapsed]="false">
+        <div class="ui-g-12 ui-md-12 ui-sm-12" style="margin-bottom: 05px">
+            <p-table
+                [value]="fn"
+                [(selection)]="selections" >
+                <ng-template pTemplate="caption">
+                    {{isFuncaoDados? 'Função de dados':'Função de transação'}}
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="text-align:left"><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
+                        <th pSortableColumn="fase.nome">Modulo <p-sortIcon></p-sortIcon></th>
+                        <th pSortableColumn="fase.nomeFuncionalidade">Funcionalidade <p-sortIcon></p-sortIcon></th>
+                        <th pSortableColumn="fase.name">Nome <p-sortIcon></p-sortIcon></th>
+                        <th pSortableColumn="fase.classificacao">Classificação <p-sortIcon></p-sortIcon></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-funcao>
+                    <tr class="ui-selectable-row">
+                        <td >
+                            <p-tableCheckbox [value]="funcao"></p-tableCheckbox>
+                        </td>
+                        <td>
+                            {{funcao.nomeModulo}}
+                        </td>
+                        <td>
+                            {{funcao.nomeFuncionalidade}}
+                        </td>
+                        <td>
+                            {{funcao.name}}
+                        </td>
+                        <td>
+                            {{funcao.classificacao}}
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            
+        </div>
+        <div class="ui-g-12">
+            <div class="ui-g-3 ui-md-4 ui-sm-6">
+                <label>Deflator</label>
+                <p-dropdown #deflaDropDown [filter]="true" [options]="fatoresAjuste"
+                    [disabled]="!isContratoSelected()"
+                    [placeholder]="this.getLabel('Selecione')" name="fatorAjuste"
+                    [autoWidth]="false" (onChange)="mudarDeflator($event.value)" [(ngModel)]="novoDeflator">
+                </p-dropdown>
+                <span class="md-inputfield">
+                        <div *ngIf="!deflaPesquisa" class="ui-message ui-messages-error">
+                            Campo obrigatório.
+                        </div>
+                </span>
+            </div>
+            <div class="ui-g-3 ui-md-4 ui-sm-6" [hidden]="hideShowQuantidade">
+                <label>Quantidade *</label>
+                <input type="number" class="ui-inputtext" min="1" name="quantidadeINM" (input)="alterarQuatindade($event.target.value)" >
+                <span class="md-inputfield">
+                    <div *ngIf="erroUnitario" class="ui-message ui-messages-error">
+                        Campo obrigatório.
+                    </div>
+                </span>
+            </div>
+        </div>
+    </p-fieldset>
+</div>
+
+<div class="ui-g ui-md-12" style="justify-content: center; margin-bottom: 5px; margin-top: 5px">
+    <div class="ui-g-2 ui-md-2 ui-sm-12">
+        <app-white-button [buttonLabel]="'Fechar'"
+            id="idBtnLimparPesquisaComponentAnalise" buttonIcon="ui-icon-clear-all"
+            (click)="retornarParaTelaDeFT()">
+        </app-white-button>
+    </div>
+    <div class="ui-g-2 ui-md-2 ui-sm-12">
+        <app-green-button id="idBtnPesquisarComponentSistema" buttonIcon="ui-icon-arrowstop-1-e"
+            [buttonLabel]="'Gerar'" (click)="montarFuncoes()">
+        </app-green-button>
+    </div>
+</div>

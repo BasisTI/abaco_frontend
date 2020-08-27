@@ -1,6 +1,8 @@
-import { BaseEntity, MappableEntities } from '../shared';
-import { Modulo } from '../modulo';
+import { MappableEntities } from '../shared/mappable-entities';
+import { BaseEntity } from '../shared';
 import { Funcionalidade } from '../funcionalidade';
+import { Modulo } from '../modulo';
+import { Organizacao } from '../organizacao';
 
 export enum TipoSistema {
   'NOVO' = 'NOVO',
@@ -17,7 +19,7 @@ export class Sistema implements BaseEntity {
     public nome?: string,
     public tipoSistema?: TipoSistema,
     public numeroOcorrencia?: string,
-    public organizacao?: BaseEntity,
+    public organizacao?: Organizacao,
     public modulos?: Modulo[],
     public ehSustentacao?: boolean,
   ) {

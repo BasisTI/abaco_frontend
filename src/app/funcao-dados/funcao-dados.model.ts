@@ -1,15 +1,15 @@
-import { FuncaoTransacao } from './../funcao-transacao/funcao-transacao.model';
-import { BaseEntity, JSONable } from '../shared';
-import { Funcionalidade } from '../funcionalidade/index';
-import { DerTextParser, ParseResult } from '../analise-shared/der-text/der-text-parser';
-import { FatorAjuste } from '../fator-ajuste/index';
-import { Complexidade } from '../analise-shared/complexidade-enum';
+import {FuncaoTransacao} from './../funcao-transacao/funcao-transacao.model';
+import { FuncaoResumivel, Complexidade } from 'src/app/analise-shared';
+import { Impacto } from 'src/app/analise-shared/impacto-enum';
+import { Modulo } from 'src/app/modulo';
+import { BaseEntity } from '../shared';
 import { FuncaoAnalise } from '../analise-shared/funcao-analise';
+import { Funcionalidade } from '../funcionalidade';
+import { FatorAjuste } from '../fator-ajuste';
 import { Der } from '../der/der.model';
 import { Rlr } from '../rlr/rlr.model';
+import { DerTextParser, ParseResult } from '../analise-shared/der-text/der-text-parser';
 import { DerChipConverter } from '../analise-shared/der-chips/der-chip-converter';
-import { Impacto } from '../analise-shared/impacto-enum';
-import { FuncaoResumivel } from '../analise-shared';
 
 export enum TipoFuncaoDados {
     'ALI' = 'ALI',
@@ -19,12 +19,13 @@ export enum TipoFuncaoDados {
 
 export class Editor {
     constructor(public label?: string,
-        public placeholder?: string,
-        public formControlName?: string
-    ) { }
+                public placeholder?: string,
+                public formControlName?: string
+    ) {
+    }
 }
 
-export class FuncaoDados implements FuncaoResumivel, BaseEntity, FuncaoAnalise, JSONable<FuncaoDados> {
+export class FuncaoDados implements FuncaoResumivel, BaseEntity, FuncaoAnalise{
 
     detStr: string;
     retStr: string;
@@ -50,7 +51,8 @@ export class FuncaoDados implements FuncaoResumivel, BaseEntity, FuncaoAnalise, 
         public ders?: Der[],
         public rlrs?: Rlr[],
         public impacto?: Impacto,
-        public quantidade?: number
+        public quantidade: number = 0,
+        public modulo?: Modulo,
     ) {
         if (!pf) {
             this.pf = 0;
@@ -91,11 +93,10 @@ export class FuncaoDados implements FuncaoResumivel, BaseEntity, FuncaoAnalise, 
         }
 
 
-
         return copy;
     }
 
-    comprar(funcaoDados: FuncaoDados): boolean {
+    comparar(funcaoDados: FuncaoDados): boolean {
         return funcaoDados.name === this.name &&
             funcaoDados.funcionalidade.id === this.funcionalidade.id &&
             funcaoDados.funcionalidade.modulo.id === this.funcionalidade.modulo.id;
@@ -105,8 +106,6 @@ export class FuncaoDados implements FuncaoResumivel, BaseEntity, FuncaoAnalise, 
         return new FuncaoDadosCopyFromJSON(json).copy();
     }
 
-    // XXX eficiente obter vários ParseResult em lugares diferentes?
-    // refletir possiveis mudanças em FuncaoTransacao
     derValue(): number {
         if (this.ders && this.ders.length > 0) {
             return DerChipConverter.valor(this.ders);
@@ -125,6 +124,7 @@ export class FuncaoDados implements FuncaoResumivel, BaseEntity, FuncaoAnalise, 
         return DerTextParser.parse(this.rlr).total();
     }
 
+
     clone(): FuncaoDados {
         return new FuncaoDados(this.id, this.artificialId, this.tipo, this.complexidade,
             this.pf, this.analise, this.funcionalidades, this.funcionalidade,
@@ -139,7 +139,8 @@ class FuncaoDadosCopyFromJSON {
 
     private _json: any;
 
-    private _funcaoDados; FuncaoDados;
+    private _funcaoDados;
+    FuncaoDados;
 
     constructor(json: any) {
         this._json = json;

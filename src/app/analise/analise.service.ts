@@ -1,431 +1,386 @@
-import { TranslateService } from '@ngx-translate/core';
-import { Injectable } from '@angular/core';
-import { Response, RequestMethod, ResponseContentType } from '@angular/http';
-import { Observable } from 'rxjs/Rx';
-import { HttpService } from '@basis/angular-components';
-import { environment } from '../../environments/environment';
+import {Injectable} from '@angular/core';
+import {environment} from '../../environments/environment';
 
-import { Analise, AnaliseShareEquipe } from './';
-import { ResponseWrapper, createRequestOption, JhiDateUtils, PageNotificationService } from '../shared';
-import { BlockUI, NgBlockUI } from 'ng-block-ui';
-import { loginRoute } from '../login';
-import { GenericService } from '../util/service/generic.service';
+import {Analise, AnaliseShareEquipe} from './';
+import {TipoEquipe} from '../tipo-equipe';
+import { Resumo } from './analise-resumo/resumo.model';
+import { HttpClient } from '@angular/common/http';
+import { PageNotificationService } from '@nuvem/primeng-components';
+import { Observable, forkJoin, pipe } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { HttpGenericErrorService, BlockUiService } from '@nuvem/angular-base';
+import { ResponseWrapper, createRequestOption } from '../shared';
+import { FuncaoDadosService } from '../funcao-dados/funcao-dados.service';
+import { FuncaoTransacaoService } from '../funcao-transacao/funcao-transacao.service';
+import { FuncaoTransacao } from '../funcao-transacao';
+import { FuncaoDados } from '../funcao-dados';
 
 @Injectable()
 export class AnaliseService {
 
-  resourceUrl = environment.apiUrl + '/analises';
+    resourceUrl = environment.apiUrl + '/analises';
 
-  relatoriosUrl = environment.apiUrl + '/relatorioPdfBrowser';
+    relatoriosUrl = environment.apiUrl + '/relatorioPdfBrowser';
 
-  findByOrganizacaoUrl = this.resourceUrl + '/organizacao';
+    findByOrganizacaoUrl = this.resourceUrl + '/organizacao';
 
-  findCompartilhadaByAnaliseUrl = environment.apiUrl + '/compartilhada';
+    findCompartilhadaByAnaliseUrl = environment.apiUrl + '/compartilhada';
 
-  relatorioAnaliseUrl = environment.apiUrl + '/relatorioPdfArquivo';
+    relatorioAnaliseUrl = environment.apiUrl + '/relatorioPdfArquivo';
 
-  relatoriosDetalhadoUrl = environment.apiUrl + '/downloadPdfDetalhadoBrowser';
+    relatoriosDetalhadoUrl = environment.apiUrl + '/downloadPdfDetalhadoBrowser';
 
-  relatorioExcelUrl = environment.apiUrl + '/downloadRelatorioExcel';
+    relatorioExcelUrl = environment.apiUrl + '/downloadRelatorioExcel';
 
-  searchUrl = environment.apiUrl + '/_search/analises';
+    searchUrl = environment.apiUrl + '/_search/analises';
 
-  relatoriosBaselineUrl = environment.apiUrl + '/downloadPdfBaselineBrowser';
+    relatoriosBaselineUrl = environment.apiUrl + '/downloadPdfBaselineBrowser';
 
-  relatorioContagemUrl = environment.apiUrl + '/relatorioContagemPdf';
+    relatorioContagemUrl = environment.apiUrl + '/relatorioContagemPdf';
 
-  @BlockUI() blockUI: NgBlockUI;
+    clonarAnaliseUrl = this.resourceUrl + '/clonar/';
 
-  constructor(private http: HttpService, private pageNotificationService: PageNotificationService, private genericService: GenericService, private translate: TranslateService) { }
-
-  getLabel(label) {
-    let str: any;
-    this.translate.get(label).subscribe((res: string) => {
-      str = res;
-    }).unsubscribe();
-    return str;
-  }
-
-  /**
-   *
-   */
-  public create(analise: Analise): Observable<Analise> {
-    this.blockUI.start(this.getLabel('Analise.Analise.Mensagens.CriandoAnálise'));
-    const copy = this.convert(analise);
-    return this.http.post(this.resourceUrl, copy).map((res: Response) => {
-      const jsonResponse = res.json();
-      this.blockUI.stop();
-      return this.genericService.convertJsonToObject(res.json(), new Analise())
-    }).catch((error: any) => {
-      if (error.status === 403) {
-        this.pageNotificationService.addErrorMsg(this.getLabel('Global.Mensagens.VoceNaoPossuiPermissao'));
-        return Observable.throw(new Error(error.status));
-      }
-    });
-  }
-
-  /**
-   * atualizaAnalise
-   */
-  public atualizaAnalise(analise: Analise) {
-    this.update(analise)
-      .subscribe();
-  }
+    resourceResumoUrl = environment.apiUrl + '/vw-resumo';
 
 
-  /**
-   *
-   */
-  public update(analise: Analise): Observable<Analise> {
-    this.blockUI.start(this.getLabel('Analise.Analise.Mensagens.AtualizandoAnalise'));
-    const copy = this.convert(analise);
-    return this.http.put(this.resourceUrl, copy).map((res: Response) => {
-      const jsonResponse = res.json();
-      this.blockUI.stop();
-      return this.convertItemFromServer(jsonResponse);
-    }).catch((error: any) => {
-      if (error.status === 403) {
-        this.pageNotificationService.addErrorMsg(this.getLabel('Global.Mensagens.VoceNaoPossuiPermissao'));
-        return Observable.throw(new Error(error.status));
-      }
-    });
-  }
-
-  /**
-   *
-   */
-  public block(analise: Analise): Observable<Analise> {
-    this.blockUI.start(this.getLabel('Analise.Analise.Mensagens.BloqueandoDesbloqueandoAnalise'));
-    const copy = analise;
-    return this.http.put(`${this.resourceUrl}/${copy.id}/block`, copy).map((res: Response) => {
-      this.blockUI.stop();
-      return null;
-    }).catch((error: any) => {
-      switch (error.status) {
-        case 400: {
-          if (error.headers.toJSON()['x-abacoapp-error'][0] === 'error.notadmin') {
-            this.pageNotificationService.addErrorMsg(this.getLabel('Analise.Analise.Mensagens.msgSomenteAdministradoresBloquearDesbloquear'));
-          }
-          break;
-        }
-        case 403: {
-          this.pageNotificationService.addErrorMsg(this.getLabel('Global.Mensagens.VoceNaoPossuiPermissao'));
-          break;
-        }
-      }
-      return Observable.throw(new Error(error.status));
-    });
-  }
-
-
-
-  /**
-   *
-   */
-  public gerarRelatorioPdfArquivo(id: number) {
-    window.open(`${this.relatorioAnaliseUrl}/${id}`);
-  }
-
-  /**
-   *
-   */
-  public geraRelatorioPdfBrowser(id: number): Observable<string> {
-    this.blockUI.start(this.getLabel('Analise.Analise.Mensagens.GerandoRelatorio'));
-    this.http.get(`${this.relatoriosUrl}/${id}`, {
-      method: RequestMethod.Get,
-      responseType: ResponseContentType.Blob,
-    }).subscribe(
-      (response) => {
-        const mediaType = 'application/pdf';
-        const blob = new Blob([response.blob()], { type: mediaType });
-        const fileURL = window.URL.createObjectURL(blob);
-        const anchor = document.createElement('a');
-        anchor.download = 'analise.pdf';
-        anchor.href = fileURL;
-        window.open(fileURL, '_blank', '');
-        this.blockUI.stop();
-        return null;
-      });
-    return null;
-  }
-
-  /**
- *
- */
-  public geraRelatorioPdfDetalhadoBrowser(id: number): Observable<string> {
-    this.blockUI.start(this.getLabel('Analise.Analise.Mensagens.GerandoRelatorio'));
-    this.http.get(`${this.relatoriosDetalhadoUrl}/${id}`, {
-      method: RequestMethod.Get,
-      responseType: ResponseContentType.Blob,
-    }).catch((error: any) => {
-      if (error.status === 500) {
-        this.pageNotificationService.addErrorMsg(this.getLabel('Analise.Analise.Mensagens.ErroGerarRelatorio'));
-        this.blockUI.stop();
-        return Observable.throw(new Error(error.status));
-      }
-    }).subscribe(
-      (response) => {
-        const mediaType = 'application/pdf';
-        const blob = new Blob([response.blob()], { type: mediaType });
-        const fileURL = window.URL.createObjectURL(blob);
-        const anchor = document.createElement('a');
-        anchor.download = 'analise.pdf';
-        anchor.href = fileURL;
-        document.body.appendChild(anchor);
-        anchor.click();
-        this.blockUI.stop();
-        return null;
-      });
-    return null;
-  }
-
-  /**
-   *
-   */
-  public gerarRelatorioExcel(id: number): Observable<string> {
-    this.blockUI.start(this.getLabel('Analise.Analise.Mensagens.GerandoRelatorio'));
-    this.http.get(`${this.relatorioExcelUrl}/${id}`, {
-      method: RequestMethod.Get,
-      responseType: ResponseContentType.Blob,
-    }).catch((error: any) => {
-      this.blockUI.stop();
-      if (error.status === 500) {
-        this.pageNotificationService.addErrorMsg(this.getLabel('Analise.Analise.Mensagens.ErroGerarRelatorio'));
-        this.blockUI.stop();
-        return Observable.throw(new Error(error.status));
-      }
-    }).subscribe(
-      (response) => {
-        const mediaType = 'application/vnd.ms-excel';
-        const blob = new Blob([response.blob()], { type: mediaType });
-        const fileURL = window.URL.createObjectURL(blob);
-        const anchor = document.createElement('a');
-        anchor.download = 'analise.xls';
-        anchor.href = fileURL;
-        document.body.appendChild(anchor);
-        anchor.click();
-        this.blockUI.stop();
-        return null;
-      });
-    return null;
-  }
-
-  /**
-   *
-   */
-  public geraBaselinePdfBrowser(): Observable<string> {
-    this.blockUI.start(this.getLabel('Analise.Analise.Mensagens.GerandoRelatorio'));
-    this.http.get(`${this.relatoriosBaselineUrl}`, {
-      method: RequestMethod.Get,
-      responseType: ResponseContentType.Blob,
-    }).subscribe(
-      (response) => {
-        const mediaType = 'application/pdf';
-        const blob = new Blob([response.blob()], { type: mediaType });
-        const fileURL = window.URL.createObjectURL(blob);
-        const anchor = document.createElement('a');
-        anchor.download = 'analise.pdf';
-        anchor.href = fileURL;
-        window.open(fileURL, '_blank', '');
-        this.blockUI.stop();
-        return null;
-      });
-    return null;
-  }
-
-  /**
-   * Método responsável por acessa o serviço que gerá o relatório
-   * @param idAnalise indentificador da análise que será utilizada como base do relatório
-   * @returns
-   */
-  public gerarRelatorioContagem(idAnalise: number): Observable<string> {
-    this.blockUI.start(this.getLabel('Analise.Analise.Mensagens.GerandoRelatorio'));
-    this.http.get(`${this.relatorioContagemUrl}/${idAnalise}`, {
-      method: RequestMethod.Get,
-      responseType: ResponseContentType.Blob,
-    }).catch((error: any) => {
-      this.blockUI.stop();
-      if (error.status === 500) {
-        this.pageNotificationService.addErrorMsg(this.getLabel('Analise.Analise.Mensagens.ErroGerarRelatorio'));
-        this.blockUI.stop();
-        return Observable.throw(new Error(error.status));
-      }
-    }).subscribe(
-      (response) => {
-        const mediaType = 'application/pdf';
-        const blob = new Blob([response.blob()], { type: mediaType });
-        const fileURL = window.URL.createObjectURL(blob);
-        const anchor = document.createElement('a');
-        anchor.download = 'analise_contagem.pdf';
-        anchor.href = fileURL;
-        document.body.appendChild(anchor);
-        anchor.click();
-        this.blockUI.stop();
-        return null;
-      });
-    return null;
-  }
-
-  /**
-   *
-   */
-  public find(id: number): Observable<Analise> {
-    this.blockUI.start(this.getLabel('Analise.Analise.Mensagens.ProcurandoAnalise'));
-    return this.http.get(`${this.resourceUrl}/${id}`).map((res: Response) => {
-      const jsonResponse = res.json();
-      const analiseJson = this.convertItemFromServer(jsonResponse);
-      analiseJson.createdBy = jsonResponse.createdBy;
-      this.blockUI.stop();
-      return analiseJson;
-    });
-  }
-
-  findAllByOrganizacaoId(orgId: number): Observable<ResponseWrapper> {
-    const url = `${this.findByOrganizacaoUrl}/${orgId}`;
-    return this.http.get(url)
-      .map((res: Response) => this.convertResponse(res));
-  }
-
-  /** Encontra todas as análises referentes às equipes do usuário.
-   *
-   * @param idUsuario Id do usuário que está fazendo a requisição
-   */
-  findAnalisesUsuario(idUsuario: number): Observable<Analise[]> {
-    this.blockUI.start(this.getLabel('Analise.Analise.Mensagens.FiltrandoAnalises'));
-    const url = `${this.resourceUrl}/user/${idUsuario}`;
-    return this.http.get(url)
-      .map(
-        (res: Response) => this.convertJsonToAnalise(res),
-        (error) => this.tratarErro(error.toString(), idUsuario)
-      );
-  }
-
-  tratarErro(erro: string, id: number) { }
-  /**
-   *
-   */
-  public query(req?: any): Observable<ResponseWrapper> {
-    this.blockUI.start(this.getLabel('Analise.Analise.Mensagens.AguardeUmMomento'));
-    const options = createRequestOption(req);
-    return this.http.get(this.resourceUrl, options)
-      .map((res: Response) => this.convertResponse(res)).catch((error: any) => {
-        if (error.status === 403) {
-          this.pageNotificationService.addErrorMsg(this.getLabel('Global.Mensagens.VoceNaoPossuiPermissao'));
-          return Observable.throw(new Error(error.status));
-        }
-      });
-  }
-
-  /**
-   *
-   */
-  public delete(id: number): Observable<Response> {
-    return this.http.delete(`${this.resourceUrl}/${id}`).catch((error: any) => {
-      if (error.status === 403) {
-        this.pageNotificationService.addErrorMsg(this.getLabel('Global.Mensagens.VoceNaoPossuiPermissao'));
-        return Observable.throw(new Error(error.status));
-      }
-    });
-  }
-
-  /**
-   *
-   */
-  private convertResponse(res: Response): ResponseWrapper {
-    const jsonResponse = res.json();
-    const result = [];
-    for (let i = 0; i < jsonResponse.length; i++) {
-      result.push(this.convertItemFromServer(jsonResponse[i]));
+    constructor(
+        private http: HttpClient,
+        private pageNotificationService: PageNotificationService,
+        private genericService: HttpGenericErrorService,
+        private funcaoDadosService: FuncaoDadosService,
+        private funcaoTransacaoService: FuncaoTransacaoService,
+        private blockUiService: BlockUiService,
+        ) {
     }
-    this.blockUI.stop();
-    return new ResponseWrapper(res.headers, result, res.status);
-  }
 
-  /**
-   * Convert a returned JSON object to Analise.
-   */
-  private convertItemFromServer(json: any): Analise {
-    return new Analise().copyFromJSON(json);
-  }
-
-  convertJsonToAnalise(res: Response): Analise[] {
-    const jsonResponse = res.json();
-    let result = [];
-    for (let i = 0; i < jsonResponse.length; i++) {
-      result.push(this.convertItemFromServer(jsonResponse[i]));
+    getLabel(label) {
+        return label;
     }
-    this.blockUI.stop();
-    return result;
-  }
-  /**
-   * Convert a Analise to a JSON which can be sent to the server.
-   */
-  private convert(analise: Analise): Analise {
-    return analise.toJSONState();
-  }
 
-  // PARTE RESPONSÁVEL PELO "COMPARTILHAR"
+    public create(analise: Analise): Observable<Analise> {
+        const copy = this.convert(analise);
+        return this.http.post<Analise>(this.resourceUrl, copy).pipe(catchError((error: any) => {
+            if (error.status === 403) {
+                this.pageNotificationService.addErrorMessage(this.getLabel('Você não possui permissão!'));
+                return Observable.throw(new Error(error.status));
+            }
+        }));
+    }
 
-  /** Encontra todas as equipes que têm acesso àquela análise
-  *
-  *
-  */
-  findAllCompartilhadaByAnalise(analiseId: number): Observable<ResponseWrapper> {
-    this.blockUI.start(this.getLabel('Analise.Analise.Mensagens.BuscandoAnalises'));
-    const url = `${this.findCompartilhadaByAnaliseUrl}/${analiseId}`;
-    return this.http.get(url)
-      .map((res: Response) => this.convertResponse(res));
-  }
+    public atualizaAnalise(analise: Analise) {
+        this.update(analise)
+            .subscribe(() => (function () {
+                this.funcaoTransacaoService.getFuncaoTransacaoByAnalise(this.analise.id)
+                    .subscribe(response => (
+                        response.forEach(value => (
+                            this.analise.funcaoTransacaos.push(FuncaoTransacao.convertTransacaoJsonToObject(value)))
+                        )
+                    )).then(
+                    this.funcaoDadosService.getFuncaoDadosByAnalise(this.analise.id)
+                        .subscribe(response => (
+                            response.forEach(value => (
+                                this.analise.funcaoDados.push(FuncaoDados.convertJsonToObject(value)))
+                            )
+                        ))
+                );
+            }));
+    }
 
+    public update(analise: Analise): Observable<Analise> {
+        const copy = this.convert(analise);
+        return this.http.put<Analise>(this.resourceUrl, copy).pipe(catchError((error: any) => {
+            if (error.status === 403) {
+                this.pageNotificationService.addErrorMessage(this.getLabel('Você não possui permissão!'));
+                return Observable.throw(new Error(error.status));
+            }
+        }));
+    }
 
+    public block(analise: Analise): Observable<Analise> {
+        const copy = analise;
+        return this.http.put<Analise>(`${this.resourceUrl}/${copy.id}/block`, copy).pipe(catchError((error: any) => {
+            switch (error.status) {
+                case 400: {
+                    if (error.headers.toJSON()['x-abacoapp-error'][0] === 'error.notadmin') {
+                        this.pageNotificationService.addErrorMessage(
+                            this.getLabel('Somente administradores podem bloquear/desbloquear análises!')
+                        );
+                    }
+                    break;
+                }
+                case 403: {
+                    this.pageNotificationService.addErrorMessage(this.getLabel('Você não possui permissão!'));
+                    break;
+                }
+            }
+            return Observable.throw(new Error(error.status));
+        }));
+    }
 
-  findAllBaseline(): Observable<Response> {
-    this.blockUI.start(this.getLabel('Analise.Analise.Mensagens.BuscandoAnalisesBaseline'));
-    const url = `${this.resourceUrl}/baseline`;
-    return this.http.get(url);
-  }
+    public gerarRelatorioPdfArquivo(id: number) {
+        window.open(`${this.relatorioAnaliseUrl}/${id}`);
+    }
 
-  /** Salva as equipes que têm acesso àquela análise
-  *
-  *
-  */
-  salvarCompartilhar(listaCompartilhada: Array<AnaliseShareEquipe>) {
-    this.blockUI.start(this.getLabel('Analise.Analise.Mensagens.CompartilhandoAnalise'));
-    return this.http.post(`${this.resourceUrl}/compartilhar`, listaCompartilhada).map((res: Response) => {
-      const jsonResponse = res.json();
-      this.blockUI.stop();
-      return jsonResponse;
-    });
-  }
+    public geraRelatorioPdfBrowser(id: number): Observable<string> {
+        this.blockUiService.show();
+        this.http.request('get', `${this.relatoriosUrl}/${id}`, {
+            responseType: 'blob',
+        }).subscribe(
+            (response) => {
+                const mediaType = 'application/pdf';
+                const blob = new Blob([response], {type: mediaType});
+                const fileURL = window.URL.createObjectURL(blob);
+                const anchor = document.createElement('a');
+                anchor.download = 'analise.pdf';
+                anchor.href = fileURL;
+                window.open(fileURL, '_blank', '');
+                this.blockUiService.hide();
+                return null;
+            });
+        return null;
+    }
 
-  /** Deletas as equipes que têm acesso àquela análise
-  *
-  *
-  */
-  deletarCompartilhar(id: number): Observable<Response> {
-    return this.http.delete(`${this.resourceUrl}/compartilhar/delete/${id}`).catch((error: any) => {
-      if (error.status === 403) {
-        this.pageNotificationService.addErrorMsg(this.getLabel('Global.Mensagens.VoceNaoPossuiPermissao'));
-        return Observable.throw(new Error(error.status));
-      }
-    });
-  }
+    /**
+     *
+     */
+    public geraRelatorioPdfDetalhadoBrowser(id: Number): Observable<string> {
+        this.blockUiService.show();
+        this.http.request('get', `${this.relatoriosDetalhadoUrl}/${id}`, {
+            responseType: 'blob',
+        }).pipe(catchError((error: any) => {
+            if (error.status === 500) {
+                this.blockUiService.hide();
+                this.pageNotificationService.addErrorMessage(this.getLabel('Erro ao gerar relatório'));
+                return Observable.throw(new Error(error.status));
+            }
+        })).subscribe(
+            (response) => {
+                const mediaType = 'application/pdf';
+                const blob = new Blob([response], {type: mediaType});
+                const fileURL = window.URL.createObjectURL(blob);
+                const anchor = document.createElement('a');
+                anchor.download = 'analise.pdf';
+                anchor.href = fileURL;
+                document.body.appendChild(anchor);
+                anchor.click();
+                this.blockUiService.hide();
+                return null;
+            });
+        return null;
+    }
 
-  /**Atualiza um compartilhamento para "Somente visualizar ou Editar"
-  *
-  *
-  */
-  atualizarCompartilhar(compartilhada) {
-    this.blockUI.start(this.getLabel('Analise.Analise.Mensagens.AtualizandoCompartilhamento'));
-    const copy = compartilhada;
-    return this.http.put(`${this.resourceUrl}/compartilhar/viewonly/${copy.id}`, copy).map((res: Response) => {
-      this.blockUI.stop();
-      return null;
-    }).catch((error: any) => {
-      if (error.status === 403) {
-        this.pageNotificationService.addErrorMsg(this.getLabel('Global.Mensagens.VoceNaoPossuiPermissao'));
-        return Observable.throw(new Error(error.status));
-      }
-    });
-  }
+    /**
+     *
+     */
+    public gerarRelatorioExcel(id: Number): Observable<string> {
+        this.blockUiService.show();
+        this.http.request('get',`${this.relatorioExcelUrl}/${id}`, {
+            responseType: 'blob',
+        }).pipe(catchError((error: any) => {
+            if (error.status === 500) {
+                this.blockUiService.hide();
+                this.pageNotificationService.addErrorMessage(this.getLabel('Erro ao gerar relatório'));
+                return Observable.throw(new Error(error.status));
+            }
+        })).subscribe(
+            (response) => {
+                const mediaType = 'application/vnd.ms-excel';
+                const blob = new Blob([response], {type: mediaType});
+                const fileURL = window.URL.createObjectURL(blob);
+                const anchor = document.createElement('a');
+                anchor.download = 'analise.xls';
+                anchor.href = fileURL;
+                document.body.appendChild(anchor);
+                anchor.click();
+                this.blockUiService.hide();
+                return null;
+            });
+        return null;
+    }
+
+    /**
+     *
+     */
+    public geraBaselinePdfBrowser(): Observable<string> {
+        this.blockUiService.show();
+        this.http.request('get', `${this.relatoriosBaselineUrl}`, {
+            responseType: 'blob',
+        }).subscribe(
+            (response) => {
+                const mediaType = 'application/pdf';
+                const blob = new Blob([response], {type: mediaType});
+                const fileURL = window.URL.createObjectURL(blob);
+                const anchor = document.createElement('a');
+                anchor.download = 'analise.pdf';
+                anchor.href = fileURL;
+                window.open(fileURL, '_blank', '');
+                this.blockUiService.hide();
+                return null;
+            });
+        return null;
+    }
+
+    /**
+     * Método responsável por acessa o serviço que gerá o relatório
+     * @param idAnalise indentificador da análise que será utilizada como base do relatório
+     * @returns
+     */
+    public gerarRelatorioContagem(idAnalise: number): Observable<string> {
+        this.blockUiService.show();
+        this.http.request('get',`${this.relatorioContagemUrl}/${idAnalise}`, {
+            responseType: 'blob',
+        }).pipe(catchError((error: any) => {
+            if (error.status === 500) {
+                this.blockUiService.hide();
+                this.pageNotificationService.addErrorMessage(this.getLabel('Erro ao gerar relatório'));
+                return Observable.throw(new Error(error.status));
+            }
+        })).subscribe(
+            (response) => {
+                const mediaType = 'application/pdf';
+                const blob = new Blob([response], {type: mediaType});
+                const fileURL = window.URL.createObjectURL(blob);
+                const anchor = document.createElement('a');
+                anchor.download = 'analise_contagem.pdf';
+                anchor.href = fileURL;
+                document.body.appendChild(anchor);
+                anchor.click();
+                this.blockUiService.hide();
+                return null;
+            });
+        return null;
+    }
+
+    public find(id: Number): Observable<Analise> {
+        return this.http.get<Analise>(`${this.resourceUrl}/${id}`);
+    }
+
+    public findView(id: Number): Observable<Analise> {
+        return this.http.get<Analise>(`${this.resourceUrl}/view/${id}`);
+    }
+
+    public findWithFuncaos(id: number): any {
+        const analise: Analise = new Analise();
+        analise.id = id;
+        return forkJoin(this.http.get(`${this.resourceUrl}/${id}`),
+            this.funcaoDadosService.getFuncaoDadosByAnalise(analise),
+            this.funcaoTransacaoService.getFuncaoTransacaoByAnalise(analise));
+    }
+
+    public clonarAnalise(id: number): Observable<Analise> {
+        const url = this.clonarAnaliseUrl + id;
+        return this.http.get<Analise>(url);
+    }
+    public clonarAnaliseToEquipe(id: number, equipe: TipoEquipe) {
+        const url = this.clonarAnaliseUrl + id + '/' + equipe.id;
+        return this.http.get<Analise>(url);
+    }
+
+    findAllByOrganizacaoId(orgId: number): Observable<ResponseWrapper> {
+        const url = `${this.findByOrganizacaoUrl}/${orgId}`;
+        return this.http.get<ResponseWrapper>(url);
+    }
+
+    findAnalisesUsuario(idUsuario: number): Observable<Analise[]> {
+        const url = `${this.resourceUrl}/user/${idUsuario}`;
+        return this.http.get<Analise[]>(url);
+    }
+
+    tratarErro(erro: string, id: number) {
+    }
+
+    public query(req?: any): Observable<any> {
+        const options = createRequestOption(req);
+        return this.http.get<any>(this.resourceUrl).pipe(
+            catchError((error: any) => {
+                if (error.status === 403) {
+                    this.pageNotificationService.addErrorMessage(this.getLabel('Você não possui permissão!'));
+                    return Observable.throw(new Error(error.status));
+                }
+            }));
+    }
+
+    public delete(id: number): Observable<Response> {
+        return this.http.delete<Response>(`${this.resourceUrl}/${id}`).pipe(
+            catchError((error: any) => {
+                if (error.status === 403) {
+                    this.pageNotificationService.addErrorMessage(this.getLabel('Você não possui permissão!'));
+                    return Observable.throw(new Error(error.status));
+                }
+            }
+        ));
+    }
+
+    private convertResponse(res): ResponseWrapper {
+        const jsonResponse = res.json();
+        const result = [];
+        for (let i = 0; i < jsonResponse.length; i++) {
+            result.push(this.convertItemFromServer(jsonResponse[i]));
+        }
+        return new ResponseWrapper(res.headers, result, res.status);
+    }
+
+    public convertItemFromServer(json: any): Analise {
+        return new Analise().copyFromJSON(json);
+    }
+
+    convertJsonToAnalise(res): Analise[] {
+        const jsonResponse = res.json();
+        const result = [];
+        for (let i = 0; i < jsonResponse.length; i++) {
+            result.push(this.convertItemFromServer(jsonResponse[i]));
+        }
+        return result;
+    }
+
+    private convert(analise: Analise): Analise {
+        return analise.toJSONState();
+    }
+    findAllCompartilhadaByAnalise(analiseId: number): Observable<AnaliseShareEquipe[]> {
+        const url = `${this.findCompartilhadaByAnaliseUrl}/${analiseId}`;
+        return this.http.get<AnaliseShareEquipe[]>(url);
+    }
+
+    findAllBaseline(): Observable<Response> {
+        const url = `${this.resourceUrl}/baseline`;
+        return this.http.get<Response>(url);
+    }
+
+    salvarCompartilhar(listaCompartilhada: Array<AnaliseShareEquipe>) {
+        return this.http.post(`${this.resourceUrl}/compartilhar`, listaCompartilhada);
+    }
+
+    deletarCompartilhar(id: number): Observable<Response> {
+        return this.http.delete<Response>(`${this.resourceUrl}/compartilhar/delete/${id}`).pipe(catchError((error: any) => {
+            if (error.status === 403) {
+                this.pageNotificationService.addErrorMessage(this.getLabel('Você não possui permissão!'));
+                return Observable.throw(new Error(error.status));
+            }
+        }));
+    }
+
+    atualizarCompartilhar(compartilhada) {
+        const copy = compartilhada;
+        return this.http.put(`${this.resourceUrl}/compartilhar/viewonly/${copy.id}`, copy).pipe(catchError((error: any) => {
+            if (error.status === 403) {
+                this.pageNotificationService.addErrorMessage(this.getLabel('Você não possui permissão!'));
+                return Observable.throw(new Error(error.status));
+            }
+        }));
+    }
+
+    updateSomaPf(analiseId: number): Observable<Response> {
+        const url = `${this.resourceUrl}/update-pf/${analiseId}`;
+        return this.http.get<Response>(url);
+    }
+
+    getResumo(analiseId: Number): Observable<Resumo[]> {
+        return this.http.get<Resumo[]>(`${this.resourceResumoUrl}/${analiseId}`,).pipe(
+        catchError((error: any) => {
+            if (error.status === 403) {
+                this.pageNotificationService.addErrorMessage(this.getLabel('Você não possui permissão!'));
+                return Observable.throw(new Error(error.status));
+            }
+        }));
+    }
 }

@@ -1,18 +1,18 @@
-import { BaseEntity, JSONable } from '../shared';
-import { TipoFase } from '../tipo-fase';
+import { BaseEntity } from '../shared';
+import { Fase } from '../fase';
 
-export class EsforcoFase implements BaseEntity, JSONable<EsforcoFase> {
+export class EsforcoFase implements BaseEntity {
   constructor(
     public id?: number,
-    public fase?: TipoFase,
+    public fase?: Fase,
     public esforco?: number,
     public artificialId?: number,
   ) {
 
   }
 
-  copyFromJSON(json: any) {
-    return new EsforcoFase(json.id, new TipoFase(json.fase.id, json.fase.nome), json.esforco);
+  public copyFromJSON(json: any) {
+    return new EsforcoFase(json.id, new Fase(json.fase.id, json.fase.nome), json.esforco);
   }
 
   toJSONState(): EsforcoFase {

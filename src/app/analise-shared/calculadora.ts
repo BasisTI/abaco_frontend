@@ -1,4 +1,3 @@
-import {FuncaoDados} from '../funcao-dados/funcao-dados.model';
 import {Complexidade} from '../analise-shared/complexidade-enum';
 import {MetodoContagem} from '../analise/index';
 import {TipoFatorAjuste, FatorAjuste} from '../fator-ajuste/fator-ajuste.model';
@@ -7,6 +6,7 @@ import {PFPorTiposComplexidades} from './calculadora/pf-por-tipos-complexidades'
 import {CalculadoraFator} from './calculadora/calculadora-fator';
 import {Manual} from '../manual/manual.model';
 import {FatorAjusteImpactoRetriever} from './calculadora/fator-ajuste-impacto-retriever';
+import { FuncaoDados } from '../funcao-dados';
 
 export class Calculadora {
 
@@ -116,6 +116,7 @@ export class Calculadora {
         this.funcaoDadosCalculada.pf = CalculadoraFator.aplicarFator(
             this.funcaoDadosCalculada.pf, this._fatorAjuste, this.funcaoDados.quantidade
         );
+        this.funcaoDadosCalculada.grossPF = this.funcaoDadosCalculada.grossPF > 0 ? this.funcaoDadosCalculada.grossPF : this.funcaoDadosCalculada.pf;
     }
 
 }

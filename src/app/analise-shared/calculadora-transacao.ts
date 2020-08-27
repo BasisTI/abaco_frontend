@@ -1,12 +1,12 @@
 import { Complexidade } from '../analise-shared/complexidade-enum';
 import { MetodoContagem } from '../analise/analise.model';
-import { FatorAjuste, TipoFatorAjuste } from '../fator-ajuste/fator-ajuste.model';
-import { FuncaoTransacao, TipoFuncaoTransacao } from '../funcao-transacao/funcao-transacao.model';
-import { ComplexidadeFuncionalTransacao } from './calculadora/complexidade-funcional-transacao';
-import { PFPorTiposComplexidades } from './calculadora/pf-por-tipos-complexidades';
-import { CalculadoraFator } from './calculadora/calculadora-fator';
+import { FatorAjuste } from '../fator-ajuste/fator-ajuste.model';
 import { Manual } from '../manual/manual.model';
+import { CalculadoraFator } from './calculadora/calculadora-fator';
+import { ComplexidadeFuncionalTransacao } from './calculadora/complexidade-funcional-transacao';
 import { FatorAjusteImpactoRetriever } from './calculadora/fator-ajuste-impacto-retriever';
+import { PFPorTiposComplexidades } from './calculadora/pf-por-tipos-complexidades';
+import { FuncaoTransacao } from '../funcao-transacao';
 
 export class CalculadoraTransacao {
 
@@ -31,7 +31,7 @@ export class CalculadoraTransacao {
   }
 
   private static inicializaVariaveis(metodoContagem: MetodoContagem, funcaoTransacao: FuncaoTransacao, manual: Manual) {
-    this.funcaoTransacaoCalculada = funcaoTransacao.clone();
+    this.funcaoTransacaoCalculada = new FuncaoTransacao().copyFromJSON(funcaoTransacao).clone();
     this.funcaoTransacao = funcaoTransacao;
     this.metodoContagem = metodoContagem;
     this.defineFatorAjuste(funcaoTransacao, manual);
@@ -79,6 +79,7 @@ export class CalculadoraTransacao {
     this.funcaoTransacaoCalculada.pf = CalculadoraFator.aplicarFator(
       this.funcaoTransacaoCalculada.pf, this._fatorAjuste, this.funcaoTransacao.quantidade
     );
+    this.funcaoTransacaoCalculada.grossPF = this.funcaoTransacaoCalculada.grossPF > 0 ? this.funcaoTransacaoCalculada.grossPF : this.funcaoTransacaoCalculada.pf;
   }
 
 }

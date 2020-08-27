@@ -1,13 +1,13 @@
+import { Sistema } from './../sistema/sistema.model';
 import {Injectable} from '@angular/core';
-import {HttpService} from '@basis/angular-components';
 import {environment} from '../../environments/environment';
 import {ResponseWrapper} from '../shared';
-import {Response, RequestMethod, ResponseContentType, } from '@angular/http';
 import {Observable} from '../../../node_modules/rxjs';
 import {BaselineSintetico} from './baseline-sintetico.model';
 import {BaselineAnalitico} from './baseline-analitico.model';
-import {Sistema} from '../sistema/sistema.model';
-import {FuncaoDados} from '../funcao-dados';
+import { HttpClient } from '@angular/common/http';
+import { FuncaoDados } from '../funcao-dados';
+import { BlockUiService } from '@nuvem/angular-base';
 
 
 @Injectable()
@@ -21,62 +21,43 @@ export class BaselineService {
     relatoriosBaselineUrl = this.resourceUrl + '/downloadPdfBaselineBrowser/';
 
 
-    constructor(private http: HttpService) {
+    constructor(private http: HttpClient, private blockUiService: BlockUiService, ) {
     }
 
-    allBaselineSintetico(): Observable<ResponseWrapper> {
-        return this.http.get(`${this.sinteticosUrl}`).map((res: Response) => {
-            return this.convertResponseSintetico(res);
-        });
+    allBaselineSintetico(sistema: Sistema): Observable<BaselineSintetico[]> {
+        let url = `${this.sinteticosUrl}`;
+        if (sistema && sistema.id) {
+            url = url + '?idSistema=' + sistema.id.valueOf();
+        }
+        return this.http.get<BaselineSintetico[]>(url);
     }
 
     getSistemaSintetico(id: number): Observable<BaselineSintetico> {
-        return this.http.get(`${this.sinteticosUrl}${id}`).map((res: Response) => {
-            const jsonResponse = res.json();
-            return this.convertJsonToSintetico(jsonResponse);
-        });
+        return this.http.get<BaselineSintetico>(`${this.sinteticosUrl}${id}`);
     }
     getSistemaSinteticoEquipe(id: number, idEquipe: number): Observable<BaselineSintetico> {
-        return this.http.get(`${this.sinteticosUrl}${id}/equipe/${idEquipe}`).map((res: Response) => {
-            const jsonResponse = res.json();
-            return this.convertJsonToSintetico(jsonResponse);
-        });
+        return this.http.get<BaselineSintetico>(`${this.sinteticosUrl}${id}/equipe/${idEquipe}`);
     }
 
     baselineAnaliticoFD(id: number): Observable<ResponseWrapper> {
-        return this.http.get(`${this.analiticosFDUrl}${id}`).map((res: Response) => {
-            return this.convertResponseAnalitico(res);
-        });
+        return this.http.get<ResponseWrapper>(`${this.analiticosFDUrl}${id}`);
     }
 
     analiticosFuncaoDados(id: number): Observable<ResponseWrapper> {
-        return this.http.get(`${this.analiticosFuncaoDadosUrl}${id}`).map((res: Response) => {
-            return this.convertResponseFuncaoDados(res);
-        });
+        return this.http.get<ResponseWrapper>(`${this.analiticosFuncaoDadosUrl}${id}`);
     }
-
-    baselineAnaliticoFT(id: number): Observable<ResponseWrapper> {
-        return this.http.get(`${this.analiticosFTUrl}${id}`).map((res: Response) => {    
-            return this.convertResponseAnalitico(res);
-        });
-    }
-
 
     // POR EQUIPE
 
     baselineAnaliticoFDEquipe(id: number, idEquipe: number): Observable<ResponseWrapper> {
-        return this.http.get(`${this.analiticosFDUrl}${id}/equipe/${idEquipe}`).map((res: Response) => {
-            return this.convertResponseAnalitico(res);
-        });
+        return this.http.get<ResponseWrapper>(`${this.analiticosFDUrl}${id}/equipe/${idEquipe}`);
     }
 
     baselineAnaliticoFTEquipe(id: number, idEquipe: number): Observable<ResponseWrapper> {
-        return this.http.get(`${this.analiticosFTUrl}${id}/equipe/${idEquipe}`).map((res: Response) => {
-            return this.convertResponseAnalitico(res);
-        });
+        return this.http.get<ResponseWrapper>(`${this.analiticosFTUrl}${id}/equipe/${idEquipe}`);
     }
 
-    private convertResponseSintetico(res: Response): ResponseWrapper {
+    private convertResponseSintetico(res): ResponseWrapper {
         const jsonResponse = res.json();
         const result = [];
         for (let i = 0; i < jsonResponse.length; i++) {
@@ -98,7 +79,7 @@ export class BaselineService {
         return entity;
     }
 
-    private convertResponseFuncaoDados(res: Response): ResponseWrapper {
+    private convertResponseFuncaoDados(res): ResponseWrapper {
         const jsonResponse = res.json();
         const result = [];
         for (let i = 0; i < jsonResponse.length; i++) {
@@ -107,7 +88,7 @@ export class BaselineService {
         return new ResponseWrapper(res.headers, result, res.status);
     }
 
-    private convertResponseAnalitico(res: Response): ResponseWrapper {
+    private convertResponseAnalitico(res): ResponseWrapper {
         const jsonResponse = res.json();
         const result = [];
         for (let i = 0; i < jsonResponse.length; i++) {
@@ -124,18 +105,19 @@ export class BaselineService {
    *
    */
   public geraBaselinePdfBrowser(id: number): Observable<string> {
-    this.http.get(`${this.relatoriosBaselineUrl}${id}`, {
-    method: RequestMethod.Get,
-    responseType: ResponseContentType.Blob,
+    this.blockUiService.show();
+    this.http.request('get', `${this.relatoriosBaselineUrl}${id}`, {
+    responseType: 'blob',
   }).subscribe(
       (response) => {
         const mediaType = 'application/pdf';
-        const blob = new Blob([response.blob()], {type: mediaType});
+        const blob = new Blob([response], {type: mediaType});
         const fileURL = window.URL.createObjectURL(blob);
         const anchor = document.createElement('a');
         anchor.download = 'analise.pdf';
         anchor.href = fileURL;
         window.open(fileURL, '_blank', '');
+        this.blockUiService.hide();
         return null;
       });
       return null;
