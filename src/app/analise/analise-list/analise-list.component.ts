@@ -13,6 +13,8 @@ import { AnaliseService } from '../analise.service';
 import { SearchGroup } from '../grupo/grupo.model';
 import { GrupoService } from '../grupo/grupo.service';
 import { BlockUiService } from '@nuvem/angular-base';
+import { StatusService } from 'src/app/status';
+import { Status } from 'src/app/status/status.model';
 
 @Component({
     selector: 'app-analise',
@@ -47,9 +49,12 @@ export class AnaliseListComponent implements OnInit {
     tipoEquipesToClone: TipoEquipe[] = [];
     query: String;
     usuarios: String[] = [];
-
+    lstStatus: Status[] = [];
+    lstStatusActive: Status[] = [];
     idAnaliseCloneToEquipe: number;
+    idAnaliseChangeStatus: number;
     public equipeToClone?: TipoEquipe;
+    public statusToChange?: Status;
 
     translateSusbscriptions: Subscription[] = [];
 
@@ -62,6 +67,7 @@ export class AnaliseListComponent implements OnInit {
     inicial: boolean;
     showDialogAnaliseCloneTipoEquipe = false;
     showDialogAnaliseBlock = false;
+    showDialogAnaliseChangeStatus = false;
     mostrarDialog = false;
     enableTable: Boolean = false;
     notLoadFilterTable = false;
@@ -79,6 +85,7 @@ export class AnaliseListComponent implements OnInit {
         private equipeService: TipoEquipeService,
         private usuarioService: UserService,
         private blockUiService: BlockUiService,
+        private statusService: StatusService,
     ) {
     }
 
@@ -97,6 +104,7 @@ export class AnaliseListComponent implements OnInit {
         this.recuperarEquipe();
         this.recuperarSistema();
         this.recuperarUsuarios();
+        this.recuperarStatus();
         this.inicial = false;
     }
 
@@ -137,6 +145,13 @@ export class AnaliseListComponent implements OnInit {
             return this.getLabel('Selecione um registro para clonar');
         }
         return this.getLabel('Clonar para Equipe');
+    }
+
+    changeStatusTooltip() {
+        if (!(this.datatable && this.datatable.selectedRow)) {
+            return this.getLabel('Selecione um registro para alterar o status');
+        }
+        return this.getLabel('Alterar Status');
     }
 
     compartilharTooltip() {
@@ -200,6 +215,17 @@ export class AnaliseListComponent implements OnInit {
         });
     }
 
+    recuperarStatus() {
+        this.statusService.list().subscribe(response => {
+            this.lstStatus = response;
+            const emptyStatus = new Status();
+            this.lstStatus.unshift(emptyStatus);
+        });
+        this.statusService.listActive().subscribe(response => {
+            this.lstStatusActive = response;
+        });
+    }
+
     loadingGroupSearch(): SearchGroup {
         const sessionSearchGroup: SearchGroup = JSON.parse(sessionStorage.getItem('searchGroup'));
         if (sessionSearchGroup) {
@@ -253,6 +279,9 @@ export class AnaliseListComponent implements OnInit {
                 break;
             case 'relatorioAnaliseContagem':
                 this.gerarRelatorioContagem(event.selection);
+                break;
+            case 'changeStatus':
+                this.openModalChangeStatus(event.selection.id);
                 break;
         }
     }
@@ -374,6 +403,7 @@ export class AnaliseListComponent implements OnInit {
         this.searchGroup.metodoContagem = undefined;
         this.searchGroup.equipe = undefined;
         this.searchGroup.usuario = undefined;
+        this.searchGroup.status = undefined;
         this.userAnaliseUrl = this.grupoService.grupoUrl + this.changeUrl();
         this.enableTable = false;
         this.recarregarDataTable();
@@ -408,6 +438,9 @@ export class AnaliseListComponent implements OnInit {
             }
             if (this.searchGroup && this.searchGroup.usuario && this.searchGroup.usuario.id) {
                 this.datatable.filterParams['usuario'] = this.searchGroup.usuario.id;
+            }
+            if (this.searchGroup && this.searchGroup.status && this.searchGroup.status.id) {
+                this.datatable.filterParams['status'] = this.searchGroup.status.id;
             }
         }
     }
@@ -590,6 +623,30 @@ export class AnaliseListComponent implements OnInit {
             });
         }
     }
+
+    public openModalChangeStatus(id: number) {
+        this.statusToChange = undefined;
+        this.idAnaliseChangeStatus = id;
+        this.showDialogAnaliseChangeStatus = true;
+    }
+
+    public alterStatusAnalise() {
+        if (this.idAnaliseChangeStatus && this.statusToChange) {
+            this.analiseService.changeStatusAnalise(this.idAnaliseChangeStatus, this.statusToChange).subscribe(data => {
+                this.statusToChange = undefined;
+                this.idAnaliseChangeStatus = undefined;
+                this.showDialogAnaliseChangeStatus = false;
+                this.recarregarDataTable();
+                this.datatable.filter();
+                this.pageNotificationService.addSuccessMessage('O status da analise ' + data.identificadorAnalise + ' foi alterado.');
+            },
+            err => this.pageNotificationService.addErrorMessage('Não foi possivel alterar o status da Analise.'));
+        } else {
+            this.pageNotificationService.addErrorMessage('Selecione uma Analise e um Status para continuar.');
+
+        }
+    }
+
     public setParamsLoad() {
         if (this.isLoadFilter) {
             this.searchGroup = this.loadingGroupSearch();
