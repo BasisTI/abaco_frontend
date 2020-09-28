@@ -84,7 +84,10 @@ export class StatusPage {
 
     editarStatus() {
         PrimengInputText.clearAndFillTextByLocator(by.name('nome'), 'Devolvida');
-        PrimengButton.clickByLocator(by.css('.p-col-6:nth-child(3) .ui-radiobutton-box'));
+        PrimengButton.clickByLocator(by.xpath('' +
+            '/html/body/app-root/div/div/div[2]/div/app-status-form/div/div/div/form/div[2]/p-inputswitch'));
+        PrimengButton.clickByLocator(by.xpath('' +
+            '/html/body/app-root/div/div/div[2]/div/app-status-form/div/div/div/form/div[3]/p-inputswitch'));
         this.clicarBotao('Salvar');
     }
 

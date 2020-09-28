@@ -44,7 +44,7 @@ describe('Abaco - Cadastros Manual', function() {
     it('Cadastros Manual - Visualizar Manual', function () {
         page.login();
         page.navegar();
-        page.selecionarLinhaVisualizar('Teste Manual');
+        page.selecionarLinhaVisualizar('IBAMA');
         expect(page.verificarVisualizar()).toBe('OK');
     });
 

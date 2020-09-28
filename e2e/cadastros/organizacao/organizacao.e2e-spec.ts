@@ -67,7 +67,7 @@ describe('Abaco - Cadastros Organização', function() {
     it('Cadastros Organização - Visualizar Organização', function () {
         page.login();
         page.navegar();
-        page.selecionarLinhaVisualizar('ORG');
+        page.selecionarLinhaVisualizar('BASIS');
         expect(page.verificarVisualizar()).toBe('OK');
     });
 

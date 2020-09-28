@@ -72,7 +72,7 @@ describe('Abaco - Cadastros Fase', function() {
         page.navegar();
         expect(page.ordenarFase()).toBe('OK');
     });
-    /*Exportar*/
+
     it('Cadastros Fase - Exportar', function () {
         page.login();
         page.navegar();

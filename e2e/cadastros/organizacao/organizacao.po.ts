@@ -483,7 +483,7 @@ export class OrganizacaoPage {
 
     verificarVisualizar() {
         this.promises = [];
-
+        browser.wait(PrimengComponent.isPresentByLocator(by.css('.ui-md-12:nth-child(1)')));
         this.promises.push(PrimengComponent.isPresentByLocator(by.css('.ui-md-12:nth-child(1)')));
         this.promises.push(PrimengComponent.isPresentByLocator(by.css('.ui-g-12:nth-child(2)')));
         this.promises.push(PrimengComponent.isPresentByLocator(by.css('.ui-g-12:nth-child(3)')));

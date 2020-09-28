@@ -448,11 +448,11 @@ export class ManualPage {
 
     verificarVisualizar() {
         this.promises = [];
-
-        this.promises.push(PrimengComponent.isPresentByLocator(by.css('.ui-g-6:nth-child(1) > label')));
-        this.promises.push(PrimengComponent.isPresentByLocator(by.css('.ui-g-6:nth-child(2) > label')));
-        this.promises.push(PrimengComponent.isPresentByLocator(by.css('.ui-g-6:nth-child(3) > label')));
-        this.promises.push(PrimengComponent.isPresentByLocator(by.css('.ui-g-6:nth-child(4) > label')));
+        browser.wait(PrimengComponent.isPresentByLocator(by.css('.ui-g-6:nth-child(1) > label')));
+        this.promises.push(browser.wait(PrimengComponent.isPresentByLocator(by.css('.ui-g-6:nth-child(1) > label'))));
+        this.promises.push(browser.wait(PrimengComponent.isPresentByLocator(by.css('.ui-g-6:nth-child(2) > label'))));
+        this.promises.push(browser.wait(PrimengComponent.isPresentByLocator(by.css('.ui-g-6:nth-child(3) > label'))));
+        this.promises.push(browser.wait(PrimengComponent.isPresentByLocator(by.css('.ui-g-6:nth-child(4) > label'))));
         return Promise.all(this.promises).then(resultados => {
             switch (false) {
                 case resultados[0]:

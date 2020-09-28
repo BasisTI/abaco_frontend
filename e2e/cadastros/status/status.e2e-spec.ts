@@ -62,7 +62,7 @@ describe('Abaco - Cadastros Status', function() {
         page.navegar();
         expect(page.ordenarStatus()).toBe('OK');
     });
-
+    /*Defeito*/
     it('Cadastros Status - Ordenar Ativo', function () {
         page.login();
         page.navegar();
