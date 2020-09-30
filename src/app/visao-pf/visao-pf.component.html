@@ -1,0 +1,274 @@
+<div style="margin-bottom: 1%">
+    <p-messages [(value)]="msgs"></p-messages>
+</div>
+
+
+<div class="ui-g-12" style="margin-top:3%;">
+    <p class="title-contagem"> Contagem Funcional</p><hr>
+
+    <div class="ui-g-12" style="margin-top:3%;">
+        <div class="ui-g-12 ui-md-4">
+            <div class="ui-float-label" style="float:initial; margin-left: 2%">
+                <p-dropdown [style]="{'width':'100%'}" [options]="analisesCadastradas" optionLabel="nome" [(ngModel)]="cenario.analise" placeholder="Análise"></p-dropdown>
+            </div>
+        </div>
+
+        <div class="ui-g-12 ui-md-4">
+            <div class="ui-float-label" style="float:initial; margin-left: 10%">
+                <input style="width: 500px;" id="float-input" [(ngModel)]="cenario.nome" type="text" size="30" pInputText>
+                <label for="float-input" >Cenário</label>
+            </div>
+        </div>
+
+        <div class="ui-g-12 ui-md-4">
+            <button pButton style="width: 50%; margin-left: 31%;" type="button" label="Realizar Contagem" (click)="contar()"> </button>
+        </div>
+
+    </div>
+
+    <div class="ui-g-12 ui-md-12">
+        <p-fileUpload chooseLabel="Adicionar imagem" [customUpload]="true"
+            [auto]="true" [showUploadButton]="false" [maxFileSize]="20000000" [multiple]="true"
+            (onRemove)="deleteFileListagem($event)" (uploadHandler)="addTelaListagem($event)"
+            name="demo[]">
+            <ng-template pTemplate="content" >
+                <ul id="uploadFileTipo" *ngIf="cenario.telas.length">
+                    <div *ngFor="let file of cenario.telas">
+                        <div id="uploadFileDropdown">
+                            <p-dropdown [style]="{'width':'300%', 'margin-bottom':'8.5%'}" [options]="tiposPrototipo" [(ngModel)]="file.tipo" optionLabel="tipo"  placeholder="Tipo do Protótipo"></p-dropdown>
+                        </div>
+                    </div>
+                </ul>
+            </ng-template>
+        </p-fileUpload>
+    </div>
+
+
+
+    <div class="ui-g-12" style="margin-top:3%;" *ngIf="showProcess">
+
+        <p class="title-contagem"> Resultados da Contagem</p><hr>
+        <div class="ui-md-11" style="margin-left: 3%">
+            <h3 class="first" > Processos concluídos  {{ qtdFinalizados | number:'1.' }}%</h3>
+        </div>
+        <div class="ui-md-11" style="margin-bottom: 2%;margin-left: 3%">
+            <p-progressBar [value]="qtdFinalizados" [style]="" ></p-progressBar>
+        </div>
+
+        <p-panel header="Processos" [toggleable]="true">
+
+            <i *ngIf="atualizar" class="pi pi-spin pi-spinner" style="margin-left: 48.4% ;font-size: 3em; margin-top: 1%"></i>
+
+            <div class="ui-md-12" style="margin-top: 1%; margin-bottom: 4%">
+                <p-table #dt [value] = "processosContagem" dataKey="id" [rowHover]="false"
+                    [rows]="5" [showCurrentPageReport]="false" [rowsPerPageOptions]="[5,10,25,50]"
+                    [paginator]="true" styleClass = ".ui-table-customers" >
+
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
+                            <th pSortableColumn="dataInicio">Iniciado <p-sortIcon field="dataInicio"></p-sortIcon></th>
+                            <th pSortableColumn="dataFim">Finalizado <p-sortIcon field="dataFim"></p-sortIcon></th>
+                            <th>Imagem</th>
+                        </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="body" let-processo>
+                        <tr>
+                            <td>
+                                <div class="ui-g-12 ui-md-8" style="margin-left: 15%">
+                                    <div  [class]="'customer-badge status-' + processo.status" >{{processo.status}}</div>
+                                </div>
+
+                            </td>
+                            <td>
+                                <div class="ui-g-12 ui-md-8" style="margin-left: 15%">
+                                    <p class ="style-td">{{ processo.dataInicio | date: 'dd/MM/yy - HH:mm:ss'}}</p>
+                                </div>
+
+                            </td>
+                            <td>
+                                <div class="ui-g-12 ui-md-8" style="margin-left: 15%">
+                                    <p class ="style-td" >{{ processo.dataFim | date: 'dd/MM/yy - HH:mm:ss'}}</p>
+                                </div>
+                            </td>
+                            <td>
+
+                                <div class="ui-g-12 ui-md-12'">
+                                    <div class ="style-td" style="text-align: left">{{ processo.imagem }}</div>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </p-panel>
+    </div>
+
+
+
+
+
+
+
+    <div class="ui-g-12" *ngIf="cenario.itenContagem">
+        <p-panel header="Contagem" [toggleable]="true"  >
+
+
+            <p-table #dtcont [columns]="cols" selectionMode="multiple" [(selection)]="selected" [value]="cenario.itenContagem" [style]="{'margin':'2%', 'margin-bottom': '4%' }"
+                        [rows]="20" [showCurrentPageReport]="false" [rowsPerPageOptions]="[5,10,20,25,50]" [paginator]="true">
+
+                <ng-template pTemplate="caption">
+                    <div class="ui-g-12 ui-md-12" style=" padding: 1%">
+                        <div class="ui-g-12 ui-md-2" style=" padding: 2%">
+                            <button type="button" pButton icon="fa fa-file-o" iconPos="left"
+                                label="Exportar Todos" (click)="dtcont.exportCSV()"
+                                style="float:left; background-color: #757575;"></button>
+                        </div>
+                        <div class="ui-g-12 ui-md-8"></div>
+                        <div class="ui-g-12 ui-md-2" style=" padding: 2%">
+                            <button type="button" pButton icon="fa fa-file" iconPos="left"
+                                label="Exportar Selecionado" (click)="dtcont.exportCSV({selectionOnly:true})"
+                                style="float:right;"></button>
+                        </div>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th *ngFor="let col of columns">
+                            {{col.header}}
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr [pSelectableRow]="rowData">
+                        <td *ngFor="let col of columns">
+                            {{rowData[col.field]}}
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="footer">
+                    <tr>
+                        <td colspan="5">Total</td>
+                        <td>{{totalPontos}}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </p-panel>
+    </div>
+    <div class="ui-g-12" style="margin-bottom:5%" *ngIf="cenario.telasResult">
+        <p-panel header="Detecção de Componentes" [toggleable]="true" >
+            <p-table #dt [value] = "cenario.telasResult" dataKey="id" styleClass="ui-table-image-result" [rowHover]="false"
+                [rows]="1" [showCurrentPageReport]="false" [rowsPerPageOptions]="[1,5,10,25,50]"
+                [paginator]="true" buttonClick="showDialogImg($event)">
+
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th><h3>{{cenario.nome}}</h3></th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-tela>
+                    <tr>
+                        <div class="ui-g-12 ui-md-12" style="margin-top: 2%; margin-left: 4%">
+                            <td>
+                                <strong>Protótipo de: </strong>{{tela.tipo}}
+                            </td>
+                        </div>
+                        <div class="ui-g-12 ui-md-12" (mousemove)="tooltipPosition($event,tela)" >
+                            <td>
+                                <app-canvas id="canvas" *ngIf="tela.bucketName" id="canvas" telaID="{{idTela}}"  canvasWidth="{{canvasWidth}}" canvasHeight="{{canvasHeight}}" imageHeight="{{tela.height}}" imageWidth="{{tela.width}}" [tipos]= "tiposComponents" [components]="tela.componentes" imageUrl="/visaopf/component/detection/image/{{tela.bucketName}}/{{tela.originalImageName}}"> </app-canvas>
+                            </td>
+                        </div>
+
+                        <div class="ui-g-12 ui-md-12" style="margin-left: 35%;margin-bottom: 2%">
+
+                            <td>
+                                <div class="ui-md-6" style="margin-left: 50%">
+                                    <button type="button" (click)="showDetalhesImg(tela)" pButton icon="pi pi-eye" label="Detalhes"></button>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="ui-md-6" style="margin-left: 100%">
+                                    <button type="button" (click)="editComponent(tela)" pButton icon="pi pi-image" label="Editar"></button>
+                                </div>
+
+                            </td>
+                        </div>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="footer">
+                    <tr>
+                        <td colspan="0"><strong>Quantidade de telas :  {{cenario.telasResult.length}}</strong> </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </p-panel>
+    </div>
+</div>
+
+
+<p-dialog *ngIf="telaSelect" [(visible)]="dialogDetalhes" [style]="{width: '60vw'}" >
+    <div class="ui-g-12 ui-md-10" style="margin-left: 8%">
+        <div class="ui-g-12 ui-md-12" style="text-align: center">
+            <h3> Componentes Encontrados </h3>
+        </div>
+        <div class="ui-g-12 ui-md-12">
+            <p-table #dt [value] = "telaSelect.componentes" dataKey="id" styleClass="" [rowHover]="false" [rows]="15"
+            [showCurrentPageReport]="false" [rowsPerPageOptions]="[5,10,15]" [paginator]="true">
+
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="tipo">Tipo <p-sortIcon field="tipo"></p-sortIcon></th>
+                        <th pSortableColumn="score">Taxa de certeza <p-sortIcon field="score"></p-sortIcon></th>
+                        <th pSortableColumn="nome">Nome <p-sortIcon field="nome"></p-sortIcon></th>
+                        <th pSortableColumn="descricao">Descrição <p-sortIcon field="descricao"></p-sortIcon></th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="caption"></ng-template>
+
+                <ng-template pTemplate="body" let-component>
+                    <tr>
+                        <td>
+                            <div [class]="'customer-component tipo-' + component.tipo">
+                                {{component.tipo}}
+                            </div>
+                        </td>
+                        <td class="style-td">
+                            {{formatPctr(component.score)}}
+                        </td>
+                        <td class="style-td">
+                            {{component.nome}}
+                        </td>
+                        <td class="style-td">
+                            {{component.descricao}}
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="footer">
+                    <tr>
+                        <td colspan="2"><strong *ngIf="telaSelect.componentes.length">Total:  {{telaSelect.componentes.length}}</strong> </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</p-dialog>
+
+<div class="tooltip" *ngIf="componentTooltip" tooltip [component]="componentTooltip" [proporcaoW]="proporcaoW" [proporcaoH]="proporcaoH" >
+    <ng-template [ngIf]="componentTooltip.nome || componentTooltip.descricao" [ngIfElse]="showTipo">
+        <div>
+            <p [class]="'tooltip-tipo '+componentTooltip.tipo">{{componentTooltip.tipo}}</p>
+            <p *ngIf="componentTooltip.nome">{{componentTooltip.nome}}</p>
+            <p *ngIf="componentTooltip.descricao">{{componentTooltip.descricao}}</p>
+        </div>
+    </ng-template>
+
+    <ng-template #showTipo>
+        <div>
+            <p [class]="'tooltip-tipo '+componentTooltip.tipo">{{componentTooltip.tipo}}</p>
+        </div>
+    </ng-template>
+</div>

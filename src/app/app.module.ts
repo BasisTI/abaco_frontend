@@ -37,6 +37,11 @@ import { RouterModule } from '@angular/router';
 import { LoginModule } from './login/login.module';
 import { PesquisarFuncaoTransacaoModule } from './pesquisar-ft/pesquisar-ft.module';
 import { StatusModule } from './status/status.module';
+import { VisaoPfComponent } from './visao-pf/visao-pf.component';
+import { CanvasComponent} from './visao-pf/canvas/canvas.component';
+import { VisaoPfEditComponentComponent } from './visao-pf-edit-component/visao-pf-edit-component.component'
+import { TooltipDirective } from './visao-pf/tooltip.directive'
+
 
 @NgModule({
     declarations: [
@@ -46,6 +51,10 @@ import { StatusModule } from './status/status.module';
         AppRightpanelComponent,
         AppInlineProfileComponent,
         DiarioErrosComponent,
+        VisaoPfComponent,
+        CanvasComponent,
+        VisaoPfEditComponentComponent,
+        TooltipDirective,
     ],
     imports: [
         BrowserModule,

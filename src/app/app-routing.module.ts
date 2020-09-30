@@ -4,8 +4,8 @@ import { LoginSuccessComponent } from '@nuvem/angular-base';
 import { DiarioErrosComponent } from './components/diario-erros/diario-erros.component';
 import { IndexadorComponent } from './indexador/indexador.component';
 import { LoginComponent } from './login';
-
-
+import {VisaoPfComponent} from './visao-pf/visao-pf.component';
+import { VisaoPfEditComponentComponent } from './visao-pf-edit-component/visao-pf-edit-component.component';
 
 
 const routes: Routes = [
@@ -14,6 +14,9 @@ const routes: Routes = [
   { path: 'login-success', component: LoginSuccessComponent },
   { path: 'indexador', component: IndexadorComponent, data: { breadcrumb: 'Reindexar'} },
   { path: 'login', component: LoginComponent},
+  { path: 'visaopf', pathMatch: 'full',  component: VisaoPfComponent },
+  { path: 'visaopf/edit/:idAnalise/:idCenario/:idTela', component: VisaoPfEditComponentComponent },
+  { path: 'visaopf/contagem/:idAnalise/:idCenario', pathMatch: 'full', component: VisaoPfComponent },
 ];
 
 @NgModule({

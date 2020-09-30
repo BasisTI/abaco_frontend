@@ -1,0 +1,180 @@
+#uploadFileDropdown{
+    padding:1%;
+    margin-top:5%
+}
+
+#uploadFileTipo{
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-right: 30%;
+}
+
+.title-contagem{
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 33px;
+    letter-spacing: 0.2px;
+    text-transform: uppercase;
+    color: #1E2F40;
+    margin-left: 1%;
+}
+
+.style-td{
+    text-align: center;
+    font-weight: 650;
+    font-size: 14px;
+    height: 100%;
+    width: 100%;
+}
+
+.customer-badge {
+    padding: .25em .5em;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .3px;
+    text-align: center;
+
+    &.status-CONTAGEM_TERMINADA {
+        background-color: #C8E6C9;
+        color: #256029;
+    }
+
+    &.status-ENVIADO_DETECCAO {
+        background-color: #2A369B;
+        color: whitesmoke;
+    }
+
+    &.status-DETECCAO_TERMINADA {
+        background-color: #FFC107;
+        color: black;
+    }
+
+    &.status-ERRO {
+        background-color: #FFCDD2;
+        color: #C63737;
+    }
+
+    &.status-ENVIADO_OCR {
+        background-color: #404040;
+        color: whitesmoke;
+    }
+
+    &.status-OCR_TERMINADO {
+        background-color: #C8E6C9;
+        color: #256029;
+    }
+
+}
+
+.customer-component{
+    padding: .25em .5em;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .3px;
+    text-align: center;
+    width: 50%;
+    margin-left: 25%;
+
+    &.tipo-campo {
+        background-color: #C8E6C9;
+    }
+
+    &.tipo-dropdown {
+        background-color: #FFC107;
+    }
+
+    &.tipo-incluir {
+        background-color: #73D2FF;
+    }
+
+    &.tipo-editar {
+        background-color: #AD01C1;
+    }
+
+    &.tipo-excluir {
+        background-color: #D2691E;
+    }
+
+    &.tipo-visualizar {
+        background-color: #6495ED;
+    }
+    &.tipo-exportar {
+        background-color: #BDB76B;
+    }
+
+    &.tipo-radiobutton {
+        background-color: #404040;
+        color: whitesmoke;
+    }
+}
+
+
+.tooltip {
+    position: absolute;
+    max-width: 150px;
+    font-size: 14px;
+    text-align: left;
+    color: #f8f8f2;
+    padding: 3px 8px;
+    background: #282a36;
+    border-radius: 4px;
+    z-index: 1000;
+    opacity: 0;
+    margin-left: -5px;
+    border-width: 5px;
+    border-color: black transparent transparent transparent;
+    opacity: 1;
+    -webkit-transition: opacity 1500ms;
+    -moz-transition: opacity 1500ms;
+    -o-transition: opacity 1500ms;
+    transition: opacity 1500ms;
+
+
+}
+
+.tooltip-tipo {
+    padding: .25em .5em;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+    font-size: 13px;
+    text-align: center;
+    color: #0D0D0D;
+    font-weight: 600;
+
+    &.campo {
+        background-color: #15C101;
+    }
+
+    &.dropdown {
+        background-color: #FFC300;
+    }
+
+    &.incluir {
+        background-color: #73D2FF;
+    }
+
+    &.editar {
+        background-color: #AD01C1;
+    }
+
+    &.excluir {
+        background-color: #C10101;
+    }
+
+    &.visualizar {
+        background-color: #6495ED;
+    }
+    &.exportar {
+        background-color: #BDB76B;
+    }
+
+    &.radiobutton {
+        background-color: #91908d;
+    }
+
+}

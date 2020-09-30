@@ -1,0 +1,4 @@
+<div class="button-voltar ui-md-12">
+    <button pButton type="button" icon="pi pi-arrow-left" label="Voltar" (click)="voltarCenario()"></button>
+</div>
+<app-canvas  *ngIf="tela.bucketName" id="canvas" telaID="{{idTela}}" toolbar="True" canvasWidth="1370" canvasHeight="630"  imageHeight="{{tela.height}}" imageWidth="{{tela.width}}" [tipos]= "tiposComponents" [components]="tela.componentes" imageUrl="/visaopf/component/detection/image/{{tela.bucketName}}/{{tela.originalImageName}}"> </app-canvas>

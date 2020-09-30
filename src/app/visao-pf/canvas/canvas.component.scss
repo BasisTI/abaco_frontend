@@ -1,0 +1,59 @@
+canvas {
+    border: 1px solid #000;
+    // width:1550px;
+    // height:600px;
+}
+
+.ui-label-dialog-componente{
+    margin-left: 8% ;
+}
+
+
+.customer-component{
+    padding: .25em .5em;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .3px;
+    text-align: center;
+    width: 50%;
+    margin-left: 25%;
+
+
+    &.tipo-campo{
+        background-color: #C8E6C9;
+    }
+
+    &.tipo-dropdown {
+        background-color: #FFC107;
+    }
+
+    &.tipo-incluir {
+        background-color: #73D2FF;
+    }
+
+    &.tipo-editar {
+        background-color: #AD01C1;
+    }
+
+    &.tipo-excluir {
+        background-color: #D2691E;
+    }
+
+    &.tipo-visualizar {
+        background-color: #6495ED;
+    }
+    &.tipo-exportar {
+        background-color: #BDB76B;
+    }
+
+    &.tipo-radiobutton {
+        background-color: #91908d;
+    }
+}
+
+.style-tipo{
+    color: #898989;
+    margin-top: 1%;
+    margin-left: -16%
+}
