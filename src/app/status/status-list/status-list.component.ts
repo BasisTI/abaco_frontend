@@ -19,7 +19,7 @@ export class StatusListComponent implements OnInit {
 
   paginationParams = { contentIndex: null };
 
-  equipeSelecionada: Status;
+  statusSelecionada: Status;
 
   elasticQuery: ElasticQuery = new ElasticQuery();
 
@@ -46,10 +46,10 @@ export class StatusListComponent implements OnInit {
   public ngOnInit() {
     if (this.datatable) {
       this.datatable.pDatatableComponent.onRowSelect.subscribe((event) => {
-        this.equipeSelecionada = event.data;
+        this.statusSelecionada = event.data;
       });
       this.datatable.pDatatableComponent.onRowUnselect.subscribe((event) => {
-        this.equipeSelecionada = undefined;
+        this.statusSelecionada = undefined;
       });
     }
   }
@@ -81,7 +81,7 @@ export class StatusListComponent implements OnInit {
   }
 
   abrirEditar() {
-    this.router.navigate(['/status', this.equipeSelecionada.id, 'edit']);
+    this.router.navigate(['/status', this.statusSelecionada.id, 'edit']);
   }
 
   public confirmDelete(id: any) {

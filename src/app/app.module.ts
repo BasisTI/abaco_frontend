@@ -42,6 +42,8 @@ import { CanvasComponent} from './visao-pf/canvas/canvas.component';
 import { VisaoPfEditComponentComponent } from './visao-pf-edit-component/visao-pf-edit-component.component'
 import { TooltipDirective } from './visao-pf/tooltip.directive'
 
+import { NomenclaturaModule } from './nomenclatura/nomenclatura.module';
+import { DivergenciaModule } from './divergencia/divergencia.module';
 
 @NgModule({
     declarations: [
@@ -91,6 +93,8 @@ import { TooltipDirective } from './visao-pf/tooltip.directive'
         PesquisarFuncaoTransacaoModule,
         BlockUiModule,
         StatusModule,
+        NomenclaturaModule,
+        DivergenciaModule,
     ],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },

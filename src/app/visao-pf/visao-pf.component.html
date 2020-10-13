@@ -115,7 +115,7 @@
         <p-panel header="Contagem" [toggleable]="true"  >
 
 
-            <p-table #dtcont [columns]="cols" selectionMode="multiple" [(selection)]="selected" [value]="cenario.itenContagem" [style]="{'margin':'2%', 'margin-bottom': '4%' }"
+            <p-table #dtcont [columns]="cols" selectionMode="multiple" [(selection)]="itemSelected" [value]="cenario.itenContagem" [style]="{'margin':'2%', 'margin-bottom': '4%' }"
                         [rows]="20" [showCurrentPageReport]="false" [rowsPerPageOptions]="[5,10,20,25,50]" [paginator]="true">
 
                 <ng-template pTemplate="caption">
@@ -177,7 +177,7 @@
                         </div>
                         <div class="ui-g-12 ui-md-12" (mousemove)="tooltipPosition($event,tela)" >
                             <td>
-                                <app-canvas id="canvas" *ngIf="tela.bucketName" id="canvas" telaID="{{idTela}}"  canvasWidth="{{canvasWidth}}" canvasHeight="{{canvasHeight}}" imageHeight="{{tela.height}}" imageWidth="{{tela.width}}" [tipos]= "tiposComponents" [components]="tela.componentes" imageUrl="/visaopf/component/detection/image/{{tela.bucketName}}/{{tela.originalImageName}}"> </app-canvas>
+                                <app-canvas id="canvas" *ngIf="tela.bucketName" id="canvas" telaID="{{tela.id}}"  canvasWidth="{{canvasWidth}}" canvasHeight="{{canvasHeight}}" imageHeight="{{tela.height}}" imageWidth="{{tela.width}}" [tipos]= "tiposComponents" [components]="tela.componentes" imageUrl="/visaopf/component/detection/image/{{tela.bucketName}}/{{tela.originalImageName}}"> </app-canvas>
                             </td>
                         </div>
 

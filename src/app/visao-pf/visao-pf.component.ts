@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core'
 import { Message } from 'primeng/api'
 import {VisaoPfService} from './visao-pf.service'
+import { ListaRetorno } from './lista-retorno.model'
 import {Tela} from './tela.model'
 import {Cenario} from './cenario.model'
 import { switchMap,takeWhile } from 'rxjs/operators'
@@ -28,6 +29,7 @@ export class VisaoPfComponent implements OnInit {
     cols: any[]
     totalPontos: number
 
+    itemSelected: ListaRetorno[]
 
     canvasWidth=1300
     canvasHeight=550
