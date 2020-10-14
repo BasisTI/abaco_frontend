@@ -13,7 +13,7 @@ RUN \
     mkdir -p /etc/letsencrypt/production/certs/ssl &&\
     cp certificates/ca-bundle.crt /etc/nginx/ssl/ &&\
     rm -Rf /certificates
-
+    
 ADD  dist.tar.gz /usr/share/nginx/html/
 
 CMD ["sh", "-c", "/etc/nginx/env.sh ; nginx -g 'daemon off;'"]
