@@ -130,7 +130,7 @@ export class VisaoPfComponent implements OnInit {
 
         if(invalido === -1){
             this.showSucessMsg('Enviando imagens para contagem...')
-            this.visaoPfService.sendComponentDetection(this.cenario).subscribe(uuid =>{
+            this.visaoPfService.sendContagemVisaopf(this.cenario).subscribe(uuid =>{
                 if(uuid){
                     this.showProcess = true
                     this.updateProcessos(uuid)

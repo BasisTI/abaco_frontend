@@ -12,7 +12,7 @@ export class VisaoPfService {
   constructor(private http: HttpClient) {
   }
 
-  sendComponentDetection(cenario: Cenario): Observable<any> {
+  sendContagemVisaopf(cenario: Cenario): Observable<any> {
     let formData: FormData = new FormData()
     formData.append('nomeCenario', cenario.nome)
     formData.append('analiseId', cenario.analise.id)
@@ -58,6 +58,17 @@ export class VisaoPfService {
 
   getTiposComponent(){
     return this.http.get("/visaopf/componente/tipos")
+  }
+
+  getTelaByUuid(uuid:string){
+    return this.http.get(`/visaopf/tela/uuid/${uuid}`)
+  }
+
+  sendComponentDetection(visaopf: any): Observable<any> {
+    let formData: FormData = new FormData()
+    formData.append('modelName', 'visaopf-12500')
+    formData.append('telas', visaopf.tela.imagem, visaopf.tela.originalImageName )
+    return this.http.post('/visaopf/tela/component/detection', formData, {responseType: 'text'})
   }
 
 }

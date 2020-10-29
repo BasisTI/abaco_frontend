@@ -28,9 +28,10 @@ import { BaselineAnalitico } from './../baseline/baseline-analitico.model';
 import { BaselineService } from './../baseline/baseline.service';
 import { Der } from './../der/der.model';
 import { FuncaoTransacao, TipoFuncaoTransacao } from './../funcao-transacao/funcao-transacao.model';
-import { FuncaoDados } from './funcao-dados.model';
+import { FuncaoDados, Visaopf } from './funcao-dados.model';
 import { FuncaoDadosService } from './funcao-dados.service';
 import { BlockUiService } from '@nuvem/angular-base';
+import { ConcatSource } from 'webpack-sources';
 
 @Component({
     selector: 'app-analise-funcao-dados',
@@ -114,6 +115,9 @@ export class FuncaoDadosFormComponent implements OnInit, AfterViewInit {
     public seletedFuncaoDados: FuncaoDados = new FuncaoDados();
     public display = false;
 
+    visaopf: Visaopf = new Visaopf();
+    routeState: any
+
     constructor(
         private analiseSharedDataService: AnaliseSharedDataService,
         private confirmationService: ConfirmationService,
@@ -127,6 +131,11 @@ export class FuncaoDadosFormComponent implements OnInit, AfterViewInit {
         private router: Router,
         private blockUiService: BlockUiService,
     ) {
+
+        if (this.router.getCurrentNavigation().extras.state) {
+            this.routeState = this.router.getCurrentNavigation().extras.state;
+        }
+
     }
 
     getLabel(label) {
@@ -151,10 +160,48 @@ export class FuncaoDadosFormComponent implements OnInit, AfterViewInit {
                         this.impactos = AnaliseSharedUtils.impactos;
                         this.disableTRDER();
                         this.blockUiService.hide();
+
+                        if(this.routeState){
+                            let funcDados: FuncaoDados = JSON.parse(this.routeState.seletedFuncaoDados )
+                            this.seletedFuncaoDados = funcDados
+                            this.visaopf.telaResult = JSON.parse(this.routeState.telaResult)
+                            this.seletedFuncaoDados.sustantation=  '<img src="'+JSON.parse(this.routeState.dataUrl)+'" width="1222">'
+                            this.seletedFuncaoDados.ders = []
+                            this.visaopf.telaResult.componentes.forEach( comp => {
+                                if(comp.tipo === "campo" || comp.tipo ==="dropdown" ){
+                                    if(comp.nome == null){
+                                        this.seletedFuncaoDados.ders.push(new Der(undefined,"Sem nome - " + comp.tipo ))
+                                    }else{
+                                        this.seletedFuncaoDados.ders.push(new Der(undefined, comp.nome ))
+                                    }
+                                }
+                            })
+
+                            if(this.routeState.isEdit){
+                                this.carregarValoresNaPaginaParaEdicao(this.seletedFuncaoDados)
+                            }else{
+                                this.carregarDerERlr(this.seletedFuncaoDados)
+                                this.carregarFatorDeAjusteNaEdicao(this.seletedFuncaoDados)
+                            }
+                            this.disableTRDER()
+                            this.configurarDialog()
+                        }
                     });
                 }
             });
         });
+    }
+
+    detectarComponentes(){
+        this.desconverterChips()
+        console.log(this.seletedFuncaoDados)
+        this.router.navigate([`visaopf/deteccomponentes`], {
+            state: {
+                isEdit : this.isEdit,
+                idAnalise : this.idAnalise,
+                seletedFuncaoDados : JSON.stringify(this.seletedFuncaoDados),
+            }
+        })
     }
 
     estadoInicial() {
@@ -636,13 +683,12 @@ export class FuncaoDadosFormComponent implements OnInit, AfterViewInit {
                 retorno = false;
                 this.pageNotificationService.addErrorMessage(this.getLabel('Selecione um Deflator'));
             }
-        } else {
+        }else {
             this.erroDeflator = true;
         }
 
         if (this.seletedFuncaoDados.fatorAjuste) {
-            if (this.seletedFuncaoDados.fatorAjuste.tipoAjuste === 'UNITARIO' &&
-                !(this.seletedFuncaoDados.quantidade && this.seletedFuncaoDados.quantidade > 0)) {
+            if (this.seletedFuncaoDados.fatorAjuste.tipoAjuste === 'UNITARIO' && !(this.seletedFuncaoDados.quantidade && this.seletedFuncaoDados.quantidade > 0)) {
                 this.erroUnitario = true;
                 retorno = false;
             } else {
@@ -789,6 +835,7 @@ export class FuncaoDadosFormComponent implements OnInit, AfterViewInit {
         const funcaoDadosSelecionada: FuncaoDados = event.selection;
         switch (event.button) {
             case 'edit':
+                this.visaopf.funcaoDadosSelecionada = funcaoDadosSelecionada
                 this.isEdit = true;
                 this.prepararParaEdicao(funcaoDadosSelecionada);
                 break;
@@ -981,7 +1028,7 @@ export class FuncaoDadosFormComponent implements OnInit, AfterViewInit {
     }
 
     private carregarDerERlr(fd: FuncaoDados) {
-        if (fd.ders && fd.derValues) {
+        if (fd.ders || fd.derValues) {
             const ders = this.loadReference(fd.ders, fd.derValues);
             this.dersChips = ders.filter(der => {
                 return !(der.text === 'Mensagem' || der.text === 'Ação');

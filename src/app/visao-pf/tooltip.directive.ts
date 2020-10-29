@@ -45,29 +45,12 @@ export class TooltipDirective implements OnInit{
     }
 
     setPosition() {
-        console.log("position->",this.position)
-        console.log("imgPos->", this.imgPos)
-
-        // var proporcaoW = 1.2361538461538462
-        // var proporcaoH = 0.9963636363636363
-
-        //var clickPosition = [this.position.xmin + this.imgPos[0], this.position.ymin + this.imgPos[1]]
         var clickPosition = [ (this.position.xmin/this.proporcaoW)+ this.imgPos[0] , (this.position.ymin/this.proporcaoH)+ this.imgPos[1] ]
-        console.log("clickPosition->",clickPosition)
-
-        // clickPosition = [this.position.xmin + this.imgPos[0], this.position.ymin + this.imgPos[1]]
-        // console.log("Working clickPosition->",clickPosition)
-
-
         this.renderer.appendChild(this.el.nativeElement, this.tooltip)
         let present = this.el.nativeElement.classList.contains('tooltip');
         if(present){
-            // this.renderer.setStyle(this.el.nativeElement, 'top', `${clickPosition[1]-85}px`)
-            // this.renderer.setStyle(this.el.nativeElement, 'left', `${clickPosition[0]-125}px`)
-
             var left = clickPosition[0] - 150
             var top = clickPosition[1]
-
             this.renderer.setStyle(this.el.nativeElement, 'left', `${left}px`)
             this.renderer.setStyle(this.el.nativeElement, 'top', `${top}px`)
         }

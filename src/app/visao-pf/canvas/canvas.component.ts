@@ -28,10 +28,12 @@ export class CanvasComponent implements OnInit {
     markDisable=false
     image:any
     componente = new Componente()
+    componentTooltip:any
     clickPosition:any
     proporcaoW:number
     proporcaoH:number
     dialogComponent=false
+    showTooltip=false
     msgs: Message[] = []
     static readonly TIMEOUTCANVAS = 1000
 
@@ -44,7 +46,13 @@ export class CanvasComponent implements OnInit {
         this.getEventClickPosition()
     }
 
+
+    tooltipPosition(comp){
+        this.componentTooltip = comp
+    }
+
     getEventClickPosition(){
+
         fromEvent(this.canvas, 'mousedown').subscribe( res => {
             this.clickPosition = res
             const rect = this.canvas.getBoundingClientRect()
@@ -54,6 +62,23 @@ export class CanvasComponent implements OnInit {
             }
             if(!this.markDisable){
                 this.clickInComponente(initPos)
+            }
+        })
+
+        fromEvent(this.canvas, 'mousemove').subscribe( res =>{
+            if(!this.markDisable){
+                this.showTooltip = false
+                this.clickPosition = res
+                const rect = this.canvas.getBoundingClientRect()
+                const initPos = {
+                    x: this.clickPosition.clientX - rect.left,
+                    y: this.clickPosition.clientY - rect.top
+                }
+                if(!this.dialogComponent){
+                    this.showTooltip = true
+                    var comp = this.findComponenteByPosition(initPos)
+                    this.tooltipPosition(comp)
+                }
             }
         })
     }
@@ -103,15 +128,15 @@ export class CanvasComponent implements OnInit {
 
     removeComponent(componente){
         const index = this.components.indexOf(componente)
-        if(this.markDisable){
-            this.dialogComponent = false
-        }else if(index !=-1){
+        if(index !=-1){
             this.components.splice(index, 1)
             this.service.deleteComponent(this.telaID,componente.id).subscribe( (resp:any) =>{
                 this.components=resp.componentes
                 this.showSucessMsg('Componente removido!')
             })
         }
+
+        this.dialogComponent = false
         this.draw()
         this.componente = new Componente()
     }

@@ -222,4 +222,32 @@ class FuncaoDadosCopyFromJSON {
     }
 
 }
+export class Visaopf{
+    showProcess:boolean = true
+    atualizar:boolean
+    processosContagem:any
+    qtdFinalizados:number = 0
+    tela: Tela = new Tela()
+    telaResult:any
+    uuidProcesso:any
+
+    funcaoDadosSelecionada:any
+
+    canvasWidth=1300
+    canvasHeight=550
+
+
+
+}
+
+
+export class Tela{
+    public id: string
+    public originalImageName:string
+    public tipo:string
+    public imagem: File
+    public size:any
+    public bucketName: any
+}
+
 

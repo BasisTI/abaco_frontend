@@ -44,6 +44,8 @@ import { TooltipDirective } from './visao-pf/tooltip.directive'
 
 import { NomenclaturaModule } from './nomenclatura/nomenclatura.module';
 import { DivergenciaModule } from './divergencia/divergencia.module';
+import {FieldsetModule} from 'primeng/fieldset';
+import { VisaPfDeteccaoComponentesComponent } from './visa-pf-deteccao-componentes/visa-pf-deteccao-componentes.component';
 
 @NgModule({
     declarations: [
@@ -57,6 +59,7 @@ import { DivergenciaModule } from './divergencia/divergencia.module';
         CanvasComponent,
         VisaoPfEditComponentComponent,
         TooltipDirective,
+        VisaPfDeteccaoComponentesComponent,
     ],
     imports: [
         BrowserModule,
@@ -95,6 +98,7 @@ import { DivergenciaModule } from './divergencia/divergencia.module';
         StatusModule,
         NomenclaturaModule,
         DivergenciaModule,
+        FieldsetModule,
     ],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },
