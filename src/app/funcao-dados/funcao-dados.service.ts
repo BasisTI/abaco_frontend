@@ -11,11 +11,14 @@ import { Funcionalidade } from 'src/app/funcionalidade';
 import { ResponseWrapper } from 'src/app/shared';
 import { Manual } from 'src/app/manual';
 import { Analise } from '../analise';
+import { CommentFuncaoDados } from './comment-funcado-dados.model';
+import { Status } from '../status/status.model';
 
 @Injectable()
 export class FuncaoDadosService {
 
     resourceUrl = environment.apiUrl + '/funcao-dados';
+    resourceUrlComment = environment.apiUrl + '/comment/funcao-dados';
     vwresourceUrl = environment.apiUrl + '/vw-funcao-dados';
     resourceUrlPEAnalitico = environment.apiUrl + '/peanalitico/';
     funcaoTransacaoResourceUrl = environment.apiUrl + '/funcao-transacaos';
@@ -104,9 +107,26 @@ export class FuncaoDadosService {
         return entity;
     }
 
-    public delete(id: number): Observable<Response> {
-        return this.http.delete<Response>(`${this.resourceUrl}/${id}`);
+    delete(id: number): Observable<Response> {
+        return this.http.get<Response>(`${this.resourceUrl}/${id}`);
     }
+
+    deleteStatus(id: number): Observable<Response> {
+        return this.http.get<Response>(`${this.resourceUrl}/update-status/${id}/${StatusFunction.EXCLUIDO}`);
+    }
+
+    approved(id: number): Observable<Response> {
+        return this.http.get<Response>(`${this.resourceUrl}/update-status/${id}/${StatusFunction.VALIDADO}`);
+    }
+
+    pending(id: number): Observable<Response> {
+        return this.http.get<Response>(`${this.resourceUrl}/update-status/${id}/${StatusFunction.DIVERGENTE}`);
+    }
+
+    saveComent(comment: String, idStatus: number) {
+        return this.http.post<CommentFuncaoDados>(`${this.resourceUrlComment}/${idStatus}`, comment);
+    }
+
 
     private convertResponse(res): ResponseWrapper {
         const jsonResponse = res;
@@ -148,6 +168,12 @@ export class FuncaoDadosService {
         return this.http.post(`${this.resourceUrl}/${idAnalise}`, json);
     }
 
+    createDivergence(funcaoDados: FuncaoDados, idAnalise: Number): Observable<any> {
+        funcaoDados.statusFuncao = StatusFunction.DIVERGENTE;
+        const json = funcaoDados.toJSONState();
+        return this.http.post(`${this.resourceUrl}/${idAnalise}`, json);
+    }
+
     update(funcaoDados: FuncaoDados) {
         const copy = funcaoDados.toJSONState();
         return this.http.put(`${this.resourceUrl}/${copy.id}`, copy).pipe(catchError((error: any) => {
@@ -166,8 +192,13 @@ export class FuncaoDadosService {
         const url = `${this.vwresourceUrl}/${id}`;
         return this.http.get<[]>(url);
     }
-    public getFuncaoDadosByModuloOrFuncionalidade(idModulo: Number, idFuncionalida: Number = 0 ): Observable<any[]> {
-        const url = `${this.resourceUrlPEAnalitico}funcaoDados/${idModulo}?idFuncionalidade=${idFuncionalida}`;
+    public getFuncaoDadosByModuloOrFuncionalidade(idSistema: Number, nome?: String, idModulo?: Number, idFuncionalidade?: Number): Observable<any[]> {
+        const url = `${this.resourceUrlPEAnalitico}funcaoDados/${idSistema}?name=${nome}&idModulo=${idModulo}&idFuncionalidade=${idFuncionalidade}`;
         return this.http.get<[]>(url);
     }
 }
+enum StatusFunction {
+    DIVERGENTE = 'DIVERGENTE',
+    EXCLUIDO = 'EXCLUIDO',
+    VALIDADO = 'VALIDADO',
+  }

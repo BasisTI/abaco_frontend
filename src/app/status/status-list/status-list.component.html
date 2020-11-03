@@ -51,6 +51,11 @@
                 {{ row.ativo ? 'Sim' : 'Não' }}
               </ng-template>
             </p-column>
+            <p-column header="Divergência" field="divergencia" [sortable]="false" >
+              <ng-template let-col let-row="rowData" pTemplate="body">
+                {{ row.divergencia ? 'Sim' : 'Não' }}
+              </ng-template>
+            </p-column>
   
           </basis-datatable>
           <div class="ui-g-12 ui-md-2">

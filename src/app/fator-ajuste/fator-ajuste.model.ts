@@ -26,7 +26,8 @@ export class FatorAjuste implements BaseEntity {
     public impacto?: ImpactoFatorAjuste,
     public manual?: Manual,
     public origem?: string,
-    public artificialId?: number
+    public artificialId?: number,
+    public ordem?: number,
   ) { }
 
   toJSONState(): FatorAjuste {
@@ -38,14 +39,14 @@ export class FatorAjuste implements BaseEntity {
     // TODO converter manual?
     return new FatorAjuste(json.id, json.nome, json.fator, json.ativo,
       json.descricao, json.codigo, json.tipoAjuste, json.impacto, json.manual,
-      json.origem, json.artificialId);
+      json.origem, json.artificialId, json.ordem);
   }
 
   // TODO extrair modulo? entrar pro jsonable?
   clone(): FatorAjuste {
     return new FatorAjuste(this.id, this.nome, this.fator, this.ativo,
       this.descricao, this.codigo, this.tipoAjuste, this.impacto, this.manual,
-      this.origem, this.artificialId);
+      this.origem, this.artificialId, this.ordem);
   }
 
   get fatorFormatado(): number {

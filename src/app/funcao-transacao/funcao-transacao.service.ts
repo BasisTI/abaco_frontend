@@ -6,12 +6,14 @@ import { PageNotificationService } from '@nuvem/primeng-components';
 import { catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { Analise } from '../analise/analise.model';
+import { CommentFuncaoTransacao } from './comment.model';
 
 
 @Injectable()
 export class FuncaoTransacaoService {
 
     vwFuncaoTransacaoResourceUrl = environment.apiUrl + '/vw-funcao-transacaos';
+    resourceUrlComment = environment.apiUrl + '/comment/funcao-transacao';
     funcaoTransacaoResourceUrl = environment.apiUrl + '/funcao-transacaos';
     resourceUrlPEAnalitico = environment.apiUrl + '/peanalitico/';
     allFuncaoTransacaosUrl = this.funcaoTransacaoResourceUrl + '/completa';
@@ -75,7 +77,23 @@ export class FuncaoTransacaoService {
     }
 
     delete(id: number): Observable<Response> {
-        return this.http.delete<Response>(`${this.funcaoTransacaoResourceUrl}/${id}`);
+        return this.http.get<Response>(`${this.funcaoTransacaoResourceUrl}/${id}`);
+    }
+
+    deleteStatus(id: number): Observable<Response> {
+        return this.http.get<Response>(`${this.funcaoTransacaoResourceUrl}/update-status/${id}/${StatusFunction.EXCLUIDO}`);
+    }
+
+    approved(id: number): Observable<Response> {
+        return this.http.get<Response>(`${this.funcaoTransacaoResourceUrl}/update-status/${id}/${StatusFunction.VALIDADO}`);
+    }
+
+    pending(id: number): Observable<Response> {
+        return this.http.get<Response>(`${this.funcaoTransacaoResourceUrl}/update-status/${id}/${StatusFunction.DIVERGENTE}`);
+    }
+
+    saveComent(comment: String, idStatus: number) {
+        return this.http.post<CommentFuncaoTransacao>(`${this.resourceUrlComment}/${idStatus}`, comment);
     }
 
     existsWithName(name: String, idAnalise: number, idFuncionalade: number, idModulo: number, id: Number = 0): Observable<Boolean> {
@@ -88,12 +106,18 @@ export class FuncaoTransacaoService {
         return this.http.get<FuncaoTransacao>(url);
     }
 
-    public getFuncaoTransacaoByModuloOrFuncionalidade(idModulo: Number, idFuncionalida: Number = 0 ): Observable<any[]> {
-        const url = `${this.resourceUrlPEAnalitico}funcaoTransacao/${idModulo}?idFuncionalidade=${idFuncionalida}`;
+    public getFuncaoTransacaoByModuloOrFuncionalidade(idSistema: Number, nome?: String, idModulo?: Number, idFuncionalidade?: Number): Observable<any[]> {
+        const url = `${this.resourceUrlPEAnalitico}funcaoTransacao/${idSistema}?name=${nome}&idModulo=${idModulo}&idFuncionalidade=${idFuncionalidade}`;
         return this.http.get<[]>(url);
     }
     public getVwFuncaoTransacaoByIdAnalise(id: Number): Observable<any[]> {
         const url = `${this.vwFuncaoTransacaoResourceUrl}/${id}`;
         return this.http.get<[]>(url);
     }
+}
+
+enum StatusFunction {
+    DIVERGENTE = 'DIVERGENTE',
+    EXCLUIDO = 'EXCLUIDO',
+    VALIDADO = 'VALIDADO',
 }

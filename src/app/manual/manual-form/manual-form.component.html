@@ -263,28 +263,40 @@
                                 [value]="manual.fatoresAjuste"
                                 id="idTabelaDeflatorFormManual"
                                 sortOrder="1"
+                                [rows]="20"
+                                [rowsPerPageOptions]="[5,10,20,100]"
                                 (buttonClick)="adjustFactorDatatableClick($event)"
+                                [filterOnColumn]="true"
                                 disableView="true"
                                 disableClone="true" >
-                                <p-column header="Codigo" field="codigo">
-                                    <ng-template let-col let-fatoresAjuste="rowData" pTemplate="body">
-                                        {{ fatoresAjuste.codigo == null ? '---' : fatoresAjuste.codigo}}
+                                <p-column header="Ordem" field="ordem">
+                                    <ng-template let-col let-fatorAjuste="rowData" pTemplate="body">
+                                        {{ fatorAjuste.ordem ? fatorAjuste.ordem :  manual.fatoresAjuste.indexOf(fatorAjuste) + 1  }}
                                     </ng-template>
                                 </p-column>
-                                <p-column header="Nome" field="nome">
-                                </p-column>
-                                <p-column header="Fator" field="fator">
-                                </p-column>
-                                <p-column header="Tipo Ajuste" field="tipoAjuste">
-                                    <ng-template let-col let-fatoresAjuste="rowData" pTemplate="body">
-                                        {{ fatoresAjuste.tipoAjuste === 'PERCENTUAL' ? 'Percentual' :'Unitario'}}
+                                <p-column header="Código" field="codigo">
+                                    <ng-template let-col let-fatorAjuste="rowData" pTemplate="body">
+                                        {{ fatorAjuste.codigo == null ? '---' : fatorAjuste.codigo}}
                                     </ng-template>
                                 </p-column>
-                                <p-column header="Ativo" field="ativo">
-                                    <ng-template let-col let-fatoresAjuste="rowData" pTemplate="body">
-                                        {{ fatoresAjuste.ativo ? 'S': 'N' }}
+                                <p-column header="Nome" field="nome"></p-column>
+                                <p-column header="Fator" field="fator"></p-column>
+                                <p-column header="Tipo Ajuste" field="tipoAjuste" filterType="">
+                                    <ng-template let-col let-fatorAjuste="rowData" pTemplate="body" >
+                                        {{ fatorAjuste.tipoAjuste === 'PERCENTUAL' ? 'Percentual' :'Unitario'}}
                                     </ng-template>
                                 </p-column>
+                                <p-column header="Ativo" field="ativo" filterType="">
+                                    <ng-template let-col let-fatorAjuste="rowData" pTemplate="body">
+                                        {{ fatorAjuste.ativo ? 'S': 'N' }}
+                                    </ng-template>
+                                </p-column>
+                                <basis-datatable-button
+                                        name="order"
+                                        [bTooltip]="'Ordem de exibição do deflator.'"
+                                        icon="reorder"
+                                        class="ui-button-success">
+                                </basis-datatable-button>
                         </basis-datatable>
                     </div>
                 </div>
@@ -672,3 +684,12 @@
         </div>
     </div>
 </div>
+<p-dialog [header]="'Ordem de Exibição do Deflator'"  [(visible)]="showEditOrderDeflator" [style]="{width: '60vw'}">
+    <p-orderList [value]="manual.fatoresAjuste" styleClass="custom-orderlist" [listStyle]="{'height':'700px'}" dragdrop="true">
+        <ng-template let-deflator pTemplate="item">
+            <div class="ui-helper-clearfix">
+                <div style="font-size:14px; margin:15px 5px 0 0">{{deflator.codigo}} - {{deflator.nome}} - {{deflator.fator}} {{ deflator.tipoAjuste === 'PERCENTUAL' ? '%' :'PF'}} - {{ deflator.ativo ? 'Ativo': 'Inativo'}}</div>
+            </div>
+        </ng-template>
+    </p-orderList>
+</p-dialog>

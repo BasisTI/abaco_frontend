@@ -15,6 +15,7 @@ import { FuncaoTransacaoService } from '../funcao-transacao/funcao-transacao.ser
 import { FuncaoTransacao } from '../funcao-transacao';
 import { FuncaoDados } from '../funcao-dados';
 import { Status } from '../status/status.model';
+import { AbacoButtonsModule } from '../components/abaco-buttons/abaco-buttons.module';
 
 @Injectable()
 export class AnaliseService {
@@ -380,10 +381,47 @@ export class AnaliseService {
         const url = `${this.resourceUrl}/update-pf/${analiseId}`;
         return this.http.get<Response>(url);
     }
+    updateDivergenciaSomaPf(analiseId: number): Observable<Response> {
+        const url = `${this.resourceUrl}/update-divergente-pf/${analiseId}`;
+        return this.http.get<Response>(url);
+    }
+
 
     getResumo(analiseId: Number): Observable<Resumo[]> {
         return this.http.get<Resumo[]>(`${this.resourceResumoUrl}/${analiseId}`,).pipe(
         catchError((error: any) => {
+            if (error.status === 403) {
+                this.pageNotificationService.addErrorMessage(this.getLabel('Você não possui permissão!'));
+                return Observable.throw(new Error(error.status));
+            }
+        }));
+    }
+
+    getDivergenciaResumo(analiseId: Number): Observable<Resumo[]> {
+        return this.http.get<Resumo[]>(`${this.resourceResumoUrl}/divergencia/${analiseId}`,).pipe(
+        catchError((error: any) => {
+            if (error.status === 403) {
+                this.pageNotificationService.addErrorMessage(this.getLabel('Você não possui permissão!'));
+                return Observable.throw(new Error(error.status));
+            }
+        }));
+    }
+
+    public generateDivergence(mainAnalise: Analise, secondaryAnalise: Analise, isUnionFunction: boolean): Observable<Analise> {
+        if (!mainAnalise.id || !secondaryAnalise.id) {
+            this.pageNotificationService.addErrorMessage('Erro nas Análises selecionadas!');
+            return;
+        }
+        return this.http.get<Analise>(`${this.resourceUrl}/gerar-divergencia/${mainAnalise.id}/${secondaryAnalise.id}`);
+    }
+
+    public updateDivergence(analise: Analise) {
+        return this.http.get<Analise>(`${this.resourceUrl}/divergente/update/${analise.id}/`);
+    }
+
+    public generateDivergenceFromAnalise(analiseId): Observable<Analise> {
+        return this.http.get<Analise>(`${this.resourceUrl}/divergencia/${analiseId}`).pipe(
+            catchError((error: any) => {
             if (error.status === 403) {
                 this.pageNotificationService.addErrorMessage(this.getLabel('Você não possui permissão!'));
                 return Observable.throw(new Error(error.status));

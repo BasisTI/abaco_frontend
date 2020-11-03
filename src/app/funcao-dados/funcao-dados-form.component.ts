@@ -38,7 +38,7 @@ import { BlockUiService } from '@nuvem/angular-base';
     providers: [ConfirmationService]
 })
 export class FuncaoDadosFormComponent implements OnInit, AfterViewInit {
-
+    emptySustantion = '<p><br></p>';
     @Output()
     valueChange: EventEmitter<string> = new EventEmitter<string>();
     parseResult: ParseResult;
@@ -82,6 +82,7 @@ export class FuncaoDadosFormComponent implements OnInit, AfterViewInit {
     funcaoDadosEditar: FuncaoDados = new FuncaoDados();
     translateSubscriptions: Subscription[] = [];
     viewFuncaoDados = false;
+    divergenceComment: String;
     impacto: SelectItem[] = [
         {label: 'Inclusão', value: 'INCLUSAO'},
         {label: 'Alteração', value: 'ALTERACAO'},
@@ -607,8 +608,7 @@ export class FuncaoDadosFormComponent implements OnInit, AfterViewInit {
 
     private verifyDataRequire(): boolean {
         let retorno = true;
-
-        if (!this.seletedFuncaoDados.name) {
+        if (!(this.seletedFuncaoDados.name) && !(this.multiplos && this.text)) {
             this.nomeInvalido = true;
             retorno = false;
         } else {

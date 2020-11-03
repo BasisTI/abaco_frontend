@@ -37,6 +37,8 @@ import { RouterModule } from '@angular/router';
 import { LoginModule } from './login/login.module';
 import { PesquisarFuncaoTransacaoModule } from './pesquisar-ft/pesquisar-ft.module';
 import { StatusModule } from './status/status.module';
+import { NomenclaturaModule } from './nomenclatura/nomenclatura.module';
+import { DivergenciaModule } from './divergencia/divergencia.module';
 
 @NgModule({
     declarations: [
@@ -82,6 +84,8 @@ import { StatusModule } from './status/status.module';
         PesquisarFuncaoTransacaoModule,
         BlockUiModule,
         StatusModule,
+        NomenclaturaModule,
+        DivergenciaModule,
     ],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },

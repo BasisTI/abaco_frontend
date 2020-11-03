@@ -113,6 +113,22 @@
                     </div>
                 </div>
                 <div>
+                    <div class="ui-g-12 ui-g-nopad">
+                        <div class="ui-g-3 ui-md-offset-6">
+                            <div class="text-right">Visibilidade das Colunas:</div>
+                        </div>
+                        <div class="ui-g-3">
+                            <p-multiSelect
+                                defaultLabel="Selecione as colunas a serem exibidas"
+                                [displaySelectedLabel]="false"
+                                [ngModelOptions]="{ standalone: true }"
+                                (onChange)="mostrarColunas($event)"
+                                [options]="allColumnsTable"
+                                [(ngModel)]="columnsVisible"
+                                [style]="{ width: '100%' }">
+                            </p-multiSelect>
+                        </div>
+                    </div>
                 <basis-datatable
                         type="server"
                         [url]="userAnaliseUrl"
@@ -123,59 +139,61 @@
                         id="idTabelaComponentAnalise"
                         [rowsPerPageOptions]="rowsPerPageOptions"
                         (click) = "selectAnalise()"
-                        [showVisibleColumnsControl]="true"
                         [enableScroll]="true"
-                        [scrollHeight]="'700px'"
+                        [scrollHeight]="'500px'"
+                        [showPaginationFooter]="true"
+                        [selectionMode]="'multiple'"
                         #datatable>
+
                     <p-column header="Organização" field="organizacao.nome" [sortable]="true" filterType="select" [filter]="true">
                         <ng-template let-col let-analise="rowData" pTemplate="body">
                             {{ analise.organizacao.nome}}
                         </ng-template>
                     </p-column>
-                    <p-column header="Identificador Analise" field="identificadorAnalise" [sortable]="true" ></p-column>
-                    <p-column header="Número Os." field="numeroOs" [sortable]="true"></p-column>
-                    <p-column header="Equipe" field="equipeResponsavel.nome" [sortable]="true" filterType="select" [filter]="true">
+                    <p-column  [styleClass]="'organizacao'"  header="Identificador Analise" field="identificadorAnalise" [sortable]="true" ></p-column>
+                    <p-column  [styleClass]="'numero-os'"  header="Número Os." field="numeroOs" [sortable]="true"></p-column>
+                    <p-column  [styleClass]="'equipe'"  header="Equipe" field="equipeResponsavel.nome" [sortable]="true" filterType="select" [filter]="true">
                         <ng-template let-col let-analise="rowData" pTemplate="body">
                             {{ analise.equipeResponsavel.nome}}
                         </ng-template>
                     </p-column>
-                    <p-column header="Sistema" field="sistema.nome" [sortable]="true" filterType="select" [filter]="true">
+                    <p-column  [styleClass]="'sistema'"  header="Sistema" field="sistema.nome" [sortable]="true" filterType="select" [filter]="true">
                         <ng-template let-col let-analise="rowData" pTemplate="body">
                             {{ analise.sistema.nome}}
                         </ng-template>
                     </p-column>
-                    <p-column header="Status" field="status.nome" [sortable]="true" [filter]="true">
+                    <p-column  [styleClass]="'status'"  header="Status" field="status.nome" [sortable]="true" [filter]="true">
                         <ng-template let-col let-analise="rowData" pTemplate="body">
                             {{ analise.status && analise.status.nome? analise.status.nome : ''}}
                         </ng-template>
                     </p-column>
-                    <p-column header="Metodo Contagem" field="metodoContagem" [sortable]="true" filterType="select" [filter]="true"></p-column>
-                    <p-column header="PF total" field="pfTotal" [sortable]="true" filterType="">
+                    <p-column  [styleClass]="'metodo-contagem'"  header="Metodo Contagem" field="metodoContagem" [sortable]="true" filterType="select" [filter]="true"></p-column>
+                    <p-column  [styleClass]="'pf-total'"  header="PF total" field="pfTotal" [sortable]="true" filterType="">
                         <ng-template let-col let-analise="rowData" pTemplate="body">
                             {{ analise.pfTotal > 0 ? analise.pfTotal : 0 | number: '00.00'}}
                         </ng-template>
                     </p-column>
-                    <p-column header="PF Ajustado" field="adjustPFTotal" [sortable]="true" filterType="">
+                    <p-column  [styleClass]="'pf-ajustado'"  header="PF Ajustado" field="adjustPFTotal" [sortable]="true" filterType="">
                         <ng-template let-col let-analise="rowData" pTemplate="body">
                             {{ analise.adjustPFTotal > 0 ? analise.adjustPFTotal : 0 | number: '00.00'}}
                         </ng-template>
                     </p-column>
-                    <p-column header="Data de criação" field="dataCriacaoOrdemServico" [sortable]="true" filterType="">
+                    <p-column  [styleClass]="'data-criacao'"  header="Data de criação" field="dataCriacaoOrdemServico" [sortable]="true" filterType="">
                         <ng-template let-col let-analise="rowData" pTemplate="body" filterType="">
                             {{ analise.dataCriacaoOrdemServico | date: 'dd/MM/y - HH:mm' }}
                         </ng-template>
                     </p-column>
-                    <p-column header="Bloqueado" field="bloqueiaAnalise" [sortable]="true" filterType="">
+                    <p-column  [styleClass]="'bloqueado'"  header="Bloqueado" field="bloqueiaAnalise" [sortable]="true" filterType="">
                         <ng-template let-col let-analise="rowData" pTemplate="body">
                             {{ analise.bloqueiaAnalise ? 'Sim' : 'Não' }}
                         </ng-template>
                     </p-column>
-                    <p-column header="Clonada" field="clonadaParaEquipe" [sortable]="true" filterType="">
+                    <p-column  [styleClass]="'clonada'"  header="Clonada" field="clonadaParaEquipe" [sortable]="true" filterType="">
                         <ng-template let-col let-analise="rowData" pTemplate="body">
                             {{ analise.clonadaParaEquipe ? 'Sim' : 'Não' }}
                         </ng-template>
                     </p-column>
-                    <p-column header="Usuários" field="users" [sortable]="false" filterType="select" [filter]="true">
+                    <p-column  [styleClass]="'usuario'"  header="Usuários" field="users" [sortable]="false" filterType="select" [filter]="true">
                         <ng-template let-col let-row="rowData" pTemplate="body">
                             <li *ngFor="let user of row.users">
                                 {{ user.firstName }}
@@ -247,6 +265,13 @@
                             [disabled]="datatable.selectedRow == null"
                             class="ui-button-info">
                     </basis-datatable-button>
+                    <basis-datatable-button
+                            name="generateDivergence"
+                            [bTooltip]="changeDivergenceTooltip()"
+                            icon="compare-arrows"
+                            [disabled]="datatable.selectedRow == null"
+                            class="ui-button-info">
+                    </basis-datatable-button>
                 </basis-datatable>
                     <div class="ui-g-12 ui-md-2">
                         <app-botoes-exportacao [query]="changeUrl()" resourceName="analise" id="idBtnExportacaoComponentAnalise"
@@ -261,10 +286,8 @@
 
 <p-confirmDialog header="Confirmação" #dialog>
     <p-footer>
-        <button type="button" pButton icon="fa-close" label="Não"
-                (click)="dialog.reject()"></button>
-        <button type="button" pButton icon="fa-check" label="Sim"
-                (click)="dialog.accept()"></button>
+        <button type="button" pButton icon="fa-close" label="Não" (click)="dialog.reject()"></button>
+        <button type="button" pButton icon="fa-check" label="Sim" (click)="dialog.accept()"></button>
     </p-footer>
 </p-confirmDialog>
 <p-dialog *ngIf="equipeShare" header="Compartilhar Análise" [(visible)]="mostrarDialog" [modal]="true" (onHide)="limparSelecaoCompartilhar()" [style]="{width: '50vw'}" >
@@ -377,7 +400,6 @@
         <button type="button" pButton icon="fa-check" (click)="alterAnaliseBlock()" label="Bloquear" style="float:right; margin-top: 5px"></button>
     </div>
 </p-dialog>
-
 <p-dialog header="Alterar status" [(visible)]="showDialogAnaliseChangeStatus" [style]="{width: '50vw'}" [minHeight]="300" [modal]="true" >
     <div style="min-height:200px">
         <div class="ui-g" >
@@ -393,6 +415,36 @@
                 </p-dropdown>
             </div>
         </div>
-        <app-green-button buttonLabel="Adicionar" (click)="alterStatusAnalise()" style="float:right; margin-top: 5px"></app-green-button>
+        <app-green-button buttonLabel="Alterar" (click)="alterStatusAnalise()" style="float:right; margin-top: 5px"></app-green-button>
     </div>
+</p-dialog>
+<p-dialog header="Divergência" [(visible)]="showDialogDivergence" [style]="{width: '50vw'}" [minHeight]="300" [modal]="true">
+    <div class="ui-g-12 ui-md-12 ui-sm-12">
+        <div class="p-grid ui-g-12 ui-md-12 ui-sm-12">
+            <div class="p-grid ui-g-12 ui-md-12 ui-sm-12" >
+                <label>Deseja mesclar as Funções de Dados e Transações das Análises:</label>
+            </div>
+            <div class="p-grid ui-g-12 ui-md-12 ui-sm-12" >
+                <p-inputSwitch [(ngModel)]="setMainAnalise"></p-inputSwitch>
+            </div>
+        </div>
+        <div *ngIf="setMainAnalise">
+            <label>Análises selecionadas para gerar divergência:</label>
+            <div class="p-grid ui-g-12 ui-md-12 ui-sm-12">
+                <li>{{firstAnaliseDivergencia.identificadorAnalise}}</li>
+                <li>{{secondAnaliseDivergencia.identificadorAnalise}}</li>
+            </div>
+        </div>
+        <div *ngIf="!setMainAnalise">
+            <label>Selecione a Análise para importar as funções de dados e transação para Divergência:</label>
+            <div class="p-grid ui-g-12 ui-md-12 ui-sm-12">
+                <div class="p-grid" style="width:250px;margin-bottom:10px">
+                    <div class="p-col-12"><p-radioButton name="mainAnalise" (click)="setFunctionMainAnalise(secondAnaliseDivergencia)" value="firstAnaliseDivergencia" [label]="firstAnaliseDivergencia.identificadorAnalise" [(ngModel)]="mainAnaliseDivergencia" ></p-radioButton></div>
+                    <div class="p-col-12"><p-radioButton name="mainAnalise" (click)="setFunctionMainAnalise(firstAnaliseDivergencia)" value="secondAnaliseDivergencia" [label]="secondAnaliseDivergencia.identificadorAnalise" [(ngModel)]="mainAnaliseDivergencia" ></p-radioButton></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <app-green-button buttonLabel="Gerar Divergência" (click)="generateDivergence(setMainAnalise)" style="float:right; margin: 5px"></app-green-button>
+    <app-white-button buttonLabel="Cancelar" (click)="cancelGenerateDivergence()" style="float:right; margin: 5px"> </app-white-button>
 </p-dialog>

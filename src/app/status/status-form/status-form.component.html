@@ -24,8 +24,11 @@
                 </div>
                 <div class="ui-g-12 ui-md-12 ui-sm-12 form-fields-container">
                     <h4>Ativo</h4>
-                        <div class="p-col-6"><p-radioButton name="sim" [value]="true" label="Sim" [(ngModel)]="status.ativo" inputId="ativoSim"></p-radioButton></div>
-                        <div class="p-col-6"><p-radioButton name="nao" [value]="false" label="Não" [(ngModel)]="status.ativo" inputId="ativoNao"></p-radioButton></div>
+                        <p-inputSwitch [(ngModel)]="status.ativo" name="ativo" ></p-inputSwitch>
+                </div>
+                <div class="ui-g-12 ui-md-12 ui-sm-12 form-fields-container">
+                    <h4>Divergência</h4>
+                        <p-inputSwitch [(ngModel)]="status.divergencia" name="divergencia"></p-inputSwitch>
                 </div>
                 <div class="ui-g ui-md-12 form-buttons-container">
                     <div class="ui-g-2 ui-md-2 ui-sm-12">
@@ -35,9 +38,7 @@
                         <app-submit-button buttonLabel="Salvar" [isDisabled]="editForm.invalid"></app-submit-button>
                     </div>
                 </div>
-
             </form>
-
         </div> 
     </div>
 </div>
