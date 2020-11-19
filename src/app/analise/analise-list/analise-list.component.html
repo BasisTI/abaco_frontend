@@ -400,7 +400,7 @@
         <button type="button" pButton icon="fa-check" (click)="alterAnaliseBlock()" label="Bloquear" style="float:right; margin-top: 5px"></button>
     </div>
 </p-dialog>
-<p-dialog header="Alterar status" [(visible)]="showDialogAnaliseChangeStatus" [style]="{width: '50vw'}" [minHeight]="300" [modal]="true" >
+<p-dialog header="Alterar status" [(visible)]="showDialogAnaliseChangeStatus" [style]="{width: '50vw'}" [style]="{width: '250px', minHeight: '200px'}" [modal]="true" >
     <div style="min-height:200px">
         <div class="ui-g" >
             <div class="ui-g-12 ui-md-12 ui-sm-12">
@@ -418,7 +418,7 @@
         <app-green-button buttonLabel="Alterar" (click)="alterStatusAnalise()" style="float:right; margin-top: 5px"></app-green-button>
     </div>
 </p-dialog>
-<p-dialog header="Divergência" [(visible)]="showDialogDivergence" [style]="{width: '50vw'}" [minHeight]="300" [modal]="true">
+<p-dialog header="Validação" [(visible)]="showDialogDivergence" [style]="{width: '50vw'}" [minHeight]="300" [modal]="true">
     <div class="ui-g-12 ui-md-12 ui-sm-12">
         <div class="p-grid ui-g-12 ui-md-12 ui-sm-12">
             <div class="p-grid ui-g-12 ui-md-12 ui-sm-12" >
@@ -429,22 +429,22 @@
             </div>
         </div>
         <div *ngIf="setMainAnalise">
-            <label>Análises selecionadas para gerar divergência:</label>
+            <label>Análises selecionadas para gerar Validação:</label>
             <div class="p-grid ui-g-12 ui-md-12 ui-sm-12">
                 <li>{{firstAnaliseDivergencia.identificadorAnalise}}</li>
                 <li>{{secondAnaliseDivergencia.identificadorAnalise}}</li>
             </div>
         </div>
         <div *ngIf="!setMainAnalise">
-            <label>Selecione a Análise para importar as funções de dados e transação para Divergência:</label>
+            <label>Selecione a Análise para importar as funções de dados e transação para Validação:</label>
             <div class="p-grid ui-g-12 ui-md-12 ui-sm-12">
                 <div class="p-grid" style="width:250px;margin-bottom:10px">
-                    <div class="p-col-12"><p-radioButton name="mainAnalise" (click)="setFunctionMainAnalise(secondAnaliseDivergencia)" value="firstAnaliseDivergencia" [label]="firstAnaliseDivergencia.identificadorAnalise" [(ngModel)]="mainAnaliseDivergencia" ></p-radioButton></div>
-                    <div class="p-col-12"><p-radioButton name="mainAnalise" (click)="setFunctionMainAnalise(firstAnaliseDivergencia)" value="secondAnaliseDivergencia" [label]="secondAnaliseDivergencia.identificadorAnalise" [(ngModel)]="mainAnaliseDivergencia" ></p-radioButton></div>
+                    <div class="p-col-12"><p-radioButton name="mainAnalise" (click)="setFunctionMainAnalise(secondAnaliseDivergencia)" [value]="firstAnaliseDivergencia" [label]="firstAnaliseDivergencia.identificadorAnalise" [(ngModel)]="mainAnaliseDivergencia" ></p-radioButton></div>
+                    <div class="p-col-12"><p-radioButton name="mainAnalise" (click)="setFunctionMainAnalise(firstAnaliseDivergencia)" [value]="secondAnaliseDivergencia" [label]="secondAnaliseDivergencia.identificadorAnalise" [(ngModel)]="mainAnaliseDivergencia" ></p-radioButton></div>
                 </div>
             </div>
         </div>
     </div>
-    <app-green-button buttonLabel="Gerar Divergência" (click)="generateDivergence(setMainAnalise)" style="float:right; margin: 5px"></app-green-button>
+    <app-green-button buttonLabel="Gerar Validação" (click)="generateDivergence(setMainAnalise)" style="float:right; margin: 5px"></app-green-button>
     <app-white-button buttonLabel="Cancelar" (click)="cancelGenerateDivergence()" style="float:right; margin: 5px"> </app-white-button>
 </p-dialog>

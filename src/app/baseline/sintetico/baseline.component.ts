@@ -5,10 +5,11 @@ import { SistemaService } from '../../sistema/sistema.service';
 import { BaselineService } from '../baseline.service';
 import { Sistema } from '../../sistema';
 import { ElasticQuery } from 'src/app/shared/elastic-query';
-import { DatatableComponent, DatatableClickEvent } from '@nuvem/primeng-components';
+import { DatatableComponent, DatatableClickEvent, PageNotificationService } from '@nuvem/primeng-components';
 import { ResponseWrapper } from 'src/app/shared';
 import { ConfirmationService } from 'primeng';
 import { BaselineSintetico } from '../baseline-sintetico.model';
+import { error } from 'console';
 
 @Component({
     // tslint:disable-next-line:component-selector
@@ -25,16 +26,17 @@ export class BaselineComponent implements OnInit {
     selecionada: boolean;
     nomeSistemas: Array<Sistema>;
     sistema?: Sistema = new Sistema();
+    sistemaUpdate?: Sistema = new Sistema();
     urlBaseline: string;
     enableTable = false ;
     lstBasilineSintetico: BaselineSintetico[];
+    showUpdateBaseline: boolean = false;
 
     constructor(
         private router: Router,
         private baselineService: BaselineService,
         private sistemaService: SistemaService,
-        private confirmationService: ConfirmationService,
-        private indexadorService: IndexadorService,
+        private pageNotificationService: PageNotificationService,
     ) {
     }
 
@@ -116,12 +118,25 @@ export class BaselineComponent implements OnInit {
             this.datatable.reset();
         }
     }
-    public atualizarAnalise() {
-        this.confirmationService.confirm({
-            message: this.getLabel('Desejar atualizar a Baseline dos Sistemas?'),
-            accept: () => {
-                this.indexadorService.reindexar(this.indexList).subscribe();
-            }
-        });
+    public atualizarBaseline() {
+        this.showUpdateBaseline = true;
+    }
+    public updateBaseline(sistema: Sistema) {
+        if (!sistema) {
+            this.pageNotificationService.addErrorMessage(
+                this.getLabel('Somente administradores podem bloquear/desbloquear análises!')
+            );
+            return;
+        }
+        this.baselineService.updateBaselineSintetico(sistema).subscribe((res) => {
+            this.showUpdateBaseline = false;
+            this.sistema = sistema;
+            this.sistemaUpdate =  new Sistema();
+            this.performSearch();
+        }, error => {
+            this.pageNotificationService.addErrorMessage('Não foi possível localizar Análise para gerar Baseline do sistema informado.');
+            console.log(error.message);
+            this.showUpdateBaseline = false;
+       });
     }
 }
