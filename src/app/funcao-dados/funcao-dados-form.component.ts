@@ -165,7 +165,9 @@ export class FuncaoDadosFormComponent implements OnInit, AfterViewInit {
                             let funcDados: FuncaoDados = JSON.parse(this.routeState.seletedFuncaoDados )
                             this.seletedFuncaoDados = funcDados
                             this.visaopf.telaResult = JSON.parse(this.routeState.telaResult)
-                            this.seletedFuncaoDados.sustantation=  '<img src="'+JSON.parse(this.routeState.dataUrl)+'" width="1222">'
+                            if(this.routeState.dataUrl){
+                                this.seletedFuncaoDados.sustantation=  '<img src="'+JSON.parse(this.routeState.dataUrl)+'" width="1222">'
+                            }
                             this.seletedFuncaoDados.ders = []
                             this.visaopf.telaResult.componentes.forEach( comp => {
                                 if(comp.tipo === "campo" || comp.tipo ==="dropdown" ){
@@ -193,9 +195,13 @@ export class FuncaoDadosFormComponent implements OnInit, AfterViewInit {
     }
 
     detectarComponentes(){
+        var routerNavigate = `visaopf/deteccomponentes`
+        if(this.visaopf.telaResult){
+            routerNavigate = `visaopf/deteccomponentes/${this.visaopf.telaResult.id}`
+        }
+
         this.desconverterChips()
-        console.log(this.seletedFuncaoDados)
-        this.router.navigate([`visaopf/deteccomponentes`], {
+        this.router.navigate([routerNavigate], {
             state: {
                 isEdit : this.isEdit,
                 idAnalise : this.idAnalise,

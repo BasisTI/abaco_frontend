@@ -18,6 +18,7 @@ const routes: Routes = [
   { path: 'visaopf/edit/:idAnalise/:idCenario/:idTela', component: VisaoPfEditComponentComponent },
   { path: 'visaopf/contagem/:idAnalise/:idCenario', pathMatch: 'full', component: VisaoPfComponent },
   { path: 'visaopf/deteccomponentes', component: VisaPfDeteccaoComponentesComponent },
+  { path: 'visaopf/deteccomponentes/:idTela', component: VisaPfDeteccaoComponentesComponent },
 ];
 
 @NgModule({

@@ -18,8 +18,18 @@ export class VisaPfDeteccaoComponentesComponent implements OnInit {
     visaopf: Visaopf = new Visaopf();
     routeState:any
     data:any
+    idTela:any
 
     constructor(private activedRoute: ActivatedRoute, private router: Router, private visaoPfService: VisaoPfService) {
+        this.idTela = this.activedRoute.snapshot.paramMap.get('idTela')
+        console.log(this.idTela)
+        if(this.idTela){
+            this.visaopf.telaResult = this.visaoPfService.getTela(this.idTela).subscribe( resp => {
+                this.visaopf.telaResult = resp
+                console.log(this.visaopf.telaResult)
+
+            })
+        }
 
         if (this.router.getCurrentNavigation().extras.state) {
             this.routeState = this.router.getCurrentNavigation().extras.state;
@@ -28,19 +38,22 @@ export class VisaPfDeteccaoComponentesComponent implements OnInit {
 
     ngOnInit(): void {
         this.getTipos()
-
     }
 
     continuarContagem(){
-        this.router.navigate([`analise/${this.routeState.idAnalise}/funcao-dados`], {
-            state: {
-                isEdit : this.routeState.isEdit,
-                idAnalise : this.routeState.idAnalise,
-                seletedFuncaoDados : this.routeState.seletedFuncaoDados,
-                telaResult : JSON.stringify(this.visaopf.telaResult),
-                dataUrl : JSON.stringify(this.visaopf.tela.dataUrl),
-            }
+        this.visaoPfService.getTela(this.visaopf.telaResult.id).subscribe((resp:any) => {
+            if(resp){
+                this.router.navigate([`analise/${this.routeState.idAnalise}/funcao-dados`], {
+                    state: {
+                        isEdit : this.routeState.isEdit,
+                        idAnalise : this.routeState.idAnalise,
+                        seletedFuncaoDados : this.routeState.seletedFuncaoDados,
+                        telaResult : JSON.stringify(resp),
+                        dataUrl : JSON.stringify(this.visaopf.tela.dataUrl),
+                    }
 
+                })
+            }
         })
     }
 
