@@ -35,7 +35,7 @@ export class CanvasComponent implements OnInit {
     dialogComponent=false
     showTooltip=false
     msgs: Message[] = []
-    static readonly TIMEOUTCANVAS = 1000
+    static readonly TIMEOUTCANVAS = 1500
 
     constructor(private service:CanvasService){
 
