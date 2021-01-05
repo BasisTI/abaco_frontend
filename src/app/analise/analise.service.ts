@@ -381,11 +381,6 @@ export class AnaliseService {
         const url = `${this.resourceUrl}/update-pf/${analiseId}`;
         return this.http.get<Response>(url);
     }
-    updateDivergenciaSomaPf(analiseId: number): Observable<Response> {
-        const url = `${this.resourceUrl}/update-divergente-pf/${analiseId}`;
-        return this.http.get<Response>(url);
-    }
-
 
     getResumo(analiseId: Number): Observable<Resumo[]> {
         return this.http.get<Resumo[]>(`${this.resourceResumoUrl}/${analiseId}`,).pipe(
@@ -418,7 +413,7 @@ export class AnaliseService {
     public updateDivergence(analise: Analise) {
         return this.http.get<Analise>(`${this.resourceUrl}/divergente/update/${analise.id}/`);
     }
-
+    
     public generateDivergenceFromAnalise(analiseId): Observable<Analise> {
         return this.http.get<Analise>(`${this.resourceUrl}/divergencia/${analiseId}`).pipe(
             catchError((error: any) => {
@@ -428,4 +423,5 @@ export class AnaliseService {
             }
         }));
     }
+
 }
