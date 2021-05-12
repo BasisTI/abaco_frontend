@@ -28,7 +28,7 @@
         "@fullcalendar/core": "^5.5.1",
         "@nuvem/angular-base": "^9.1.8",
         "@nuvem/primeng-components": "^9.1.8",
-        "chart.js": "2.7.1",
+        "chart.js": "2.9.4",
         "file-saver": "^2.0.5",
         "fullcalendar": "3.10.1",
         "jspdf": "^2.3.0",
